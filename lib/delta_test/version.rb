@@ -1,3 +1,9 @@
 module DeltaTest
-  VERSION = "0.0.1"
+
+  MAJOR    = 0
+  MINOR    = 0
+  REVISION = 1
+
+  VERSION = [MAJOR, MINOR, REVISION].compact.join(".")
+
 end

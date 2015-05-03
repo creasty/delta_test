@@ -1,5 +1,5 @@
-require "delta_test/version"
+require_relative "delta_test/version"
+require_relative "delta_test/analyzer"
 
 module DeltaTest
-  # Your code goes here...
 end
