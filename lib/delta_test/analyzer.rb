@@ -1,24 +1,21 @@
-require 'ruby-prof'
+require "ruby-prof"
 
 module DeltaTest
   class Analyzer
 
-    def initializer
-      @result = nil
-      @files  = Set.new
-    end
+    attr_reader :result
 
     def start
+      @result = nil
+      @files  = Set.new
+
       RubyProf.stop if RubyProf.running?
       RubyProf.start
     end
 
     def stop
+      raise unless RubyProf.running?
       @result = RubyProf.stop
-    end
-
-    def profile(&block)
-      @result = RubyProf.profile(&block)
     end
 
     def related_source_files
@@ -26,7 +23,7 @@ module DeltaTest
 
       @result.threads.each do |thread|
         thread.methods.each do |method|
-         @files |= method.source_file
+          @files << method.source_file
         end
       end
 
