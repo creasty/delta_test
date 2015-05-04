@@ -14,7 +14,8 @@ module DeltaTest
 
       if defined?(Rails)
         self.base_path  = Rails.root
-        self.files     |= Rails.application.send(:_all_load_paths)
+        # FIXME
+        # self.files = Rails.application.send(:_all_load_paths)
       end
     end
 
