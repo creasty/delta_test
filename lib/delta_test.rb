@@ -3,6 +3,7 @@ require_relative "delta_test/configuration"
 require_relative "delta_test/analyzer"
 require_relative "delta_test/dependencies"
 require_relative "delta_test/dependencies_table"
+require_relative "delta_test/generator"
 
 module DeltaTest
   class << self
