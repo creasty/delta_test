@@ -1,5 +1,5 @@
 module DeltaTest
-  class DependenciesTable < Hash
+  class DependenciesTable < ::Hash
 
     def initialize
       super
