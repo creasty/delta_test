@@ -30,10 +30,10 @@ describe DeltaTest::Analyzer do
 
   describe "#stop" do
 
-    it "should raise error if `start` is not yet called" do
+    it "should not raise error if `start` is not yet called" do
       expect {
         analyzer.stop
-      }.to raise_error
+      }.not_to raise_error
     end
 
     it "should set result" do

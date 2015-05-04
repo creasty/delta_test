@@ -40,6 +40,25 @@ describe DeltaTest::Configuration do
 
   end
 
+  describe "#table_file, #table_file=" do
+
+    it "should return an instance of Pathname" do
+      expect(configuration.table_file).to be_a(Pathname)
+    end
+
+    it "should store an instance of Pathname from a string in the setter" do
+      path = 'foo/bar'
+
+      expect {
+        configuration.table_file = path
+      }.not_to raise_error
+
+      expect(configuration.table_file).to be_a(Pathname)
+      expect(configuration.table_file.to_s).to eq(path)
+    end
+
+  end
+
   describe "#files, #files=" do
 
     it "should return an instance of Set" do
@@ -58,10 +77,6 @@ describe DeltaTest::Configuration do
       expect(configuration.files).to eq(files_set)
     end
 
-  end
-
-  describe "#relative_files" do
-
     it "should return a set of relative file paths" do
       base_path = '/base_path'
       files_array = [
@@ -77,9 +92,10 @@ describe DeltaTest::Configuration do
       configuration.base_path = base_path
       configuration.files     = files_array
 
-      expect(configuration.relative_files).to eq(relative_set)
+      expect(configuration.files).to eq(relative_set)
     end
 
   end
+
 
 end

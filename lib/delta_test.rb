@@ -6,11 +6,17 @@ require_relative "delta_test/dependencies_table"
 require_relative "delta_test/generator"
 
 module DeltaTest
+
+  ACTIVE_FLAG = 'DELTA_TEST_ACTIVE'
+
   class << self
 
-    def configure
-      @config ||= Configuration.new
+    def setup
+      @config = Configuration.new
+      @active = (!ENV[ACTIVE_FLAG].nil? && ENV[ACTIVE_FLAG] =~ /0|false/i)
+    end
 
+    def configure
       yield @config if block_given?
     end
 
@@ -23,7 +29,7 @@ module DeltaTest
     end
 
     def respond_to?(method_name, include_private = false)
-      @config.respond_to?(method_name)
+      @config.respond_to?(method_name) || super
     end
 
     def regulate_filepath(file)
@@ -32,7 +38,19 @@ module DeltaTest
       file.cleanpath
     end
 
+    def active?
+      @active
+    end
+
+    def activate!
+      @active = true
+    end
+
+    def deactivate!
+      @active = false
+    end
+
   end
 end
 
-DeltaTest.configure
+DeltaTest.setup

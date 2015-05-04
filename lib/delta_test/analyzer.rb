@@ -14,8 +14,8 @@ module DeltaTest
     end
 
     def stop
-      raise unless RubyProf.running?
-      @result = RubyProf.stop
+      @result = nil
+      @result = RubyProf.stop if RubyProf.running?
     end
 
     def related_source_files

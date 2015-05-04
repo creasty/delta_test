@@ -1,17 +1,24 @@
+require "fileutils"
+
 module DeltaTest
   class DependenciesTable < ::Hash
 
-    def initialize
+    def initialize(klass = Set)
       super
 
+      @klass = klass
       self.default_proc = -> (h, k) do
-        h[k] = Dependencies.new
+        h[k] = @klass.new
       end
     end
 
-    def self.load(file)
-      data = File.binread(file)
-      Marshal.load(data) rescue self.new
+    def self.load(file, klass = Set)
+      begin
+        data = File.binread(file)
+        Marshal.load(data)
+      rescue
+        self.new(klass)
+      end
     end
 
     def without_default_proc
@@ -36,6 +43,7 @@ module DeltaTest
       without_default_proc do
         cleanup!
         data = Marshal.dump(self)
+        FileUtils.mkdir_p(File.dirname(file))
         File.open(file, "wb") { |f| f.write data }
       end
     end

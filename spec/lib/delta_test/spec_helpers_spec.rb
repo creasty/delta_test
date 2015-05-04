@@ -1,5 +1,3 @@
-DELTA_TEST_DRYRUN = true
-
 require "delta_test/spec_helpers"
 
 describe DeltaTest::SpecHelpers do
@@ -20,10 +18,12 @@ describe DeltaTest::SpecHelpers do
         end
       end
     end
+
+    allow(DeltaTest).to receive(:active?).and_return(false)
   end
 
   it "should define a global generator" do
-    expect(defined?($_delta_test_generator)).not_to be(false)
+    expect(defined?($delta_test_generator)).not_to be(false)
   end
 
   describe "when extending" do
@@ -36,8 +36,7 @@ describe DeltaTest::SpecHelpers do
       end
 
       it "should start the generator" do
-        allow($_delta_test_generator).to receive(:start!).with("spec/foo/bar.rb").and_return(nil)
-        expect($_delta_test_generator).to receive(:start!).with("spec/foo/bar.rb")
+        expect($delta_test_generator).to receive(:start!).with("spec/foo/bar.rb")
         @rspec_example_group.extend DeltaTest::SpecHelpers
       end
 
@@ -51,7 +50,7 @@ describe DeltaTest::SpecHelpers do
       end
 
       it "should stop the generator" do
-        expect($_delta_test_generator).to receive(:stop!)
+        expect($delta_test_generator).to receive(:stop!)
         @rspec_example_group.extend DeltaTest::SpecHelpers
       end
 

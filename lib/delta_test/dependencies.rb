@@ -6,5 +6,7 @@ module DeltaTest
       super(file) if DeltaTest.files.include?(file)
     end
 
+    alias_method :<<, :add
+
   end
 end
