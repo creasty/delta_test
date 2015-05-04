@@ -25,6 +25,12 @@ module DeltaTest
       @config.respond_to?(method_name)
     end
 
+    def regulate_filepath(file)
+      file = Pathname.new(file)
+      file = file.relative_path_from(self.base_path) rescue file
+      file.cleanpath
+    end
+
   end
 end
 

@@ -22,16 +22,16 @@ module DeltaTest
       @base_path = Pathname.new(path)
     end
 
-    def files=(files)
-      files = Set.new(files)
-      files.map! { |f| Pathname.new(f) }
-      @files = files
+    def files=(_files)
+      _files = Set.new(_files)
+      _files.map! { |f| Pathname.new(f) }
+      @files = _files
     end
 
     def relative_files
-      self.files
-        .dup
-        .map! { |f| f.relative_path_from(self.base_path) }
+      _files = self.files.dup
+      _files.map! { |f| DeltaTest.regulate_filepath(f) }
+      _files
     end
 
   end
