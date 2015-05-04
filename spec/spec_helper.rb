@@ -1,4 +1,6 @@
 require 'rspec'
+require 'fakefs/spec_helpers'
+
 require 'delta_test'
 
 Dir["#{File.dirname(__FILE__)}/supports/**/*.rb"].each { |f| require f }

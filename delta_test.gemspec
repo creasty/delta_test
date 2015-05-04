@@ -22,7 +22,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "ruby-prof"
 
   spec.add_development_dependency "bundler", "~> 1.7"
-  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "fakefs"
   spec.add_development_dependency "pry"
+  spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", ">= 3.0"
 end
