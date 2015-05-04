@@ -5,7 +5,7 @@ module DeltaTest
       super
 
       self.default_proc = -> (h, k) do
-        h[k] = Set.new
+        h[k] = Dependencies.new
       end
     end
 
