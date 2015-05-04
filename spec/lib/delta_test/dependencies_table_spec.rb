@@ -6,9 +6,10 @@ describe DeltaTest::DependenciesTable do
     expect(DeltaTest::DependenciesTable).to be < Hash
   end
 
-  describe "#[]" do
 
-    let(:table) { DeltaTest::DependenciesTable.new }
+  let(:table) { DeltaTest::DependenciesTable.new }
+
+  describe "#[]" do
 
     it "should initiate an empty set if not accessed before" do
       value = table[:foo]
@@ -28,6 +29,29 @@ describe DeltaTest::DependenciesTable do
 
   end
 
+  describe "#without_default_proc" do
+
+    it "should reset default_proc temporary inside a block" do
+      expect(table.default_proc).not_to be_nil
+      table.without_default_proc do
+        expect(table.default_proc).to be_nil
+      end
+      expect(table.default_proc).not_to be_nil
+    end
+
+  end
+
+  describe "#cleanup!" do
+
+    it "should delete items where value is an empty set" do
+      table[:foo]
+      table[:bar] << 1
+      expect(table.keys).to eq([:foo, :bar])
+      table.cleanup!
+      expect(table.keys).to eq([:bar])
+    end
+
+  end
 
   shared_examples "init file system" do
 
