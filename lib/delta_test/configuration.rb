@@ -1,3 +1,6 @@
+require "set"
+require "pathname"
+
 module DeltaTest
   class Configuration
 
@@ -17,12 +20,6 @@ module DeltaTest
       self.base_path  = "/"
       self.table_file = "tmp/.delta_test_dt"
       self.files      = []
-
-      if defined?(Rails)
-        self.base_path = Rails.root
-        # FIXME
-        # self.files = Rails.application.send(:_all_load_paths)
-      end
 
       validate!
       precalculate!

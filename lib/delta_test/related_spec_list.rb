@@ -1,3 +1,5 @@
+require "set"
+
 require_relative "git"
 require_relative "dependencies_table"
 
