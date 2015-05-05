@@ -69,10 +69,20 @@ describe DeltaTest::Generator do
       expect(RubyProf.running?).to be(true)
     end
 
-    it "should set current_spec_file" do
-      expect(generator.current_spec_file).to be_nil
-      generator.start!(spec_file)
-      expect(generator.current_spec_file).to eq(spec_file)
+    describe "#current_spec_file" do
+
+      it "should be set" do
+        expect(generator.current_spec_file).to be_nil
+        generator.start!(spec_file)
+        expect(generator.current_spec_file).to eq(spec_file)
+      end
+
+      it "should be regulated" do
+        expect(generator.current_spec_file).to be_nil
+        generator.start!('./%s' % spec_file)
+        expect(generator.current_spec_file).to eq(spec_file)
+      end
+
     end
 
   end
