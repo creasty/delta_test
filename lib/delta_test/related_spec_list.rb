@@ -29,5 +29,17 @@ module DeltaTest
       @changed_files = Git.changed_files(@base, @head)
     end
 
+    def related_spec_files
+      spec_files = Set.new
+
+      @table.each do |spec_file, dependencies|
+        if (dependencies & @changed_files).any?
+          spec_files << spec_file
+        end
+      end
+
+      spec_files
+    end
+
   end
 end

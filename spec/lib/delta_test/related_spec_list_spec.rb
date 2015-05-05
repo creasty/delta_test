@@ -27,12 +27,15 @@ describe DeltaTest::RelatedSpecList do
 
     before do
       table = DeltaTest::DependenciesTable.new
-      table['spec/foo_spec.rb'] << 'lib/foo.rb'
+      table["spec/foo_spec.rb"] << "lib/foo.rb"
+      table["spec/bar_spec.rb"] << "lib/bar.rb"
+      table["spec/mixed_spec.rb"] << "lib/foo.rb"
+      table["spec/mixed_spec.rb"] << "lib/bar.rb"
 
       allow(DeltaTest::DependenciesTable).to receive(:load).with(table_file_path).and_return(table)
 
       changed_files = [
-        'lib/foo.rb',
+        "lib/foo.rb",
       ]
 
       allow(DeltaTest::Git).to receive(:changed_files).with(base, head).and_return(changed_files)
@@ -83,6 +86,22 @@ describe DeltaTest::RelatedSpecList do
 
       expect(list.changed_files).to be_a(Array)
       expect(list.changed_files).not_to be_empty
+    end
+
+  end
+
+  describe "#related_spec_files" do
+
+    include_examples :mock_table_and_changed_files
+
+    before do
+      table_file
+      list.load_table!
+      list.retrive_changed_files!
+    end
+
+    it "should return a set of related spec files" do
+      expect(list.related_spec_files).to eq(Set["spec/foo_spec.rb", "spec/mixed_spec.rb"])
     end
 
   end
