@@ -10,6 +10,8 @@ group :development, :test do
   gem 'pry-rails'
   gem 'spring'
   gem 'rspec-rails', '>= 3.2'
+end
 
+group :test do
   gem 'delta_test', path: '../..'
 end
