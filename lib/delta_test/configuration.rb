@@ -24,7 +24,18 @@ module DeltaTest
         # self.files = Rails.application.send(:_all_load_paths)
       end
 
+      validate!
       precalculate!
+    end
+
+    def validate!
+      if @base_path.relative?
+        raise "`base_path` need to be an absolute path"
+      end
+
+      unless @files && (@files.is_a?(Array) || @files.is_a?(Set))
+        raise TypeError.new("`files` need to be an array or a set")
+      end
     end
 
     def precalculate!

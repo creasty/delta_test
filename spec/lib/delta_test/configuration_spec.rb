@@ -59,6 +59,66 @@ describe DeltaTest::Configuration do
 
   end
 
+  describe "#validate!" do
+
+    describe "#base_path" do
+
+      it "should raise an error if `base_path` is a relative path" do
+        configuration.base_path = "relative/path"
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/base_path/)
+      end
+
+      it "should not raise if `base_path` is a absolute path" do
+        configuration.base_path = "/absolute/path"
+
+        expect {
+          configuration.validate!
+        }.not_to raise_error
+      end
+
+    end
+
+    describe "#files" do
+
+      it "should raise an error if `files` is not set" do
+        configuration.files = nil
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/files/)
+      end
+
+      it "should raise an error if `files` is neither an array or a set" do
+        configuration.files = {}
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/files/)
+      end
+
+      it "should not raise if `files` is an array" do
+        configuration.files = []
+
+        expect {
+          configuration.validate!
+        }.not_to raise_error
+      end
+
+      it "should not raise if `files` is a set" do
+        configuration.files = Set.new
+
+        expect {
+          configuration.validate!
+        }.not_to raise_error
+      end
+
+    end
+
+  end
+
   describe "#precalculate!" do
 
     describe "#relative_files" do
