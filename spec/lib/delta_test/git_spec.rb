@@ -1,3 +1,5 @@
+require "delta_test/git"
+
 describe DeltaTest::Git do
 
   let(:out) { "" }

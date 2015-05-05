@@ -1,3 +1,5 @@
+require "delta_test/dependencies_table"
+
 describe DeltaTest::DependenciesTable do
 
   include FakeFS::SpecHelpers

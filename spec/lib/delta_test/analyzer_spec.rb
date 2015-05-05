@@ -1,3 +1,5 @@
+require "delta_test/analyzer"
+
 describe DeltaTest::Analyzer do
 
   let(:analyzer) { DeltaTest::Analyzer.new }

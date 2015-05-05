@@ -1,5 +1,7 @@
 require "fileutils"
 
+require_relative "dependencies"
+
 module DeltaTest
   class DependenciesTable < ::Hash
 

@@ -1,3 +1,5 @@
+require "delta_test/dependencies"
+
 describe DeltaTest::Dependencies do
 
   it "should be a subclass of Set" do

@@ -1,3 +1,6 @@
+require_relative "analyzer"
+require_relative "dependencies_table"
+
 module DeltaTest
   class Generator
 

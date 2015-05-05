@@ -1,3 +1,5 @@
+require "delta_test/generator"
+
 describe DeltaTest::Generator do
 
   include FakeFS::SpecHelpers
