@@ -2,7 +2,7 @@ require "delta_test"
 require "delta_test/spec_helpers"
 
 DeltaTest.configure do |config|
-  config.base_path = Rails.root
+  config.base_path = File.expand_path('../..', __FILE__)  # hack
 end
 
 RSpec.configure do |config|
