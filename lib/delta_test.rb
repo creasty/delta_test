@@ -5,6 +5,9 @@ module DeltaTest
 
   ACTIVE_FLAG = 'DELTA_TEST_ACTIVE'
 
+  class TableNotFoundError < IOError; end
+  class NotInGitRepository < StandardError; end
+
   class << self
 
     attr_reader :config
