@@ -25,22 +25,28 @@ describe DeltaTest::RelatedSpecList do
 
   shared_examples :mock_table_and_changed_files do
 
-    before do
+    let(:table) do
       table = DeltaTest::DependenciesTable.new
+
       table["spec/foo_spec.rb"] << "lib/foo.rb"
       table["spec/bar_spec.rb"] << "lib/bar.rb"
       table["spec/mixed_spec.rb"] << "lib/foo.rb"
       table["spec/mixed_spec.rb"] << "lib/bar.rb"
 
-      allow(DeltaTest::DependenciesTable).to receive(:load).with(table_file_path).and_return(table)
+      table
+    end
 
-      changed_files = [
+    let(:changed_files) do
+      [
         "lib/foo.rb",
       ]
+    end
 
-      allow(DeltaTest::Git).to receive(:changed_files).with(base, head).and_return(changed_files)
+    before do
+      allow(DeltaTest::DependenciesTable).to receive(:load).with(table_file_path).and_return(table)
 
       allow(DeltaTest::Git).to receive(:git_repo?).and_return(true)
+      allow(DeltaTest::Git).to receive(:changed_files).with(base, head).and_return(changed_files)
     end
 
   end
