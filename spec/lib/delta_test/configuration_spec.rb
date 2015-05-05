@@ -89,6 +89,26 @@ describe DeltaTest::Configuration do
 
     end
 
+    describe "#table_file_path" do
+
+      it "should return an absolute path to the table file if `table_file` is a relative" do
+        configuration.base_path  = "/base_path"
+        configuration.table_file = "somewhere/table_file"
+
+        configuration.precalculate!
+        expect(configuration.table_file_path).to eq(Pathname.new("/base_path/somewhere/table_file"))
+      end
+
+      it "should return the same value to the table file if `table_file` is a absolute" do
+        configuration.base_path  = "/base_path"
+        configuration.table_file = "/somewhere/table_file"
+
+        configuration.precalculate!
+        expect(configuration.table_file_path).to eq(Pathname.new("/somewhere/table_file"))
+      end
+
+    end
+
   end
 
 end

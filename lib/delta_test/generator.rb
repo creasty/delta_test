@@ -17,9 +17,8 @@ module DeltaTest
 
       puts "--- setup!"
 
-      @analyzer        = Analyzer.new
-      @table_file_path = DeltaTest.base_path.join(DeltaTest.table_file)
-      @table           = DependenciesTable.load(@table_file_path, Dependencies)
+      @analyzer = Analyzer.new
+      @table    = DependenciesTable.load(DeltaTest.table_file_path, Dependencies)
 
       @current_spec_file = nil
 
@@ -60,7 +59,7 @@ module DeltaTest
       puts "--- teardown!"
 
       @analyzer.stop
-      @table.dump(@table_file_path)
+      @table.dump(DeltaTest.table_file_path)
     end
 
   end
