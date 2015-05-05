@@ -16,8 +16,14 @@ module DeltaTest
       end
 
       def ls_files
-        o, e, s = Open3.capture3(%q{git ls-files})
-        o
+        o, e, s = Open3.capture3(%q{git ls-files -z})
+        o.split("\x0")
+      end
+
+      def changed_files(base = "master", head = "HEAD")
+        args = [base, head].map { |a| Shellwords.escape(a) }
+        o, e, s = Open3.capture3(%q{git --no-pager diff --name-only -z %s %s} % args)
+        o.split("\x0")
       end
 
     end
