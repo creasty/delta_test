@@ -1,4 +1,5 @@
 require_relative "delta_test/version"
+require_relative "delta_test/git"
 require_relative "delta_test/configuration"
 require_relative "delta_test/analyzer"
 require_relative "delta_test/dependencies"
