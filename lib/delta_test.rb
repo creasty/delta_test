@@ -7,6 +7,8 @@ module DeltaTest
 
   class << self
 
+    attr_reader :config
+
     def setup
       @config = Configuration.new
       @active = (!ENV[ACTIVE_FLAG].nil? && ENV[ACTIVE_FLAG] =~ /0|false/i)
@@ -14,6 +16,7 @@ module DeltaTest
 
     def configure
       yield @config if block_given?
+      @config.precalculate!
     end
 
     def method_missing(method_name, *args, &block)

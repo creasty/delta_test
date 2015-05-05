@@ -59,43 +59,36 @@ describe DeltaTest::Configuration do
 
   end
 
-  describe "#files, #files=" do
+  describe "#precalculate!" do
 
-    it "should return an instance of Set" do
-      expect(configuration.files).to be_a(Set)
-    end
+    describe "#files" do
 
-    it "should store an instance of Set from an array in the setter" do
-      files_array = ['foo/bar', 'foo/bar', 'foo/bar/baz']
-      files_set = Set.new(files_array.map { |f| Pathname.new(f) })
+      it "should return an instance of Set" do
+        configuration.precalculate!
+        expect(configuration.files).to be_a(Set)
+      end
 
-      expect {
-        configuration.files = files_array
-      }.not_to raise_error
+      it "should return a set of relative file paths" do
+        base_path = '/base_path'
+        files_array = [
+          '/base_path/foo/bar',
+          '/base_path/foo/bar',
+          '/base_path/foo/bar/baz',
+        ]
+        relative_set = Set[
+          Pathname.new('foo/bar'),
+          Pathname.new('foo/bar/baz'),
+        ]
 
-      expect(configuration.files).to be_a(Set)
-      expect(configuration.files).to eq(files_set)
-    end
+        configuration.base_path = base_path
+        configuration.files     = files_array
 
-    it "should return a set of relative file paths" do
-      base_path = '/base_path'
-      files_array = [
-        '/base_path/foo/bar',
-        '/base_path/foo/bar',
-        '/base_path/foo/bar/baz',
-      ]
-      relative_set = Set[
-        Pathname.new('foo/bar'),
-        Pathname.new('foo/bar/baz'),
-      ]
+        configuration.precalculate!
+        expect(configuration.files).to eq(relative_set)
+      end
 
-      configuration.base_path = base_path
-      configuration.files     = files_array
-
-      expect(configuration.files).to eq(relative_set)
     end
 
   end
-
 
 end

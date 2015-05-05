@@ -13,10 +13,18 @@ module DeltaTest
       self.files      = []
 
       if defined?(Rails)
-        self.base_path  = Rails.root
+        self.base_path = Rails.root
         # FIXME
         # self.files = Rails.application.send(:_all_load_paths)
       end
+
+      precalculate!
+    end
+
+    def precalculate!
+      _files = Set.new(self.files)
+      _files.map! { |f| DeltaTest.regulate_filepath(f) }
+      self.files = _files
     end
 
     def base_path=(path)
@@ -25,12 +33,6 @@ module DeltaTest
 
     def table_file=(path)
       @table_file = Pathname.new(path)
-    end
-
-    def files=(_files)
-      _files = Set.new(_files)
-      _files.map! { |f| DeltaTest.regulate_filepath(f) }
-      @files = _files
     end
 
   end
