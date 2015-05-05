@@ -61,11 +61,11 @@ describe DeltaTest::Configuration do
 
   describe "#precalculate!" do
 
-    describe "#files" do
+    describe "#relative_files" do
 
       it "should return an instance of Set" do
         configuration.precalculate!
-        expect(configuration.files).to be_a(Set)
+        expect(configuration.relative_files).to be_a(Set)
       end
 
       it "should return a set of relative file paths" do
@@ -84,7 +84,7 @@ describe DeltaTest::Configuration do
         configuration.files     = files_array
 
         configuration.precalculate!
-        expect(configuration.files).to eq(relative_set)
+        expect(configuration.relative_files).to eq(relative_set)
       end
 
     end

@@ -7,6 +7,8 @@ module DeltaTest
       files
     ]
 
+    attr_reader :relative_files
+
     def initialize
       self.base_path  = "/"
       self.table_file = "tmp/.delta_test_dt"
@@ -22,9 +24,8 @@ module DeltaTest
     end
 
     def precalculate!
-      _files = Set.new(self.files)
-      _files.map! { |f| DeltaTest.regulate_filepath(f) }
-      self.files = _files
+      @relative_files = Set.new(self.files)
+      @relative_files.map! { |f| DeltaTest.regulate_filepath(f) }
     end
 
     def base_path=(path)
