@@ -1,6 +1,10 @@
 require "delta_test"
 require "delta_test/spec_helpers"
 
+DeltaTest.configure do |config|
+  config.base_path = Rails.root
+end
+
 RSpec.configure do |config|
 
   config.include DeltaTest::SpecHelpers

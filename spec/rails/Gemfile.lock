@@ -2,6 +2,7 @@ PATH
   remote: ../..
   specs:
     delta_test (0.0.1)
+      ruby-prof
 
 GEM
   remote: https://rubygems.org/
@@ -126,6 +127,7 @@ GEM
       rspec-mocks (~> 3.2.0)
       rspec-support (~> 3.2.0)
     rspec-support (3.2.2)
+    ruby-prof (0.15.8)
     ruby_parser (3.6.6)
       sexp_processor (~> 4.1)
     sexp_processor (4.5.1)
