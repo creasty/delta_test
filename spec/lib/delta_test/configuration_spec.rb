@@ -14,8 +14,8 @@ describe DeltaTest::Configuration do
 
     it "should set default values" do
       options.each do |option|
-        expect(DeltaTest.respond_to?(option)).to be(true)
-        expect(DeltaTest.send(option)).not_to be_nil
+        expect(configuration.respond_to?(option)).to be(true)
+        expect(configuration.send(option)).not_to be_nil
       end
     end
 

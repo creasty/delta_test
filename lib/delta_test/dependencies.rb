@@ -3,7 +3,7 @@ module DeltaTest
 
     def add(file)
       file = DeltaTest.regulate_filepath(file)
-      super(file) if DeltaTest.relative_files.include?(file)
+      super(file) if DeltaTest.config.relative_files.include?(file)
     end
 
     alias_method :<<, :add
