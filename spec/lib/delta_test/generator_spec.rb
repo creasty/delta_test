@@ -2,10 +2,9 @@ require "delta_test/generator"
 
 describe DeltaTest::Generator do
 
-  include FakeFS::SpecHelpers
+  include_examples :create_table_file
 
   let(:base_path) { Pathname.new(File.expand_path('../../../supports', __FILE__)) }
-  let(:table_file_path) { Pathname.new("table_file_path") }
 
   let(:spec_file) { "foo/spec_file.rb" }
   let(:spec_file_2) { "foo/spec_file_2.rb" }
@@ -16,11 +15,6 @@ describe DeltaTest::Generator do
       "sample/beta.rb",
       # "sample/gamma.rb",  # intentionally omitted
     ]
-  end
-
-  let!(:table_file) do
-    file = FakeFS::FakeFile.new
-    FakeFS::FileSystem.add(base_path.join(table_file_path), file)
   end
 
   let(:generator) { DeltaTest::Generator.new }

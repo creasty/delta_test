@@ -2,14 +2,13 @@ require "delta_test/related_spec_list"
 
 describe DeltaTest::RelatedSpecList do
 
-  include FakeFS::SpecHelpers
+  include_examples :defer_create_table_file
 
   let(:base) { "master" }
   let(:head) { "feature/foo" }
   let(:list) { DeltaTest::RelatedSpecList.new(base, head) }
 
-  let(:base_path) { Pathname.new("/base_path") }
-  let(:table_file_path) { base_path.join("table_file_path") }
+  let(:base_path) { "/base_path" }
 
   before do
     DeltaTest.configure do |config|
@@ -18,12 +17,7 @@ describe DeltaTest::RelatedSpecList do
     end
   end
 
-  let(:table_file) do
-    file = FakeFS::FakeFile.new
-    FakeFS::FileSystem.add(table_file_path, file)
-  end
-
-  shared_examples :mock_table_and_changed_files do
+  shared_examples :_mock_table_and_changed_files do
 
     let(:table) do
       table = DeltaTest::DependenciesTable.new
@@ -75,7 +69,7 @@ describe DeltaTest::RelatedSpecList do
 
   describe "#retrive_changed_files!" do
 
-    include_examples :mock_table_and_changed_files
+    include_examples :_mock_table_and_changed_files
 
     it "shoud raise an error if the directory is not managed by git" do
       allow(DeltaTest::Git).to receive(:git_repo?).and_return(false)
@@ -98,7 +92,7 @@ describe DeltaTest::RelatedSpecList do
 
   describe "#related_spec_files" do
 
-    include_examples :mock_table_and_changed_files
+    include_examples :_mock_table_and_changed_files
 
     before do
       table_file

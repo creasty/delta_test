@@ -2,8 +2,6 @@ require "delta_test/dependencies_table"
 
 describe DeltaTest::DependenciesTable do
 
-  include FakeFS::SpecHelpers
-
   it "should be a subclass of Hash" do
     expect(DeltaTest::DependenciesTable).to be < Hash
   end
@@ -55,7 +53,9 @@ describe DeltaTest::DependenciesTable do
 
   end
 
-  shared_examples "init file system" do
+  shared_examples :_create_table do
+
+    include_examples :create_table_file
 
     let!(:table) do
       table = DeltaTest::DependenciesTable.new
@@ -68,39 +68,33 @@ describe DeltaTest::DependenciesTable do
       table
     end
 
-    let(:output_path) { "test" }
-    let!(:file) do
-      file = FakeFS::FakeFile.new
-      FakeFS::FileSystem.add(output_path, file)
-    end
-
   end
 
   describe "#dump" do
 
-    include_examples "init file system"
+    include_examples :_create_table
 
     it "should dump a table object to a file" do
-      expect(file.content).to be_empty
+      expect(table_file.content).to be_empty
 
       expect {
-        table.dump(output_path)
+        table.dump(table_file_path)
       }.not_to raise_error
 
-      expect(file.content).not_to be_empty
+      expect(table_file.content).not_to be_empty
     end
 
   end
 
   describe "::load" do
 
-    include_examples "init file system"
+    include_examples :_create_table
 
     it "should restore a table object from a file" do
-      table.dump(output_path)
+      table.dump(table_file_path)
       restored_table = nil
       expect {
-        restored_table = DeltaTest::DependenciesTable.load(output_path)
+        restored_table = DeltaTest::DependenciesTable.load(table_file_path)
       }.not_to raise_error
       expect(restored_table).to be_a(DeltaTest::DependenciesTable)
       expect(restored_table).to eq(table)
