@@ -1,4 +1,4 @@
-require "delta_test/generator"
+require 'delta_test/generator'
 
 describe DeltaTest::Generator do
 
@@ -6,14 +6,14 @@ describe DeltaTest::Generator do
 
   let(:base_path) { Pathname.new(File.expand_path('../../../fixtures', __FILE__)) }
 
-  let(:spec_file) { "foo/spec_file.rb" }
-  let(:spec_file_2) { "foo/spec_file_2.rb" }
+  let(:spec_file)   { 'foo/spec_file.rb' }
+  let(:spec_file_2) { 'foo/spec_file_2.rb' }
 
   let(:files) do
     [
-      "sample/alpha.rb",
-      "sample/beta.rb",
-      # "sample/gamma.rb",  # intentionally omitted
+      'sample/alpha.rb',
+      'sample/beta.rb',
+      # 'sample/gamma.rb',  # intentionally omitted
     ]
   end
 
@@ -34,9 +34,9 @@ describe DeltaTest::Generator do
     RubyProf.stop if RubyProf.running?
   end
 
-  describe "#setup!" do
+  describe '#setup!' do
 
-    it "should setup a generator" do
+    it 'should setup a generator' do
       expect {
         generator.setup!(false)  # disable tearadown
       }.not_to raise_error
@@ -47,13 +47,13 @@ describe DeltaTest::Generator do
 
   end
 
-  describe "#start!" do
+  describe '#start!' do
 
     before do
       generator.setup!(false)  # disable tearadown
     end
 
-    it "should start ruby-prof" do
+    it 'should start ruby-prof' do
       expect(RubyProf.running?).to be(false)
 
       expect {
@@ -63,15 +63,15 @@ describe DeltaTest::Generator do
       expect(RubyProf.running?).to be(true)
     end
 
-    describe "#current_spec_file" do
+    describe '#current_spec_file' do
 
-      it "should be set" do
+      it 'should be set' do
         expect(generator.current_spec_file).to be_nil
         generator.start!(spec_file)
         expect(generator.current_spec_file).to eq(spec_file)
       end
 
-      it "should be regulated" do
+      it 'should be regulated' do
         expect(generator.current_spec_file).to be_nil
         generator.start!('./%s' % spec_file)
         expect(generator.current_spec_file).to eq(spec_file)
@@ -81,13 +81,13 @@ describe DeltaTest::Generator do
 
   end
 
-  describe "#stop!" do
+  describe '#stop!' do
 
     before do
       generator.setup!(false)  # disable tearadown
     end
 
-    it "should stop ruby-prof" do
+    it 'should stop ruby-prof' do
       expect(RubyProf.running?).to be(false)
       generator.start!(spec_file)
       expect(RubyProf.running?).to be(true)
@@ -95,7 +95,7 @@ describe DeltaTest::Generator do
       expect(RubyProf.running?).to be(false)
     end
 
-    it "should unset current_spec_file" do
+    it 'should unset current_spec_file' do
       expect(generator.current_spec_file).to be_nil
       generator.start!(spec_file)
       expect(generator.current_spec_file).to eq(spec_file)
@@ -105,13 +105,13 @@ describe DeltaTest::Generator do
 
   end
 
-  describe "#table" do
+  describe '#table' do
 
     before do
       generator.setup!(false)  # disable tearadown
     end
 
-    it "should return a set of source files" do
+    it 'should return a set of source files' do
       expect(generator.table).to be_empty
 
       generator.start!(spec_file)
@@ -119,10 +119,10 @@ describe DeltaTest::Generator do
       generator.stop!
 
       expect(generator.table.keys).to eq([spec_file])
-      expect(generator.table[spec_file]).to include(Pathname.new("sample/alpha.rb"))
+      expect(generator.table[spec_file]).to include(Pathname.new('sample/alpha.rb'))
     end
 
-    it "should return a set of source files for every spec files" do
+    it 'should return a set of source files for every spec files' do
       expect(generator.table).to be_empty
 
       generator.start!(spec_file)
@@ -134,11 +134,11 @@ describe DeltaTest::Generator do
       generator.stop!
 
       expect(generator.table.keys).to eq([spec_file, spec_file_2])
-      expect(generator.table[spec_file]).to include(Pathname.new("sample/alpha.rb"))
-      expect(generator.table[spec_file_2]).to include(Pathname.new("sample/beta.rb"))
+      expect(generator.table[spec_file]).to include(Pathname.new('sample/alpha.rb'))
+      expect(generator.table[spec_file_2]).to include(Pathname.new('sample/beta.rb'))
     end
 
-    it "should not include paths not included in `files`" do
+    it 'should not include paths not included in `files`' do
       expect(generator.table).to be_empty
 
       generator.start!(spec_file)
@@ -146,18 +146,18 @@ describe DeltaTest::Generator do
       generator.stop!
 
       expect(generator.table.keys).to eq([spec_file])
-      expect(generator.table[spec_file]).to include(Pathname.new("sample/alpha.rb"))
-      expect(generator.table[spec_file]).to include(Pathname.new("sample/beta.rb"))
-      expect(generator.table[spec_file]).not_to include(Pathname.new("sample/gamma.rb"))
+      expect(generator.table[spec_file]).to include(Pathname.new('sample/alpha.rb'))
+      expect(generator.table[spec_file]).to include(Pathname.new('sample/beta.rb'))
+      expect(generator.table[spec_file]).not_to include(Pathname.new('sample/gamma.rb'))
     end
 
   end
 
-  describe "#teardown!" do
+  describe '#teardown!' do
 
-    context "When not `setup!` is called yet" do
+    context 'When not `setup!` is called yet' do
 
-      it "should do nothing" do
+      it 'should do nothing' do
         expect {
           generator.teardown!
         }.not_to raise_error
@@ -165,13 +165,13 @@ describe DeltaTest::Generator do
 
     end
 
-    context "When `setup!` is called" do
+    context 'When `setup!` is called' do
 
       before do
         generator.setup!(false)  # disable tearadown
       end
 
-      it "should stop ruby-prof if running" do
+      it 'should stop ruby-prof if running' do
         expect(RubyProf.running?).to be(false)
         generator.start!(spec_file)
         expect(RubyProf.running?).to be(true)
@@ -179,7 +179,7 @@ describe DeltaTest::Generator do
         expect(RubyProf.running?).to be(false)
       end
 
-      it "should save the table into a file" do
+      it 'should save the table into a file' do
         expect(generator.table).to be_empty
 
         generator.start!(spec_file)

@@ -1,5 +1,5 @@
-require_relative "analyzer"
-require_relative "dependencies_table"
+require_relative 'analyzer'
+require_relative 'dependencies_table'
 
 module DeltaTest
   class Generator
@@ -15,7 +15,7 @@ module DeltaTest
       return if @_setup
       @_setup = true
 
-      puts "--- setup!"
+      puts '--- setup!'
 
       @analyzer = Analyzer.new
       @table    = DependenciesTable.load(DeltaTest.config.table_file_path, Dependencies)
@@ -28,7 +28,7 @@ module DeltaTest
     def start!(spec_file)
       return unless DeltaTest.active?
 
-      puts "--- start!(%s)" % spec_file
+      puts '--- start!(%s)' % spec_file
 
       @current_spec_file = Utils.regulate_filepath(spec_file, DeltaTest.config.base_path).to_s
       @analyzer.start
@@ -37,7 +37,7 @@ module DeltaTest
     def stop!
       return unless DeltaTest.active?
 
-      puts "--- stop!"
+      puts '--- stop!'
 
       spec_file = @current_spec_file
       @current_spec_file = nil
@@ -56,7 +56,7 @@ module DeltaTest
       return if @_teardown
       @_teardown = true
 
-      puts "--- teardown!"
+      puts '--- teardown!'
 
       @analyzer.stop
       @table.dump(DeltaTest.config.table_file_path)

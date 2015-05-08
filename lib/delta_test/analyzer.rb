@@ -1,4 +1,4 @@
-require "ruby-prof"
+require 'ruby-prof'
 
 module DeltaTest
   class Analyzer

@@ -1,23 +1,23 @@
-require "delta_test/dependencies_table"
+require 'delta_test/dependencies_table'
 
 describe DeltaTest::DependenciesTable do
 
-  it "should be a subclass of Hash" do
+  it 'should be a subclass of Hash' do
     expect(DeltaTest::DependenciesTable).to be < Hash
   end
 
 
   let(:table) { DeltaTest::DependenciesTable.new }
 
-  describe "#[]" do
+  describe '#[]' do
 
-    it "should initiate an empty set if not accessed before" do
+    it 'should initiate an empty set if not accessed before' do
       value = table[:foo]
       expect(value).to be_a(Set)
       expect(value).to be_empty
     end
 
-    it "should retain elements in a set throughout accesses" do
+    it 'should retain elements in a set throughout accesses' do
       table[:foo] << 1
       table[:foo] << 2
       table[:foo] << 2
@@ -29,9 +29,9 @@ describe DeltaTest::DependenciesTable do
 
   end
 
-  describe "#without_default_proc" do
+  describe '#without_default_proc' do
 
-    it "should reset default_proc temporary inside a block" do
+    it 'should reset default_proc temporary inside a block' do
       expect(table.default_proc).not_to be_nil
       table.without_default_proc do
         expect(table.default_proc).to be_nil
@@ -41,9 +41,9 @@ describe DeltaTest::DependenciesTable do
 
   end
 
-  describe "#cleanup!" do
+  describe '#cleanup!' do
 
-    it "should delete items where value is an empty set" do
+    it 'should delete items where value is an empty set' do
       table[:foo]
       table[:bar] << 1
       expect(table.keys).to eq([:foo, :bar])
@@ -70,11 +70,11 @@ describe DeltaTest::DependenciesTable do
 
   end
 
-  describe "#dump" do
+  describe '#dump' do
 
     include_examples :_create_table
 
-    it "should dump a table object to a file" do
+    it 'should dump a table object to a file' do
       expect(table_file.content).to be_empty
 
       expect {
@@ -86,11 +86,11 @@ describe DeltaTest::DependenciesTable do
 
   end
 
-  describe "::load" do
+  describe '::load' do
 
     include_examples :_create_table
 
-    it "should restore a table object from a file" do
+    it 'should restore a table object from a file' do
       table.dump(table_file_path)
       restored_table = nil
       expect {

@@ -1,6 +1,6 @@
-require "set"
-require "pathname"
-require "yaml"
+require 'set'
+require 'pathname'
+require 'yaml'
 
 module DeltaTest
   class Configuration
@@ -24,8 +24,8 @@ module DeltaTest
 
     def initialize
       update do |c|
-        c.base_path  = "/"
-        c.table_file = "tmp/.delta_test_dt"
+        c.base_path  = '/'
+        c.table_file = 'tmp/.delta_test_dt'
         c.files      = []
       end
     end
@@ -52,11 +52,11 @@ module DeltaTest
 
     def validate!
       if @base_path.relative?
-        raise "`base_path` need to be an absolute path"
+        raise '`base_path` need to be an absolute path'
       end
 
       unless @files && (@files.is_a?(Array) || @files.is_a?(Set))
-        raise TypeError.new("`files` need to be an array or a set")
+        raise TypeError.new('`files` need to be an array or a set')
       end
     end
 
@@ -75,7 +75,7 @@ module DeltaTest
         config_file = Utils.find_file_upward(*CONFIG_FILES)
 
         unless config_file
-          raise NoConfigurationFileFound.new("no configuration file found")
+          raise NoConfigurationFileFound.new('no configuration file found')
         end
 
         yaml = YAML.load_file(config_file)

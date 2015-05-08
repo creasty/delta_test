@@ -1,5 +1,5 @@
-require "open3"
-require "shellwords"
+require 'open3'
+require 'shellwords'
 
 module DeltaTest
   module Git
@@ -20,7 +20,7 @@ module DeltaTest
         s.success? ? o.split("\x0") : []
       end
 
-      def changed_files(base = "master", head = "HEAD")
+      def changed_files(base = 'master', head = 'HEAD')
         args = [base, head].map { |a| Shellwords.escape(a) }
         o, e, s = Open3.capture3(%q{git --no-pager diff --name-only -z %s %s} % args)
         s.success? ? o.split("\x0") : []

@@ -1,7 +1,7 @@
-require "fileutils"
-require "set"
+require 'fileutils'
+require 'set'
 
-require_relative "dependencies"
+require_relative 'dependencies'
 
 module DeltaTest
   class DependenciesTable < ::Hash
@@ -47,7 +47,7 @@ module DeltaTest
         cleanup!
         data = Marshal.dump(self)
         FileUtils.mkdir_p(File.dirname(file))
-        File.open(file, "wb") { |f| f.write data }
+        File.open(file, 'wb') { |f| f.write data }
       end
     end
 

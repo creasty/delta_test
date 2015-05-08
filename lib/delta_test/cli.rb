@@ -1,7 +1,7 @@
-require "open3"
-require "shellwords"
+require 'open3'
+require 'shellwords'
 
-require_relative "related_spec_list"
+require_relative 'related_spec_list'
 
 module DeltaTest
   class CLI
@@ -13,17 +13,17 @@ module DeltaTest
 
       begin
         case command
-        when "list"
+        when 'list'
           do_list(@args[0], @args[1])
-        when "table"
+        when 'table'
           do_show_table
-        when "exec"
+        when 'exec'
           do_exec(@args[0], @args[1], @args[2..-1])
         else
           do_help(command)
         end
       rescue TableNotFoundError, NotInGitRepository => e
-        STDERR.puts "[%s] %s" % [e.class.name, e.message]
+        STDERR.puts '[%s] %s' % [e.class.name, e.message]
         exit 1
       end
     end
@@ -50,7 +50,7 @@ module DeltaTest
     end
 
     def do_help(command)
-      if !command.nil? && "-" != command[0]
+      if !command.nil? && '-' != command[0]
         puts "Command not found: #{command}"
       end
 

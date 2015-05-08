@@ -1,8 +1,8 @@
 describe DeltaTest do
 
-  describe "::configure" do
+  describe '::configure' do
 
-    it "should change option values inside a block" do
+    it 'should change option values inside a block' do
       expect {
         DeltaTest.configure do |config|
           expect(config).to be_a(DeltaTest::Configuration)
@@ -12,16 +12,16 @@ describe DeltaTest do
 
   end
 
-  describe "::active?" do
+  describe '::active?' do
 
-    it "should return a value of ACTIVE_FLAG" do
+    it 'should return a value of ACTIVE_FLAG' do
       active = (!ENV[DeltaTest::ACTIVE_FLAG].nil? && ENV[DeltaTest::ACTIVE_FLAG] =~ /0|false/i)
       expect(DeltaTest.active?).to be(active)
     end
 
   end
 
-  describe "::activate!, ::deactivate!" do
+  describe '::activate!, ::deactivate!' do
 
     around do |example|
       active = DeltaTest.active?
@@ -35,7 +35,7 @@ describe DeltaTest do
       end
     end
 
-    it "should change active flag" do
+    it 'should change active flag' do
       DeltaTest.deactivate!
       expect(DeltaTest.active?).to be(false)
       DeltaTest.activate!

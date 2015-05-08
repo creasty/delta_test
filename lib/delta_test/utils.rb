@@ -13,7 +13,7 @@ module DeltaTest
         base = Hash.new { |h, k| h[k] = pwd }
         file = {}
 
-        while base.values.all? { |b| "." != b && "/" != b }
+        while base.values.all? { |b| '.' != b && '/' != b }
           file_names.each do |name|
             file[name] = File.join(base[name], name)
             base[name] = File.dirname(base[name])

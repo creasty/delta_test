@@ -2,7 +2,7 @@ describe DeltaTest::Configuration do
 
   let(:configuration) { DeltaTest::Configuration.new }
 
-  describe "::new" do
+  describe '::new' do
 
     let(:options) do
       %i[
@@ -12,7 +12,7 @@ describe DeltaTest::Configuration do
       ]
     end
 
-    it "should set default values" do
+    it 'should set default values' do
       options.each do |option|
         expect(configuration.respond_to?(option)).to be(true)
         expect(configuration.send(option)).not_to be_nil
@@ -21,13 +21,13 @@ describe DeltaTest::Configuration do
 
   end
 
-  describe "#base_path, #base_path=" do
+  describe '#base_path, #base_path=' do
 
-    it "should return an instance of Pathname" do
+    it 'should return an instance of Pathname' do
       expect(configuration.base_path).to be_a(Pathname)
     end
 
-    it "should store an instance of Pathname from a string in the setter" do
+    it 'should store an instance of Pathname from a string in the setter' do
       path = 'foo/bar'
 
       expect {
@@ -40,13 +40,13 @@ describe DeltaTest::Configuration do
 
   end
 
-  describe "#table_file, #table_file=" do
+  describe '#table_file, #table_file=' do
 
-    it "should return an instance of Pathname" do
+    it 'should return an instance of Pathname' do
       expect(configuration.table_file).to be_a(Pathname)
     end
 
-    it "should store an instance of Pathname from a string in the setter" do
+    it 'should store an instance of Pathname from a string in the setter' do
       path = 'foo/bar'
 
       expect {
@@ -59,11 +59,11 @@ describe DeltaTest::Configuration do
 
   end
 
-  describe "#validate!" do
+  describe '#validate!' do
 
-    describe "#base_path" do
+    describe '#base_path' do
 
-      it "should raise an error if `base_path` is a relative path" do
+      it 'should raise an error if `base_path` is a relative path' do
         configuration.base_path = "relative/path"
 
         expect {
@@ -71,7 +71,7 @@ describe DeltaTest::Configuration do
         }.to raise_error(/base_path/)
       end
 
-      it "should not raise if `base_path` is a absolute path" do
+      it 'should not raise if `base_path` is a absolute path' do
         configuration.base_path = "/absolute/path"
 
         expect {
@@ -81,9 +81,9 @@ describe DeltaTest::Configuration do
 
     end
 
-    describe "#files" do
+    describe '#files' do
 
-      it "should raise an error if `files` is not set" do
+      it 'should raise an error if `files` is not set' do
         configuration.files = nil
 
         expect {
@@ -91,7 +91,7 @@ describe DeltaTest::Configuration do
         }.to raise_error(/files/)
       end
 
-      it "should raise an error if `files` is neither an array or a set" do
+      it 'should raise an error if `files` is neither an array or a set' do
         configuration.files = {}
 
         expect {
@@ -99,7 +99,7 @@ describe DeltaTest::Configuration do
         }.to raise_error(/files/)
       end
 
-      it "should not raise if `files` is an array" do
+      it 'should not raise if `files` is an array' do
         configuration.files = []
 
         expect {
@@ -107,7 +107,7 @@ describe DeltaTest::Configuration do
         }.not_to raise_error
       end
 
-      it "should not raise if `files` is a set" do
+      it 'should not raise if `files` is a set' do
         configuration.files = Set.new
 
         expect {
@@ -119,16 +119,16 @@ describe DeltaTest::Configuration do
 
   end
 
-  describe "#precalculate!" do
+  describe '#precalculate!' do
 
-    describe "#relative_files" do
+    describe '#relative_files' do
 
-      it "should return an instance of Set" do
+      it 'should return an instance of Set' do
         configuration.precalculate!
         expect(configuration.relative_files).to be_a(Set)
       end
 
-      it "should return a set of relative file paths" do
+      it 'should return a set of relative file paths' do
         base_path = '/base_path'
         files_array = [
           '/base_path/foo/bar',
@@ -149,31 +149,31 @@ describe DeltaTest::Configuration do
 
     end
 
-    describe "#table_file_path" do
+    describe '#table_file_path' do
 
-      it "should return an absolute path to the table file if `table_file` is a relative" do
-        configuration.base_path  = "/base_path"
-        configuration.table_file = "somewhere/table_file"
+      it 'should return an absolute path to the table file if `table_file` is a relative' do
+        configuration.base_path  = '/base_path'
+        configuration.table_file = 'somewhere/table_file'
 
         configuration.precalculate!
-        expect(configuration.table_file_path).to eq(Pathname.new("/base_path/somewhere/table_file"))
+        expect(configuration.table_file_path).to eq(Pathname.new('/base_path/somewhere/table_file'))
       end
 
-      it "should return the same value to the table file if `table_file` is a absolute" do
-        configuration.base_path  = "/base_path"
-        configuration.table_file = "/somewhere/table_file"
+      it 'should return the same value to the table file if `table_file` is a absolute' do
+        configuration.base_path  = '/base_path'
+        configuration.table_file = '/somewhere/table_file'
 
         configuration.precalculate!
-        expect(configuration.table_file_path).to eq(Pathname.new("/somewhere/table_file"))
+        expect(configuration.table_file_path).to eq(Pathname.new('/somewhere/table_file'))
       end
 
     end
 
   end
 
-  describe "#update" do
+  describe '#update' do
 
-    it "should call `validate!` and `precalculate!` after the block" do
+    it 'should call `validate!` and `precalculate!` after the block' do
       dummy = double
       allow(dummy).to receive(:not_yet_called)
       allow(dummy).to receive(:already_called)
@@ -192,11 +192,11 @@ describe DeltaTest::Configuration do
 
   end
 
-  describe "#load_from_file!" do
+  describe '#load_from_file!' do
 
-    let(:pwd) { "/path/to/pwd" }
-    let(:yaml_file_path) { "/path/to/delta_test.yml" }
-    let(:table_file_path) { "/path/to/table_file" }
+    let(:pwd)             { '/path/to/pwd' }
+    let(:yaml_file_path)  { '/path/to/delta_test.yml' }
+    let(:table_file_path) { '/path/to/table_file' }
 
     let(:yaml_file) do
       file = FakeFS::FakeFile.new
@@ -213,13 +213,13 @@ table_file: #{table_file_path}
       Dir.chdir(pwd)
     end
 
-    it "should raise an error if no file is found" do
+    it 'should raise an error if no file is found' do
       expect {
         configuration.load_from_file!
       }.to raise_error(DeltaTest::NoConfigurationFileFound)
     end
 
-    it "should set `base_path` to the path of yaml file" do
+    it 'should set `base_path` to the path of yaml file' do
       FakeFS::FileSystem.add(yaml_file_path, yaml_file)
 
       expect {
@@ -229,7 +229,7 @@ table_file: #{table_file_path}
       expect(configuration.base_path).to eq(Pathname.new(yaml_file_path))
     end
 
-    it "should set other option values from yaml" do
+    it 'should set other option values from yaml' do
       FakeFS::FileSystem.add(yaml_file_path, yaml_file)
 
       expect {
@@ -239,7 +239,7 @@ table_file: #{table_file_path}
       expect(configuration.table_file).to eq(Pathname.new(table_file_path))
     end
 
-    it "should raise an error if there is invalid option in yaml" do
+    it 'should raise an error if there is invalid option in yaml' do
       FakeFS::FileSystem.add(yaml_file_path, yaml_file)
       yaml_file.content = <<-YAML
 foo: true

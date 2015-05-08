@@ -1,4 +1,4 @@
-require "delta_test/cli"
+require 'delta_test/cli'
 
 describe DeltaTest::CLI do
 
