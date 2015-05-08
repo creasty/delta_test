@@ -48,15 +48,18 @@ module DeltaTest
       file.cleanpath
     end
 
-    def find_file_upward(file_name)
-      base = Dir.pwd
+    def find_file_upward(*file_names)
+      pwd  = Dir.pwd
+      base = Hash.new { |h, k| h[k] = pwd }
+      file = {}
 
-      while true
-        file = File.join(base, file_name)
-        base = File.dirname(base)
+      while base.values.all? { |b| "." != b && "/" != b }
+        file_names.each do |name|
+          file[name] = File.join(base[name], name)
+          base[name] = File.dirname(base[name])
 
-        return file if File.exists?(file)
-        break if "." == base || "/" == base
+          return file[name] if File.exists?(file[name])
+        end
       end
 
       nil
