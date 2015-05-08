@@ -76,5 +76,30 @@ module DeltaTest
       file.cleanpath
     end
 
+
+    #  Loader
+    #-----------------------------------------------
+    def load_from_file!
+      update do |c|
+        config_file = DeltaTest.find_file_upward(*CONFIG_FILES)
+
+        unless config_file
+          raise NoConfigurationFileFound.new("no configuration file found")
+        end
+
+        yaml = YAML.load_file(config_file)
+
+        c.base_path = config_file
+
+        yaml.each do |k, v|
+          if c.respond_to?("#{k}=")
+            c.send("#{k}=", v)
+          else
+            raise InvalidOption.new("invalid option: #{k}")
+          end
+        end
+      end
+    end
+
   end
 end

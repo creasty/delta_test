@@ -222,4 +222,64 @@ describe DeltaTest::Configuration do
 
   end
 
+  describe "#load_from_file!" do
+
+    let(:pwd) { "/path/to/pwd" }
+    let(:yaml_file_path) { "/path/to/delta_test.yml" }
+    let(:table_file_path) { "/path/to/table_file" }
+
+    let(:yaml_file) do
+      file = FakeFS::FakeFile.new
+
+      file.content = <<-YAML
+table_file: #{table_file_path}
+      YAML
+
+      file
+    end
+
+    before do
+      FakeFS::FileSystem.add(pwd)
+      Dir.chdir(pwd)
+    end
+
+    it "should raise an error if no file is found" do
+      expect {
+        configuration.load_from_file!
+      }.to raise_error(DeltaTest::NoConfigurationFileFound)
+    end
+
+    it "should set `base_path` to the path of yaml file" do
+      FakeFS::FileSystem.add(yaml_file_path, yaml_file)
+
+      expect {
+        configuration.load_from_file!
+      }.not_to raise_error
+
+      expect(configuration.base_path).to eq(Pathname.new(yaml_file_path))
+    end
+
+    it "should set other option values from yaml" do
+      FakeFS::FileSystem.add(yaml_file_path, yaml_file)
+
+      expect {
+        configuration.load_from_file!
+      }.not_to raise_error
+
+      expect(configuration.table_file).to eq(Pathname.new(table_file_path))
+    end
+
+    it "should raise an error if there is invalid option in yaml" do
+      FakeFS::FileSystem.add(yaml_file_path, yaml_file)
+      yaml_file.content = <<-YAML
+foo: true
+      YAML
+
+      expect {
+        configuration.load_from_file!
+      }.to raise_error(DeltaTest::InvalidOption, /foo/)
+    end
+
+  end
+
 end

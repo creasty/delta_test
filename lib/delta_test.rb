@@ -9,6 +9,8 @@ module DeltaTest
 
   class TableNotFoundError < IOError; end
   class NotInGitRepository < StandardError; end
+  class NoConfigurationFileFound < IOError; end
+  class InvalidOption < StandardError; end
 
   class << self
 
