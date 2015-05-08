@@ -28,4 +28,8 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
+  config.after do
+    DeltaTest.setup
+  end
+
 end

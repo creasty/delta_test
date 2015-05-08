@@ -42,9 +42,7 @@ module DeltaTest
     #  Utils
     #-----------------------------------------------
     def regulate_filepath(file)
-      file = Pathname.new(file)
-      file = file.relative_path_from(@config.base_path) rescue file
-      file.cleanpath
+      @config.regulate_filepath(file)
     end
 
     def find_file_upward(*file_names)

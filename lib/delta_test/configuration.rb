@@ -62,9 +62,18 @@ module DeltaTest
 
     def precalculate!
       @relative_files = Set.new(self.files)
-      @relative_files.map! { |f| DeltaTest.regulate_filepath(f) }
+      @relative_files.map! { |f| regulate_filepath(f) }
 
       @table_file_path = Pathname.new(File.absolute_path(self.table_file, self.base_path))
+    end
+
+
+    #  Utils
+    #-----------------------------------------------
+    def regulate_filepath(file)
+      file = Pathname.new(file)
+      file = file.relative_path_from(self.base_path) rescue file
+      file.cleanpath
     end
 
   end
