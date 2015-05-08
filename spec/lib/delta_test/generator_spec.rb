@@ -4,7 +4,7 @@ describe DeltaTest::Generator do
 
   include_examples :create_table_file
 
-  let(:base_path) { Pathname.new(File.expand_path('../../../supports', __FILE__)) }
+  let(:base_path) { Pathname.new(File.expand_path('../../../fixtures', __FILE__)) }
 
   let(:spec_file) { "foo/spec_file.rb" }
   let(:spec_file_2) { "foo/spec_file_2.rb" }

@@ -3,13 +3,14 @@ require 'fakefs/spec_helpers'
 
 require 'delta_test'
 
+Dir["#{File.dirname(__FILE__)}/fixtures/**/*.rb"].each { |f| require f }
 Dir["#{File.dirname(__FILE__)}/supports/**/*.rb"].each { |f| require f }
 
 
 module DeltaTestSpecHelper
 
-  def support_path(*path)
-    File.expand_path(File.join('supports', *path), File.dirname(__FILE__))
+  def fixture_path(*path)
+    File.expand_path(File.join('fixtures', *path), File.dirname(__FILE__))
   end
 
 end

@@ -77,9 +77,9 @@ describe DeltaTest::Analyzer do
           analyzer.start
           Sample::Alpha.new
           analyzer.stop
-          expect(analyzer.related_source_files).not_to include(support_path("sample/alpha.rb"))
-          expect(analyzer.related_source_files).not_to include(support_path("sample/beta.rb"))
-          expect(analyzer.related_source_files).not_to include(support_path("sample/gamma.rb"))
+          expect(analyzer.related_source_files).not_to include(fixture_path("sample/alpha.rb"))
+          expect(analyzer.related_source_files).not_to include(fixture_path("sample/beta.rb"))
+          expect(analyzer.related_source_files).not_to include(fixture_path("sample/gamma.rb"))
         end
 
       end
@@ -90,9 +90,9 @@ describe DeltaTest::Analyzer do
           analyzer.start
           Sample::Alpha.new.alpha
           analyzer.stop
-          expect(analyzer.related_source_files).to include(support_path("sample/alpha.rb"))
-          expect(analyzer.related_source_files).not_to include(support_path("sample/beta.rb"))
-          expect(analyzer.related_source_files).not_to include(support_path("sample/gamma.rb"))
+          expect(analyzer.related_source_files).to include(fixture_path("sample/alpha.rb"))
+          expect(analyzer.related_source_files).not_to include(fixture_path("sample/beta.rb"))
+          expect(analyzer.related_source_files).not_to include(fixture_path("sample/gamma.rb"))
         end
 
       end
@@ -103,18 +103,18 @@ describe DeltaTest::Analyzer do
           analyzer.start
           Sample::Alpha.new.beta
           analyzer.stop
-          expect(analyzer.related_source_files).to include(support_path("sample/alpha.rb"))
-          expect(analyzer.related_source_files).to include(support_path("sample/beta.rb"))
-          expect(analyzer.related_source_files).not_to include(support_path("sample/gamma.rb"))
+          expect(analyzer.related_source_files).to include(fixture_path("sample/alpha.rb"))
+          expect(analyzer.related_source_files).to include(fixture_path("sample/beta.rb"))
+          expect(analyzer.related_source_files).not_to include(fixture_path("sample/gamma.rb"))
         end
 
         it "should include extarnal files even if nested" do
           analyzer.start
           Sample::Alpha.new.beta_gamma
           analyzer.stop
-          expect(analyzer.related_source_files).to include(support_path("sample/alpha.rb"))
-          expect(analyzer.related_source_files).to include(support_path("sample/beta.rb"))
-          expect(analyzer.related_source_files).to include(support_path("sample/gamma.rb"))
+          expect(analyzer.related_source_files).to include(fixture_path("sample/alpha.rb"))
+          expect(analyzer.related_source_files).to include(fixture_path("sample/beta.rb"))
+          expect(analyzer.related_source_files).to include(fixture_path("sample/gamma.rb"))
         end
 
       end
