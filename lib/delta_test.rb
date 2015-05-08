@@ -24,12 +24,8 @@ module DeltaTest
       @config.precalculate!
     end
 
-    def regulate_filepath(file)
-      file = Pathname.new(file)
-      file = file.relative_path_from(@config.base_path) rescue file
-      file.cleanpath
-    end
-
+    #  Flags
+    #-----------------------------------------------
     def active?
       @active
     end
@@ -40,6 +36,14 @@ module DeltaTest
 
     def deactivate!
       @active = false
+    end
+
+    #  Utils
+    #-----------------------------------------------
+    def regulate_filepath(file)
+      file = Pathname.new(file)
+      file = file.relative_path_from(@config.base_path) rescue file
+      file.cleanpath
     end
 
   end
