@@ -1,8 +1,14 @@
 require "set"
 require "pathname"
+require "yaml"
 
 module DeltaTest
   class Configuration
+
+    CONFIG_FILES = [
+      'delta_test.yml',
+      'delta_test.yaml',
+    ].freeze
 
     attr_accessor *%i[
       base_path
@@ -17,10 +23,29 @@ module DeltaTest
     ]
 
     def initialize
-      self.base_path  = "/"
-      self.table_file = "tmp/.delta_test_dt"
-      self.files      = []
+      update do |c|
+        c.base_path  = "/"
+        c.table_file = "tmp/.delta_test_dt"
+        c.files      = []
+      end
+    end
 
+
+    #  Override setters
+    #-----------------------------------------------
+    def base_path=(path)
+      @base_path = Pathname.new(path)
+    end
+
+    def table_file=(path)
+      @table_file = Pathname.new(path)
+    end
+
+
+    #  Update
+    #-----------------------------------------------
+    def update
+      yield self if block_given?
       validate!
       precalculate!
     end
@@ -40,14 +65,6 @@ module DeltaTest
       @relative_files.map! { |f| DeltaTest.regulate_filepath(f) }
 
       @table_file_path = Pathname.new(File.absolute_path(self.table_file, self.base_path))
-    end
-
-    def base_path=(path)
-      @base_path = Pathname.new(path)
-    end
-
-    def table_file=(path)
-      @table_file = Pathname.new(path)
     end
 
   end

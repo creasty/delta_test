@@ -171,4 +171,25 @@ describe DeltaTest::Configuration do
 
   end
 
+  describe "#update" do
+
+    it "should call `validate!` and `precalculate!` after the block" do
+      dummy = double
+      allow(dummy).to receive(:not_yet_called)
+      allow(dummy).to receive(:already_called)
+
+      expect(dummy).to receive(:not_yet_called).with(no_args).once.ordered
+      expect(configuration).to receive(:validate!).with(no_args).once.ordered
+      expect(configuration).to receive(:precalculate!).with(no_args).once.ordered
+      expect(dummy).to receive(:already_called).with(no_args).once.ordered
+
+      configuration.update do |config|
+        dummy.not_yet_called
+      end
+
+      dummy.already_called
+    end
+
+  end
+
 end

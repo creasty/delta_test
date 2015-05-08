@@ -10,21 +10,6 @@ describe DeltaTest do
       }.not_to raise_error
     end
 
-    it "should call `precalculate!` after the block" do
-      dummy = double
-      allow(dummy).to receive(:not_yet_called)
-      allow(dummy).to receive(:already_called)
-
-      expect(dummy).to receive(:not_yet_called).with(no_args).once.ordered
-      expect(DeltaTest.config).to receive(:precalculate!).with(no_args).once.ordered
-      expect(dummy).to receive(:already_called).with(no_args).once.ordered
-
-      DeltaTest.configure do |config|
-        dummy.not_yet_called
-      end
-      dummy.already_called
-    end
-
   end
 
   describe "::active?" do

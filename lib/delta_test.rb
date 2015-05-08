@@ -19,9 +19,8 @@ module DeltaTest
       @active = (!ENV[ACTIVE_FLAG].nil? && ENV[ACTIVE_FLAG] =~ /0|false/i)
     end
 
-    def configure
-      yield @config if block_given?
-      @config.precalculate!
+    def configure(&block)
+      @config.update(&block)
     end
 
 
