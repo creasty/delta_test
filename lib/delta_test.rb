@@ -24,6 +24,7 @@ module DeltaTest
       @config.precalculate!
     end
 
+
     #  Flags
     #-----------------------------------------------
     def active?
@@ -38,12 +39,27 @@ module DeltaTest
       @active = false
     end
 
+
     #  Utils
     #-----------------------------------------------
     def regulate_filepath(file)
       file = Pathname.new(file)
       file = file.relative_path_from(@config.base_path) rescue file
       file.cleanpath
+    end
+
+    def find_file_upward(file_name)
+      base = Dir.pwd
+
+      while true
+        file = File.join(base, file_name)
+        base = File.dirname(base)
+
+        return file if File.exists?(file)
+        break if "." == base || "/" == base
+      end
+
+      nil
     end
 
   end

@@ -27,6 +27,40 @@ describe DeltaTest do
 
   end
 
+  describe "::active?" do
+
+    it "should return a value of ACTIVE_FLAG" do
+      active = (!ENV[DeltaTest::ACTIVE_FLAG].nil? && ENV[DeltaTest::ACTIVE_FLAG] =~ /0|false/i)
+      expect(DeltaTest.active?).to be(active)
+    end
+
+  end
+
+  describe "::activate!, ::deactivate!" do
+
+    around do |example|
+      active = DeltaTest.active?
+
+      example.run
+
+      if active
+        DeltaTest.activate!
+      else
+        DeltaTest.deactivate!
+      end
+    end
+
+    it "should change active flag" do
+      DeltaTest.deactivate!
+      expect(DeltaTest.active?).to be(false)
+      DeltaTest.activate!
+      expect(DeltaTest.active?).to be(true)
+      DeltaTest.deactivate!
+      expect(DeltaTest.active?).to be(false)
+    end
+
+  end
+
   describe "::regulate_filepath" do
 
     let(:base_path) { "/base_path" }
@@ -59,36 +93,61 @@ describe DeltaTest do
 
   end
 
-  describe "::active?" do
+  describe "::find_file_upward" do
 
-    it "should return a value of ACTIVE_FLAG" do
-      active = (!ENV[DeltaTest::ACTIVE_FLAG].nil? && ENV[DeltaTest::ACTIVE_FLAG] =~ /0|false/i)
-      expect(DeltaTest.active?).to be(active)
-    end
+    let(:file) { FakeFS::FakeFile.new }
+    let(:file_name) { "file" }
 
-  end
+    it "should return a file path if a file is exist in the current directory" do
+      pwd       = "/a/b/c/d"
+      file_path = "/a/b/c/d/#{file_name}"
 
-  describe "::activate!, ::deactivate!" do
+      FakeFS::FileSystem.add(pwd)
 
-    around do |example|
-      active = DeltaTest.active?
+      Dir.chdir(pwd) do
+        FakeFS::FileSystem.add(file_path, file)
 
-      example.run
-
-      if active
-        DeltaTest.activate!
-      else
-        DeltaTest.deactivate!
+        expect(DeltaTest.find_file_upward(file_name)).to eq(file_path)
       end
     end
 
-    it "should change active flag" do
-      DeltaTest.deactivate!
-      expect(DeltaTest.active?).to be(false)
-      DeltaTest.activate!
-      expect(DeltaTest.active?).to be(true)
-      DeltaTest.deactivate!
-      expect(DeltaTest.active?).to be(false)
+    it "should return a file path if a file is exist at the parent directory" do
+      pwd       = "/a/b/c/d"
+      file_path = "/a/b/c/#{file_name}"
+
+      FakeFS::FileSystem.add(pwd)
+
+      Dir.chdir(pwd) do
+        FakeFS::FileSystem.add(file_path, file)
+
+        expect(DeltaTest.find_file_upward(file_name)).to eq(file_path)
+      end
+    end
+
+    it "should return a file path if a file is exist at somewhere of parent directories" do
+      pwd       = "/a/b/c/d"
+      file_path = "/a/#{file_name}"
+
+      FakeFS::FileSystem.add(pwd)
+
+      Dir.chdir(pwd) do
+        FakeFS::FileSystem.add(file_path, file)
+
+        expect(DeltaTest.find_file_upward(file_name)).to eq(file_path)
+      end
+    end
+
+    it "should return nil if a file is not exist in any parent directories" do
+      pwd       = "/a/b/c/d"
+      file_path = "/abc/#{file_name}"
+
+      FakeFS::FileSystem.add(pwd)
+
+      Dir.chdir(pwd) do
+        FakeFS::FileSystem.add(file_path, file)
+
+        expect(DeltaTest.find_file_upward(file_name)).to be_nil
+      end
     end
 
   end
