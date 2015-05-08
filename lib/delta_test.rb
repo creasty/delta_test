@@ -1,7 +1,6 @@
 require 'pathname'
 
 require_relative 'delta_test/version'
-require_relative 'delta_test/utils'
 require_relative 'delta_test/configuration'
 
 module DeltaTest

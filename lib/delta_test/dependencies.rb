@@ -1,3 +1,5 @@
+require_relative 'utils'
+
 module DeltaTest
   class Dependencies < ::Set
 

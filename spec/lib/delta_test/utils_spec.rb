@@ -1,6 +1,8 @@
+require 'delta_test/utils'
+
 describe DeltaTest::Utils do
 
-  describe '#regulate_filepath' do
+  describe '::regulate_filepath' do
 
     let(:base_path) { Pathname.new('/base_path') }
 

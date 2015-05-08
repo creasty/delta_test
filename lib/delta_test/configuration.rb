@@ -2,6 +2,8 @@ require 'set'
 require 'pathname'
 require 'yaml'
 
+require_relative 'utils'
+
 module DeltaTest
   class Configuration
 
