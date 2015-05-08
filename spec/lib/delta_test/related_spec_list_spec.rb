@@ -37,7 +37,7 @@ describe DeltaTest::RelatedSpecList do
     end
 
     before do
-      allow(DeltaTest::DependenciesTable).to receive(:load).with(table_file_path).and_return(table)
+      allow(DeltaTest::DependenciesTable).to receive(:load).with(Pathname.new(table_file_path)).and_return(table)
 
       allow(DeltaTest::Git).to receive(:git_repo?).and_return(true)
       allow(DeltaTest::Git).to receive(:changed_files).with(base, head).and_return(changed_files)
