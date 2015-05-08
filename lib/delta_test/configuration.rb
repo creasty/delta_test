@@ -62,18 +62,9 @@ module DeltaTest
 
     def precalculate!
       @relative_files = Set.new(self.files)
-      @relative_files.map! { |f| regulate_filepath(f) }
+      @relative_files.map! { |f| Utils.regulate_filepath(f, self.base_path) }
 
       @table_file_path = Pathname.new(File.absolute_path(self.table_file, self.base_path))
-    end
-
-
-    #  Utils
-    #-----------------------------------------------
-    def regulate_filepath(file)
-      file = Pathname.new(file)
-      file = file.relative_path_from(self.base_path) rescue file
-      file.cleanpath
     end
 
 
@@ -81,7 +72,7 @@ module DeltaTest
     #-----------------------------------------------
     def load_from_file!
       update do |c|
-        config_file = DeltaTest.find_file_upward(*CONFIG_FILES)
+        config_file = Utils.find_file_upward(*CONFIG_FILES)
 
         unless config_file
           raise NoConfigurationFileFound.new("no configuration file found")

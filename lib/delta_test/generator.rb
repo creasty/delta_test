@@ -30,7 +30,7 @@ module DeltaTest
 
       puts "--- start!(%s)" % spec_file
 
-      @current_spec_file = DeltaTest.regulate_filepath(spec_file).to_s
+      @current_spec_file = Utils.regulate_filepath(spec_file, DeltaTest.config.base_path).to_s
       @analyzer.start
     end
 

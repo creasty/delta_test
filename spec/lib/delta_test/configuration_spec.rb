@@ -59,36 +59,6 @@ describe DeltaTest::Configuration do
 
   end
 
-  describe "#regulate_filepath" do
-
-    let(:base_path) { "/base_path" }
-
-    before do
-      configuration.base_path = base_path
-    end
-
-    it "shoud return a relative path from `base_path`" do
-      absolute_path = Pathname.new("/base_path/foo/file_1.txt")
-      relative_path = Pathname.new("foo/file_1.txt")
-
-      expect(configuration.regulate_filepath(absolute_path)).to eq(relative_path)
-    end
-
-    it "shoud return a clean path" do
-      absolute_path = Pathname.new("./foo/file_1.txt")
-      relative_path = Pathname.new("foo/file_1.txt")
-
-      expect(configuration.regulate_filepath(absolute_path)).to eq(relative_path)
-    end
-
-    it "shoud not raise an error and return the path when a path is not started with `base_path`" do
-      path = Pathname.new("other/foo/file_1.txt")
-
-      expect(configuration.regulate_filepath(path)).to eq(path)
-    end
-
-  end
-
   describe "#validate!" do
 
     describe "#base_path" do

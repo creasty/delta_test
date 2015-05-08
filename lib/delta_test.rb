@@ -1,6 +1,7 @@
 require "pathname"
 
 require_relative "delta_test/version"
+require_relative "delta_test/utils"
 require_relative "delta_test/configuration"
 
 module DeltaTest
@@ -38,30 +39,6 @@ module DeltaTest
 
     def deactivate!
       @active = false
-    end
-
-
-    #  Utils
-    #-----------------------------------------------
-    def regulate_filepath(file)
-      @config.regulate_filepath(file)
-    end
-
-    def find_file_upward(*file_names)
-      pwd  = Dir.pwd
-      base = Hash.new { |h, k| h[k] = pwd }
-      file = {}
-
-      while base.values.all? { |b| "." != b && "/" != b }
-        file_names.each do |name|
-          file[name] = File.join(base[name], name)
-          base[name] = File.dirname(base[name])
-
-          return file[name] if File.exists?(file[name])
-        end
-      end
-
-      nil
     end
 
   end
