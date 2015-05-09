@@ -12,18 +12,21 @@ module DeltaTest
     }.freeze
 
     attr_reader *%i[
-      bin
       args
-      options
       command
+      options
     ]
 
-    def run(bin, args)
-      @bin, @args = bin, args
+    def run(args)
+      @args = args.dup
 
       @command = @args.shift
       @options = parse_options!
 
+      invoke
+    end
+
+    def invoke
       begin
         case @command
         when 'list'
@@ -33,7 +36,7 @@ module DeltaTest
         when 'exec'
           do_exec
         else
-          do_help(@command)
+          do_help
         end
       rescue TableNotFoundError, NotInGitRepository => e
         exit_with_message(1, '[%s] %s' % [e.class.name, e.message])
@@ -45,9 +48,9 @@ module DeltaTest
 
       @args.reject! do |arg|
         case arg
-        when /^-[a-z0-9]$/, /^--([a-z0-9]\w*)$/
+        when /^-([a-z0-9])$/i, /^--([a-z0-9][a-z0-9-]*)$/i
           options[$1] = true
-        when /^--([a-z0-9]\w*)=(.+)$/
+        when /^--([a-z0-9][a-z0-9-]*)=(.+)$/i
           options[$1] = $2
         else
           break
@@ -90,28 +93,36 @@ module DeltaTest
     end
 
     def do_exec
+      spec_files = nil
       args = []
-      args << 'cat'
-      args << '|'
-      args << ('%s=%s' % [ACTIVE_FLAG, true])
-      args << 'xargs'
+
+      run_full_tests = (@options['base'] == @options['head'])
+
+      if run_full_tests
+        args << ('%s=%s' % [ACTIVE_FLAG, true])
+      else
+        args << 'cat'
+        args << '|'
+        args << 'xargs'
+
+        list = RelatedSpecList.new
+        list.load_table!
+        list.retrive_changed_files!(@options['base'], @options['head'])
+
+        spec_files = list.related_spec_files.to_a
+
+        if spec_files.empty?
+          exit_with_message(0, 'Nothing to test')
+        end
+      end
+
       args += @args
       args = args.join(' ')
-
-      list = RelatedSpecList.new
-      list.load_table!
-      list.retrive_changed_files!(@options['base'], @options['head'])
-
-      related_spec_files = list.related_spec_files
-
-      if related_spec_files.empty?
-        exit_with_message(0, 'Nothing to test')
-      end
 
       $stdout.sync = true
 
       Open3.popen3(args) do |i, o, e, w|
-        i.write(related_spec_files.to_a.join("\n"))
+        i.write(spec_files.join("\n")) if run_full_tests
         i.close
         o.each { |l| puts l }
         e.each { |l| $stderr.puts l }

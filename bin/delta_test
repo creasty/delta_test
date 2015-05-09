@@ -9,4 +9,4 @@ require 'delta_test/cli'
 
 DeltaTest.config.auto_configure!
 
-DeltaTest::CLI.new.run($0, ARGV)
+DeltaTest::CLI.new.run(ARGV)
