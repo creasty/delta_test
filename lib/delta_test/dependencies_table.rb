@@ -18,7 +18,7 @@ module DeltaTest
       begin
         data = File.binread(file)
         dt = Marshal.load(data)
-        dt.send(:initialize)  # to use with default_proc
+        dt.default_proc = DEFAULT_PROC
         dt
       rescue
         self.new
