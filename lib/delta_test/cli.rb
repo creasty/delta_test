@@ -61,7 +61,7 @@ module DeltaTest
       if status.zero?
         puts(*args)
       else
-        STDERR.puts(*args)
+        $stderr.puts(*args)
       end
 
       exit status
@@ -109,7 +109,7 @@ module DeltaTest
         i.write(list.related_spec_files.to_a.join("\n"))
         i.close
         o.each { |l| puts l }
-        e.each { |l| STDERR.puts l }
+        e.each { |l| $stderr.puts l }
       end
     end
 
