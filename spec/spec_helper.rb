@@ -31,6 +31,7 @@ RSpec.configure do |config|
 
   config.after do
     DeltaTest.setup
+    allow(DeltaTest).to receive(:active?).and_return(false)
   end
 
 end
