@@ -6,7 +6,7 @@ describe DeltaTest::RelatedSpecList do
 
   let(:base) { 'master' }
   let(:head) { 'feature/foo' }
-  let(:list) { DeltaTest::RelatedSpecList.new(base, head) }
+  let(:list) { DeltaTest::RelatedSpecList.new }
 
   let(:base_path) { '/base_path' }
 
@@ -75,14 +75,14 @@ describe DeltaTest::RelatedSpecList do
       allow(DeltaTest::Git).to receive(:git_repo?).and_return(false)
 
       expect {
-        list.retrive_changed_files!
+        list.retrive_changed_files!(base, head)
       }.to raise_error(DeltaTest::NotInGitRepository)
     end
 
     it 'shoud retrive a list of changed files' do
       expect(list.changed_files).to be_nil
 
-      list.retrive_changed_files!
+      list.retrive_changed_files!(base, head)
 
       expect(list.changed_files).to be_a(Array)
       expect(list.changed_files).not_to be_empty
@@ -97,7 +97,7 @@ describe DeltaTest::RelatedSpecList do
     before do
       table_file
       list.load_table!
-      list.retrive_changed_files!
+      list.retrive_changed_files!(base, head)
     end
 
     it 'should return a set of related spec files' do
