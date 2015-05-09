@@ -131,4 +131,114 @@ describe DeltaTest::Utils do
 
   end
 
+  describe '::grep_pattern_to_regexp' do
+
+    # private method
+    let(:grep_pattern_to_regexp) { DeltaTest::Utils.method(:grep_pattern_to_regexp) }
+
+    it 'should return a Regexp' do
+      expect(grep_pattern_to_regexp.call('')).to be_a(Regexp)
+    end
+
+    it 'should wrap a pattern with ^ and $' do
+      regexp = grep_pattern_to_regexp.call('aaa')
+
+      expect(regexp).to be_a(Regexp)
+      expect(regexp.source).to eq('^aaa$')
+    end
+
+    it 'should escape any special characters in a pattern' do
+      regexp = grep_pattern_to_regexp.call('\?{}.')
+
+      expect(regexp).to be_a(Regexp)
+      expect(regexp.source).to eq('^\\\\\?\{\}\.$')
+    end
+
+    it 'should replace ** with super-directory wildcards' do
+      regexp = grep_pattern_to_regexp.call('a/**')
+
+      expect(regexp).to be_a(Regexp)
+      expect(regexp.source).to eq('^a/.*$')
+    end
+
+    it 'should care about trailling slash when **/' do
+      regexp = grep_pattern_to_regexp.call('a/**/path')
+
+      expect(regexp).to be_a(Regexp)
+      expect(regexp.source).to eq('^a/.*/?path$')
+    end
+
+    it 'should replace * with file/directory name wildcards' do
+      regexp = grep_pattern_to_regexp.call('a/*_file')
+
+      expect(regexp).to be_a(Regexp)
+      expect(regexp.source).to eq('^a/[^/]*_file$')
+    end
+
+  end
+
+  describe '::files_grep' do
+
+    let(:files) do
+      [
+        '/0',
+        '/a/b/c',
+        '/a/b/c/d',
+        '/a/b/c/d/e',
+        '/x/y/z',
+      ]
+    end
+
+    let(:patterns) do
+      [
+        '/a/**/*',
+      ]
+    end
+
+    let(:exclude_patterns) do
+      [
+        '/a/**/e',
+        '/x/y/*',
+      ]
+    end
+
+    it 'should return the whole files when the patterns is an empty array' do
+      expect(DeltaTest::Utils.files_grep(files, [])).to eq(files)
+    end
+
+    it 'should return the whole files when the exclude patterns is an empty array' do
+      expect(DeltaTest::Utils.files_grep(files, [], [])).to eq(files)
+    end
+
+    it 'should return files only matched with the patterns' do
+      matched_files = [
+        '/a/b/c',
+        '/a/b/c/d',
+        '/a/b/c/d/e',
+      ]
+
+      expect(DeltaTest::Utils.files_grep(files, patterns)).to eq(matched_files)
+    end
+
+    it 'should return files not matched with the exclude patterns' do
+      matched_files = [
+        '/0',
+        '/a/b/c',
+        '/a/b/c/d',
+      ]
+
+      expect(DeltaTest::Utils.files_grep(files, [], exclude_patterns)).to eq(matched_files)
+    end
+
+    it 'should return files not matched with an union of patterns' do
+      matched_files = [
+        '/a/b/c',
+        '/a/b/c/d',
+      ]
+
+      expect(DeltaTest::Utils.files_grep(files, patterns, exclude_patterns)).to eq(matched_files)
+    end
+
+  end
+
 end

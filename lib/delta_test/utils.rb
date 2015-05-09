@@ -25,6 +25,38 @@ module DeltaTest
         nil
       end
 
+      def files_grep(files, patterns = [], exclude_patterns = [])
+        patterns = patterns
+          .map { |p| grep_pattern_to_regexp(p) }
+        exclude_patterns = exclude_patterns
+          .map { |p| grep_pattern_to_regexp(p) }
+
+        any_patterns         = patterns.any?
+        any_exclude_patterns = exclude_patterns.any?
+
+        files.select do |file|
+          matcher = ->(p) { p === file }
+
+          (
+            !any_patterns || patterns.any?(&matcher)
+          ) && (
+            !any_exclude_patterns || !exclude_patterns.any?(&matcher)
+          )
+        end
+      end
+
+
+    private
+
+      def grep_pattern_to_regexp(pattern)
+        pattern = Regexp.escape(pattern)
+          .gsub('\*\*/', '.*/?')
+          .gsub('\*\*', '.*')
+          .gsub('\*', '[^/]*')
+
+        Regexp.new('^%s$' % pattern)
+      end
+
     end
   end
 end
