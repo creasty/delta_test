@@ -17,14 +17,38 @@ describe DeltaTest::DependenciesTable do
       expect(value).to be_empty
     end
 
-    it 'should retain elements in a set throughout accesses' do
-      table[:foo] << 1
-      table[:foo] << 2
-      table[:foo] << 2
-      table[:foo] << 3
-      table[:foo] << 3
-      table[:foo] << 3
-      expect(table[:foo]).to eq(Set.new([1, 2, 3]))
+    it 'should retain objects throughout accesses' do
+      foo_1 = table[:foo].object_id
+      foo_2 = table[:foo].object_id
+      expect(foo_1).to eq(foo_2)
+    end
+
+  end
+
+  describe '#add' do
+
+    let(:spec_file) { 'spec/foo_spec.rb' }
+    let(:base_path) { '/base_path' }
+
+    let(:files) do
+      ['foo/file_1.txt']
+    end
+
+    before do
+      DeltaTest.configure do |config|
+        config.base_path = base_path
+        config.files     = files
+      end
+    end
+
+    it 'should add a regulated file path' do
+      table.add(spec_file, '/base_path/foo/file_1.txt')
+      expect(table[spec_file]).to eq(Set[Pathname.new('foo/file_1.txt')])
+    end
+
+    it 'should add nothing if a file path is not included in `files` set' do
+      table.add(spec_file, '/base_path/foo/file_2.txt')
+      expect(table[spec_file]).to be_empty
     end
 
   end

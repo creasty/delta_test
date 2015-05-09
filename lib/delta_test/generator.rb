@@ -20,7 +20,7 @@ module DeltaTest
       puts '--- setup!'
 
       @analyzer = Analyzer.new
-      @table    = DependenciesTable.load(DeltaTest.config.table_file_path, Dependencies)
+      @table    = DependenciesTable.load(DeltaTest.config.table_file_path)
 
       @current_spec_file = nil
 
@@ -48,7 +48,7 @@ module DeltaTest
 
       if spec_file
         @analyzer.related_source_files.each do |file|
-          @table[spec_file] << file
+          @table.add(spec_file, file)
         end
       end
     end

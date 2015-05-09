@@ -1,46 +1,47 @@
 require 'fileutils'
 require 'set'
 
-require_relative 'dependencies'
+require_relative 'utils'
 
 module DeltaTest
   class DependenciesTable < ::Hash
 
-    def initialize(klass = Set)
+    DEFAULT_PROC = -> (h, k) { h[k] = ::Set.new }
+
+    def initialize
       super
 
-      @klass = klass
-      self.default_proc = -> (h, k) do
-        h[k] = @klass.new
-      end
+      self.default_proc = DEFAULT_PROC
     end
 
-    def self.load(file, klass = Set)
+    def self.load(file)
       begin
         data = File.binread(file)
         dt = Marshal.load(data)
-        dt.send(:initialize, klass)  # to use with default_proc
+        dt.send(:initialize)  # to use with default_proc
         dt
       rescue
-        self.new(klass)
+        self.new
       end
     end
 
+    def add(spec_file, source_file)
+      source_file = Utils.regulate_filepath(source_file, DeltaTest.config.base_path)
+      self[spec_file] << source_file if DeltaTest.config.filtered_files.include?(source_file)
+    end
+
     def without_default_proc
-      _default_proc = self.default_proc
       self.default_proc = nil
 
       begin
         yield
       ensure
-        self.default_proc = _default_proc
+        self.default_proc = DEFAULT_PROC
       end
     end
 
     def cleanup!
-      self.reject! do |k, v|
-        v.empty?
-      end
+      self.reject! { |k, v| v.empty? }
     end
 
     def dump(file)
