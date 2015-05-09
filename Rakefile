@@ -8,7 +8,7 @@ end
 namespace :rails do
   desc 'Run rails tests'
   task :spec do
-    exit system('cd spec/rails && bundle exec rspec')
+    exit system('cd spec/rails && DELTA_TEST_ACTIVE=true bundle exec rspec')
   end
 end
 

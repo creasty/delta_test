@@ -1,0 +1,5 @@
+table_file: tmp/.delta_test_dt
+
+patterns:
+  - app/**/*.rb
+  - config/locales/**/*.yml
