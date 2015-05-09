@@ -77,6 +77,7 @@ module DeltaTest
         dependencies.each do |dependency|
           puts "\t#{dependency}"
         end
+        puts
       end
     end
 
