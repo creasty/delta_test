@@ -105,7 +105,7 @@ module DeltaTest
 
       yaml = YAML.load_file(config_file)
 
-      self.base_path = config_file
+      self.base_path = File.dirname(config_file)
 
       yaml.each do |k, v|
         if self.respond_to?("#{k}=")

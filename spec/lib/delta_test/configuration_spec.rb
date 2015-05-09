@@ -287,14 +287,14 @@ describe DeltaTest::Configuration do
         }.to raise_error(DeltaTest::NoConfigurationFileFound)
       end
 
-      it 'should set `base_path` to the path of yaml file' do
+      it 'should set `base_path` to the directory of yaml file' do
         FakeFS::FileSystem.add(yaml_file_path, yaml_file)
 
         expect {
           configuration.load_from_file!
         }.not_to raise_error
 
-        expect(configuration.base_path).to eq(Pathname.new(yaml_file_path))
+        expect(configuration.base_path).to eq(Pathname.new(File.dirname(yaml_file_path)))
       end
 
       it 'should set other option values from yaml' do

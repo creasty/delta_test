@@ -27,7 +27,7 @@ module DeltaTest
 
     def active?
       return @active unless @active.nil?
-      @active = (!ENV[ACTIVE_FLAG].nil? && ENV[ACTIVE_FLAG] =~ /0|false/i)
+      @active = (!ENV[ACTIVE_FLAG].nil? && ENV[ACTIVE_FLAG] !~ /0|false/i)
     end
 
     def activate!
