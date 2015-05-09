@@ -23,18 +23,6 @@ describe DeltaTest do
 
   describe '::activate!, ::deactivate!' do
 
-    around do |example|
-      active = DeltaTest.active?
-
-      example.run
-
-      if active
-        DeltaTest.activate!
-      else
-        DeltaTest.deactivate!
-      end
-    end
-
     it 'should change active flag' do
       DeltaTest.deactivate!
       expect(DeltaTest.active?).to be(false)

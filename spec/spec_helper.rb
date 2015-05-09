@@ -30,8 +30,8 @@ RSpec.configure do |config|
   end
 
   config.after do
+    DeltaTest.deactivate!
     DeltaTest.setup
-    allow(DeltaTest).to receive(:active?).and_return(false)
   end
 
 end

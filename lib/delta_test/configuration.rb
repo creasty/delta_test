@@ -2,6 +2,7 @@ require 'set'
 require 'pathname'
 require 'yaml'
 
+require_relative 'git'
 require_relative 'utils'
 
 module DeltaTest
@@ -57,58 +58,70 @@ module DeltaTest
     end
 
     def validate!
-      if @base_path.relative?
+      if self.base_path.relative?
         raise '`base_path` need to be an absolute path'
       end
 
-      unless @files.is_a?(Array)
+      unless self.files.is_a?(Array)
         raise TypeError.new('`files` need to be an array')
       end
 
-      unless @patterns.is_a?(Array)
+      unless self.patterns.is_a?(Array)
         raise TypeError.new('`patterns` need to be an array')
       end
 
-      unless @exclude_patterns.is_a?(Array)
+      unless self.exclude_patterns.is_a?(Array)
         raise TypeError.new('`exclude_patterns` need to be an array')
       end
     end
 
     def precalculate!
-      filtered_files = @files
-        .map { |f| Utils.regulate_filepath(f, @base_path) }
+      filtered_files = self.files
+        .map { |f| Utils.regulate_filepath(f, self.base_path) }
         .uniq
 
-      filtered_files = Utils.files_grep(filtered_files, @patterns, @exclude_patterns)
+      filtered_files = Utils.files_grep(filtered_files, self.patterns, self.exclude_patterns)
 
       @filtered_files = Set.new(filtered_files)
 
-      @table_file_path = Pathname.new(File.absolute_path(@table_file, @base_path))
+      @table_file_path = Pathname.new(File.absolute_path(self.table_file, self.base_path))
     end
 
 
-    #  Loader
+    #  Auto configuration
     #-----------------------------------------------
+    def auto_configure!
+      load_from_file!
+      retrive_files_from_git_index!
+      update
+    end
+
     def load_from_file!
-      update do |c|
-        config_file = Utils.find_file_upward(*CONFIG_FILES)
+      config_file = Utils.find_file_upward(*CONFIG_FILES)
 
-        unless config_file
-          raise NoConfigurationFileFound.new('no configuration file found')
-        end
+      unless config_file
+        raise NoConfigurationFileFound.new('no configuration file found')
+      end
 
-        yaml = YAML.load_file(config_file)
+      yaml = YAML.load_file(config_file)
 
-        c.base_path = config_file
+      self.base_path = config_file
 
-        yaml.each do |k, v|
-          if c.respond_to?("#{k}=")
-            c.send("#{k}=", v)
-          else
-            raise InvalidOption.new("invalid option: #{k}")
-          end
+      yaml.each do |k, v|
+        if self.respond_to?("#{k}=")
+          self.send("#{k}=", v)
+        else
+          raise InvalidOption.new("invalid option: #{k}")
         end
       end
+    end
+
+    def retrive_files_from_git_index!
+      unless Git.git_repo?
+        raise NotInGitRepository.new('the directory is not managed by git')
+      end
+
+      self.files = Git.ls_files
     end
 
   end

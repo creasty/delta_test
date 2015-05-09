@@ -18,18 +18,16 @@ module DeltaTest
 
     def setup
       @config = Configuration.new
-      @active = (!ENV[ACTIVE_FLAG].nil? && ENV[ACTIVE_FLAG] =~ /0|false/i)
+      @config.auto_configure! if active?
     end
 
     def configure(&block)
       @config.update(&block)
     end
 
-
-    #  Flags
-    #-----------------------------------------------
     def active?
-      @active
+      return @active unless @active.nil?
+      @active = (!ENV[ACTIVE_FLAG].nil? && ENV[ACTIVE_FLAG] =~ /0|false/i)
     end
 
     def activate!

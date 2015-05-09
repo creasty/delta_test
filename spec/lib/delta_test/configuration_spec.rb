@@ -243,62 +243,109 @@ describe DeltaTest::Configuration do
 
   end
 
-  describe '#load_from_file!' do
+  describe 'Auto configuration' do
 
-    let(:pwd)             { '/path/to/pwd' }
-    let(:yaml_file_path)  { '/path/to/delta_test.yml' }
-    let(:table_file_path) { '/path/to/table_file' }
+    describe '#auto_configure!' do
 
-    let(:yaml_file) do
-      file = FakeFS::FakeFile.new
+      it 'should call `load_from_file!`, `retrive_files_from_git_index!` and `update`' do
+        allow(configuration).to receive(:load_from_file!).and_return(true)
+        allow(configuration).to receive(:retrive_files_from_git_index!).and_return(true)
 
-      file.content = <<-YAML
-table_file: #{table_file_path}
-      YAML
+        expect(configuration).to receive(:load_from_file!).with(no_args).once.ordered
+        expect(configuration).to receive(:retrive_files_from_git_index!).with(no_args).once.ordered
+        expect(configuration).to receive(:update).with(no_args).once.ordered
 
-      file
+        configuration.auto_configure!
+      end
+
     end
 
-    before do
-      FakeFS::FileSystem.add(pwd)
-      Dir.chdir(pwd)
+    describe '#load_from_file!' do
+
+      let(:pwd)             { '/path/to/pwd' }
+      let(:yaml_file_path)  { '/path/to/delta_test.yml' }
+      let(:table_file_path) { '/path/to/table_file' }
+
+      let(:yaml_file) do
+        file = FakeFS::FakeFile.new
+
+        file.content = <<-YAML
+  table_file: #{table_file_path}
+        YAML
+
+        file
+      end
+
+      before do
+        FakeFS::FileSystem.add(pwd)
+        Dir.chdir(pwd)
+      end
+
+      it 'should raise an error if no file is found' do
+        expect {
+          configuration.load_from_file!
+        }.to raise_error(DeltaTest::NoConfigurationFileFound)
+      end
+
+      it 'should set `base_path` to the path of yaml file' do
+        FakeFS::FileSystem.add(yaml_file_path, yaml_file)
+
+        expect {
+          configuration.load_from_file!
+        }.not_to raise_error
+
+        expect(configuration.base_path).to eq(Pathname.new(yaml_file_path))
+      end
+
+      it 'should set other option values from yaml' do
+        FakeFS::FileSystem.add(yaml_file_path, yaml_file)
+
+        expect {
+          configuration.load_from_file!
+        }.not_to raise_error
+
+        expect(configuration.table_file).to eq(Pathname.new(table_file_path))
+      end
+
+      it 'should raise an error if there is invalid option in yaml' do
+        FakeFS::FileSystem.add(yaml_file_path, yaml_file)
+        yaml_file.content = <<-YAML
+  foo: true
+        YAML
+
+        expect {
+          configuration.load_from_file!
+        }.to raise_error(DeltaTest::InvalidOption, /foo/)
+      end
+
     end
 
-    it 'should raise an error if no file is found' do
-      expect {
-        configuration.load_from_file!
-      }.to raise_error(DeltaTest::NoConfigurationFileFound)
-    end
+    describe 'retrive_files_from_git_index!' do
 
-    it 'should set `base_path` to the path of yaml file' do
-      FakeFS::FileSystem.add(yaml_file_path, yaml_file)
+      it 'should raise an error if not in git repo' do
+        allow(DeltaTest::Git).to receive(:git_repo?).with(no_args).and_return(false)
 
-      expect {
-        configuration.load_from_file!
-      }.not_to raise_error
+        expect {
+          configuration.retrive_files_from_git_index!
+        }.to raise_error(DeltaTest::NotInGitRepository)
+      end
 
-      expect(configuration.base_path).to eq(Pathname.new(yaml_file_path))
-    end
+      it 'should set `files` from the file indices of git' do
+        files = [
+          'a/file_1',
+          'a/file_2',
+        ]
 
-    it 'should set other option values from yaml' do
-      FakeFS::FileSystem.add(yaml_file_path, yaml_file)
+        allow(DeltaTest::Git).to receive(:git_repo?).with(no_args).and_return(true)
+        allow(DeltaTest::Git).to receive(:ls_files).with(no_args).and_return(files)
 
-      expect {
-        configuration.load_from_file!
-      }.not_to raise_error
+        expect {
+          configuration.retrive_files_from_git_index!
+        }.not_to raise_error
 
-      expect(configuration.table_file).to eq(Pathname.new(table_file_path))
-    end
+        expect(configuration.files).to eq(files)
+      end
 
-    it 'should raise an error if there is invalid option in yaml' do
-      FakeFS::FileSystem.add(yaml_file_path, yaml_file)
-      yaml_file.content = <<-YAML
-foo: true
-      YAML
-
-      expect {
-        configuration.load_from_file!
-      }.to raise_error(DeltaTest::InvalidOption, /foo/)
     end
 
   end
