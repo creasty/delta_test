@@ -10,14 +10,16 @@ module DeltaTest
       super
 
       @klass = klass
-      set_default_proc
+      self.default_proc = -> (h, k) do
+        h[k] = @klass.new
+      end
     end
 
     def self.load(file, klass = Set)
       begin
         data = File.binread(file)
         dt = Marshal.load(data)
-        dt.set_default_proc
+        dt.send(:initialize, klass)  # to use with default_proc
         dt
       rescue
         self.new(klass)
@@ -48,15 +50,6 @@ module DeltaTest
         data = Marshal.dump(self)
         FileUtils.mkdir_p(File.dirname(file))
         File.open(file, 'wb') { |f| f.write data }
-      end
-    end
-
-
-  private
-
-    def set_default_proc
-      self.default_proc = -> (h, k) do
-        h[k] = @klass.new
       end
     end
 
