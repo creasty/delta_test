@@ -16,11 +16,13 @@ module DeltaTest
       base_path
       table_file
       files
+      pattern
+      exclude_pattern
     ]
 
     # for precalculated values
     attr_reader *%i[
-      relative_files
+      filtered_files
       table_file_path
     ]
 
@@ -63,8 +65,8 @@ module DeltaTest
     end
 
     def precalculate!
-      @relative_files = Set.new(self.files)
-      @relative_files.map! { |f| Utils.regulate_filepath(f, self.base_path) }
+      @filtered_files = Set.new(self.files)
+      @filtered_files.map! { |f| Utils.regulate_filepath(f, self.base_path) }
 
       @table_file_path = Pathname.new(File.absolute_path(self.table_file, self.base_path))
     end

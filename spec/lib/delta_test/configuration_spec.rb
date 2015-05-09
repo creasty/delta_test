@@ -121,30 +121,30 @@ describe DeltaTest::Configuration do
 
   describe '#precalculate!' do
 
-    describe '#relative_files' do
+    describe '#filtered_files' do
 
       it 'should return an instance of Set' do
         configuration.precalculate!
-        expect(configuration.relative_files).to be_a(Set)
+        expect(configuration.filtered_files).to be_a(Set)
       end
 
-      it 'should return a set of relative file paths' do
+      it 'should return a set of filtered file paths' do
         base_path = '/base_path'
-        files_array = [
+        files = [
           '/base_path/foo/bar',
           '/base_path/foo/bar',
           '/base_path/foo/bar/baz',
         ]
-        relative_set = Set[
+        filtered_files = Set[
           Pathname.new('foo/bar'),
           Pathname.new('foo/bar/baz'),
         ]
 
         configuration.base_path = base_path
-        configuration.files     = files_array
+        configuration.files     = files
 
         configuration.precalculate!
-        expect(configuration.relative_files).to eq(relative_set)
+        expect(configuration.filtered_files).to eq(filtered_files)
       end
 
     end
