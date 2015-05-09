@@ -101,14 +101,16 @@ module DeltaTest
       list.load_table!
       list.retrive_changed_files!(@options['base'], @options['head'])
 
-      if list.related_spec_files.empty?
+      related_spec_files = list.related_spec_files
+
+      if related_spec_files.empty?
         exit_with_message(0, 'Nothing to test')
       end
 
       $stdout.sync = true
 
       Open3.popen3(args) do |i, o, e, w|
-        i.write(list.related_spec_files.to_a.join("\n"))
+        i.write(related_spec_files.to_a.join("\n"))
         i.close
         o.each { |l| puts l }
         e.each { |l| $stderr.puts l }
