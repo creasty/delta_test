@@ -105,6 +105,8 @@ module DeltaTest
         exit_with_message(0, 'Nothing to test')
       end
 
+      $stdout.sync = true
+
       Open3.popen3(args) do |i, o, e, w|
         i.write(list.related_spec_files.to_a.join("\n"))
         i.close
