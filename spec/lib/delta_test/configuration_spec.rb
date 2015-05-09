@@ -91,7 +91,7 @@ describe DeltaTest::Configuration do
         }.to raise_error(/files/)
       end
 
-      it 'should raise an error if `files` is neither an array or a set' do
+      it 'should raise an error if `files` is neither an array' do
         configuration.files = {}
 
         expect {
@@ -107,8 +107,56 @@ describe DeltaTest::Configuration do
         }.not_to raise_error
       end
 
-      it 'should not raise if `files` is a set' do
-        configuration.files = Set.new
+    end
+
+    describe '#patterns' do
+
+      it 'should raise an error if `patterns` is not set' do
+        configuration.patterns = nil
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/patterns/)
+      end
+
+      it 'should raise an error if `patterns` is neither an array' do
+        configuration.patterns = {}
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/patterns/)
+      end
+
+      it 'should not raise if `patterns` is an array' do
+        configuration.patterns = []
+
+        expect {
+          configuration.validate!
+        }.not_to raise_error
+      end
+
+    end
+
+    describe '#exclude_patterns' do
+
+      it 'should raise an error if `exclude_patterns` is not set' do
+        configuration.exclude_patterns = nil
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/patterns/)
+      end
+
+      it 'should raise an error if `exclude_patterns` is neither an array' do
+        configuration.exclude_patterns = {}
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/exclude_patterns/)
+      end
+
+      it 'should not raise if `exclude_patterns` is an array' do
+        configuration.exclude_patterns = []
 
         expect {
           configuration.validate!
@@ -130,6 +178,9 @@ describe DeltaTest::Configuration do
 
       it 'should return a set of filtered file paths' do
         base_path = '/base_path'
+        patterns = [
+          '**/*r'
+        ]
         files = [
           '/base_path/foo/bar',
           '/base_path/foo/bar',
@@ -137,11 +188,11 @@ describe DeltaTest::Configuration do
         ]
         filtered_files = Set[
           Pathname.new('foo/bar'),
-          Pathname.new('foo/bar/baz'),
         ]
 
         configuration.base_path = base_path
         configuration.files     = files
+        configuration.patterns  = patterns
 
         configuration.precalculate!
         expect(configuration.filtered_files).to eq(filtered_files)

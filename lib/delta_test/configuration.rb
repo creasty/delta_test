@@ -16,8 +16,8 @@ module DeltaTest
       base_path
       table_file
       files
-      pattern
-      exclude_pattern
+      patterns
+      exclude_patterns
     ]
 
     # for precalculated values
@@ -28,9 +28,11 @@ module DeltaTest
 
     def initialize
       update do |c|
-        c.base_path  = '/'
-        c.table_file = 'tmp/.delta_test_dt'
-        c.files      = []
+        c.base_path        = File.expand_path('.')
+        c.table_file       = 'tmp/.delta_test_dt'
+        c.files            = []
+        c.patterns         = []
+        c.exclude_patterns = []
       end
     end
 
@@ -59,16 +61,29 @@ module DeltaTest
         raise '`base_path` need to be an absolute path'
       end
 
-      unless @files && (@files.is_a?(Array) || @files.is_a?(Set))
-        raise TypeError.new('`files` need to be an array or a set')
+      unless @files.is_a?(Array)
+        raise TypeError.new('`files` need to be an array')
+      end
+
+      unless @patterns.is_a?(Array)
+        raise TypeError.new('`patterns` need to be an array')
+      end
+
+      unless @exclude_patterns.is_a?(Array)
+        raise TypeError.new('`exclude_patterns` need to be an array')
       end
     end
 
     def precalculate!
-      @filtered_files = Set.new(self.files)
-      @filtered_files.map! { |f| Utils.regulate_filepath(f, self.base_path) }
+      filtered_files = @files
+        .map { |f| Utils.regulate_filepath(f, @base_path) }
+        .uniq
 
-      @table_file_path = Pathname.new(File.absolute_path(self.table_file, self.base_path))
+      filtered_files = Utils.files_grep(filtered_files, @patterns, @exclude_patterns)
+
+      @filtered_files = Set.new(filtered_files)
+
+      @table_file_path = Pathname.new(File.absolute_path(@table_file, @base_path))
     end
 
 

@@ -35,7 +35,7 @@ module DeltaTest
         any_exclude_patterns = exclude_patterns.any?
 
         files.select do |file|
-          matcher = ->(p) { p === file }
+          matcher = ->(p) { p === file.to_s }
 
           (
             !any_patterns || patterns.any?(&matcher)
