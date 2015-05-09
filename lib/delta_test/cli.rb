@@ -72,7 +72,13 @@ module DeltaTest
       list = RelatedSpecList.new
       list.load_table!
 
-      p list.table
+      list.table.each do |spec_file, dependencies|
+        puts spec_file
+        puts
+        dependencies.each do |dependency|
+          puts "\t#{dependency}"
+        end
+      end
     end
 
     def do_list
@@ -100,7 +106,6 @@ module DeltaTest
         exit_with_message(0, 'Nothing to test')
       end
 
-      puts args
       Open3.popen3(args) do |i, o, e, w|
         i.write(list.related_spec_files.to_a.join("\n"))
         i.close
