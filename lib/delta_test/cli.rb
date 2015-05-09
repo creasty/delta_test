@@ -21,9 +21,8 @@ module DeltaTest
     def run(bin, args)
       @bin, @args = bin, args
 
-      @command  = @args.shift
-      @org_args = @args
-      @options  = parse_options!
+      @command = @args.shift
+      @options = parse_options!
 
       begin
         case @command
@@ -51,7 +50,7 @@ module DeltaTest
         when /^--([a-z0-9]\w*)=(.+)$/
           options[$1] = $2
         else
-          false
+          break
         end
       end
 
@@ -95,7 +94,7 @@ module DeltaTest
       args << '|'
       args << ('%s=%s' % [ACTIVE_FLAG, true])
       args << 'xargs'
-      args += @org_args
+      args += @args
       args = args.join(' ')
 
       list = RelatedSpecList.new
