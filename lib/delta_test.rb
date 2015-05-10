@@ -11,6 +11,7 @@ module DeltaTest
   class << self
 
     attr_reader :config
+    attr_writer :verbose
 
     def setup
       @config = Configuration.new
@@ -32,6 +33,14 @@ module DeltaTest
 
     def deactivate!
       @active = false
+    end
+
+    def verbose?
+      !!@verbose
+    end
+
+    def log(*args)
+      puts *args if verbose?
     end
 
   end

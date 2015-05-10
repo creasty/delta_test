@@ -17,7 +17,7 @@ module DeltaTest
       return if @_setup
       @_setup = true
 
-      puts '--- setup!'
+      DeltaTest.log('--- setup!')
 
       @analyzer = Analyzer.new
       @table    = DependenciesTable.load(DeltaTest.config.table_file_path)
@@ -30,7 +30,7 @@ module DeltaTest
     def start!(spec_file)
       return unless DeltaTest.active?
 
-      puts '--- start!(%s)' % spec_file
+      DeltaTest.log('--- start!(%s)' % spec_file)
 
       @current_spec_file = Utils.regulate_filepath(spec_file, DeltaTest.config.base_path).to_s
       @analyzer.start
@@ -39,7 +39,7 @@ module DeltaTest
     def stop!
       return unless DeltaTest.active?
 
-      puts '--- stop!'
+      DeltaTest.log('--- stop!')
 
       spec_file = @current_spec_file
       @current_spec_file = nil
@@ -58,7 +58,7 @@ module DeltaTest
       return if @_teardown
       @_teardown = true
 
-      puts '--- teardown!'
+      DeltaTest.log('--- teardown!')
 
       @analyzer.stop
       @table.dump(DeltaTest.config.table_file_path)

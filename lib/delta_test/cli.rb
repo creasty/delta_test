@@ -7,8 +7,9 @@ module DeltaTest
   class CLI
 
     DEFAULTS = {
-      'base' => 'master',
-      'head' => 'HEAD',
+      'base'    => 'master',
+      'head'    => 'HEAD',
+      'verbose' => false,
     }.freeze
 
     attr_reader *%i[
@@ -17,23 +18,27 @@ module DeltaTest
       options
     ]
 
+    def initialize
+      @args    = []
+      @command = nil
+      @options = {}
+    end
+
     def run(args)
       @args = args.dup
 
-      @command = @args.shift unless '-' == @args[0].to_s[0]
+      @command = @args.shift
       @options = parse_options!
 
       @list = RelatedSpecList.new
+
+      DeltaTest.verbose = !!@options['verbose']
 
       invoke
     end
 
     def invoke
       begin
-        if @options['v']
-          exit_with_message(0, 'DeltaTest %s' % VERSION)
-        end
-
         case @command
         when 'list'
           do_list
@@ -41,11 +46,17 @@ module DeltaTest
           do_table
         when 'exec'
           do_exec
+        when '-v'
+          do_version
         else
           do_help
         end
       rescue => e
-        exit_with_message(1, '[%s] %s' % [e.class.name, e.message])
+        if DeltaTest.verbose?
+          raise e
+        else
+          exit_with_message(1, '[%s] %s' % [e.class.name, e.message])
+        end
       end
     end
 
@@ -132,6 +143,10 @@ module DeltaTest
         o.each { |l| puts l }
         e.each { |l| $stderr.puts l }
       end
+    end
+
+    def do_version
+      puts 'DeltaTest v%s' % VERSION
     end
 
     def do_help

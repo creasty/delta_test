@@ -31,7 +31,7 @@ describe DeltaTest::CLI do
     end
 
     it 'should call `parse_options!` and `invoke`' do
-      expect(cli).to receive(:parse_options!).with(no_args).once.ordered
+      expect(cli).to receive(:parse_options!).with(no_args).and_return({}).once.ordered
       expect(cli).to receive(:invoke).with(no_args).once.ordered
 
       args = ['command', 'foo', 'bar']
@@ -375,28 +375,39 @@ describe DeltaTest::CLI do
 
     end
 
+    describe '#do_version' do
+
+      it 'should print gem version' do
+        expect {
+          cli.do_version
+        }.to output(/v\d+\.\d+.\d+/).to_stdout
+      end
+
+    end
+
   end
 
   describe '#invoke' do
 
     let(:commands) do
-      %w[
-        list
-        table
-        exec
-        help
-      ]
+      {
+        'list'  => 'do_list',
+        'table' => 'do_table',
+        'exec'  => 'do_exec',
+        'help'  => 'do_help',
+        '-v'    => 'do_version',
+      }
     end
 
     before do
-      commands.each do |command|
-        allow(cli).to receive('do_%s' % command).with(no_args).and_return(nil)
+      commands.each do |_, action|
+        allow(cli).to receive(action).with(no_args).and_return(nil)
       end
     end
 
     it 'should invoke method for a command' do
-      commands.each do |command|
-        expect(cli).to receive('do_%s' % command).with(no_args)
+      commands.each do |command, action|
+        expect(cli).to receive(action).with(no_args)
 
         cli.command = command
 
