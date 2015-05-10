@@ -112,6 +112,27 @@ custom_mappings:
 ```
 
 
+Testing
+-------
+
+Run units tests:
+
+```bash
+$ rspec
+
+# or
+
+$ rake test
+```
+
+Run integration tests:
+
+```bash
+$ (cd spec/rails && bundle install)
+$ rake rails:test
+```
+
+
 Contributing
 ------------
 
