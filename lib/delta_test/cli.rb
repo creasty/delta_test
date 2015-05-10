@@ -54,7 +54,7 @@ module DeltaTest
           do_table
         when 'exec'
           do_exec
-        when '-v'
+        when '-v', '--version'
           do_version
         else
           do_help
@@ -195,7 +195,7 @@ module DeltaTest
       end
 
       puts <<-HELP
-usage: delta_test [--base=<base>] [--head=<head>] [--verbose] <command> [<args>]
+usage: delta_test <command> [--base=<base>] [--head=<head>] [--verbose] [<args>]
                   [-v]
 
 options:
@@ -207,7 +207,7 @@ options:
 
     --verbose      Print more output.
 
-    -v             Show version.
+    -v, --version  Show version.
 
 commands:
     list           List related spec files for changes between base and head.

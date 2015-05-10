@@ -1,7 +1,7 @@
 delta_test
 ==========
 
-delta_test analyzes your tests and runs only related tests for your file changes.
+**delta_test** analyzes your tests and runs only related tests for your file changes.
 
 
 Setup
@@ -48,7 +48,7 @@ end
 Usage
 -----
 
-First you'll need to run full tests to create **Dependencies table**:
+First you'll need to run full tests to create **dependencies table**:
 
 ```bash
 $ git checkout master
@@ -70,7 +70,7 @@ Advanced usage
 ### Command
 
 ```
-usage: delta_test [--base=<base>] [--head=<head>] [--verbose] <command> [<args>]
+usage: delta_test <command> [--base=<base>] [--head=<head>] [--verbose] [<args>]
                   [-v]
 
 options:
@@ -82,7 +82,7 @@ options:
 
     --verbose      Print more output.
 
-    -v             Show version.
+    -v, --version  Show version.
 
 commands:
     list           List related spec files for changes between base and head.
