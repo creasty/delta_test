@@ -10,11 +10,11 @@ module DeltaTest
       $delta_test_generator ||= DeltaTest::Generator.new
       $delta_test_generator.setup!
 
-      example.before(:context) do
+      example.before(:all) do
         $delta_test_generator.start!(example.metadata[:file_path])
       end
 
-      example.after(:context) do
+      example.after(:all) do
         $delta_test_generator.stop!
       end
     end
