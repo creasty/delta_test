@@ -59,19 +59,19 @@ module DeltaTest
 
     def validate!
       if self.base_path.relative?
-        raise '`base_path` need to be an absolute path'
+        raise ValidationError.new(:base_path, 'need to be an absolute path')
       end
 
       unless self.files.is_a?(Array)
-        raise TypeError.new('`files` need to be an array')
+        raise ValidationError.new(:files, 'need to be an array')
       end
 
       unless self.patterns.is_a?(Array)
-        raise TypeError.new('`patterns` need to be an array')
+        raise ValidationError.new(:patterns, 'need to be an array')
       end
 
       unless self.exclude_patterns.is_a?(Array)
-        raise TypeError.new('`exclude_patterns` need to be an array')
+        raise ValidationError.new(:exclude_patterns, 'need to be an array')
       end
     end
 
@@ -100,7 +100,7 @@ module DeltaTest
       config_file = Utils.find_file_upward(*CONFIG_FILES)
 
       unless config_file
-        raise NoConfigurationFileFound.new('no configuration file found')
+        raise NoConfigurationFileFoundError
       end
 
       yaml = YAML.load_file(config_file)
@@ -111,14 +111,14 @@ module DeltaTest
         if self.respond_to?("#{k}=")
           self.send("#{k}=", v)
         else
-          raise InvalidOption.new("invalid option: #{k}")
+          raise InvalidOptionError.new(k)
         end
       end
     end
 
     def retrive_files_from_git_index!
       unless Git.git_repo?
-        raise NotInGitRepository.new('the directory is not managed by git')
+        raise NotInGitRepositoryError
       end
 
       self.files = Git.ls_files

@@ -284,7 +284,7 @@ describe DeltaTest::Configuration do
       it 'should raise an error if no file is found' do
         expect {
           configuration.load_from_file!
-        }.to raise_error(DeltaTest::NoConfigurationFileFound)
+        }.to raise_error(DeltaTest::NoConfigurationFileFoundError)
       end
 
       it 'should set `base_path` to the directory of yaml file' do
@@ -315,7 +315,7 @@ describe DeltaTest::Configuration do
 
         expect {
           configuration.load_from_file!
-        }.to raise_error(DeltaTest::InvalidOption, /foo/)
+        }.to raise_error(DeltaTest::InvalidOptionError, /foo/)
       end
 
     end
@@ -327,7 +327,7 @@ describe DeltaTest::Configuration do
 
         expect {
           configuration.retrive_files_from_git_index!
-        }.to raise_error(DeltaTest::NotInGitRepository)
+        }.to raise_error(DeltaTest::NotInGitRepositoryError)
       end
 
       it 'should set `files` from the file indices of git' do

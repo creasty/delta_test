@@ -13,7 +13,7 @@ module DeltaTest
 
     def load_table!
       unless File.exist?(DeltaTest.config.table_file_path)
-        raise TableNotFoundError.new('table file not found at: `%s`' % DeltaTest.config.table_file_path)
+        raise TableNotFoundError.new(DeltaTest.config.table_file_path)
       end
 
       @table = DependenciesTable.load(DeltaTest.config.table_file_path)
@@ -21,7 +21,7 @@ module DeltaTest
 
     def retrive_changed_files!(base, head)
       unless Git.git_repo?
-        raise NotInGitRepository.new('the directory is not managed by git')
+        raise NotInGitRepositoryError
       end
 
       @changed_files = Git.changed_files(base, head)

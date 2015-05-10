@@ -1,16 +1,12 @@
 require 'pathname'
 
 require_relative 'delta_test/version'
+require_relative 'delta_test/errors'
 require_relative 'delta_test/configuration'
 
 module DeltaTest
 
   ACTIVE_FLAG = 'DELTA_TEST_ACTIVE'
-
-  class TableNotFoundError < IOError; end
-  class NotInGitRepository < StandardError; end
-  class NoConfigurationFileFound < IOError; end
-  class InvalidOption < StandardError; end
 
   class << self
 

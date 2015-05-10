@@ -40,7 +40,7 @@ module DeltaTest
         else
           do_help
         end
-      rescue TableNotFoundError, NotInGitRepository => e
+      rescue => e
         exit_with_message(1, '[%s] %s' % [e.class.name, e.message])
       end
     end

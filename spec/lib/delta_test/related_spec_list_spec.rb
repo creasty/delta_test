@@ -76,7 +76,7 @@ describe DeltaTest::RelatedSpecList do
 
       expect {
         list.retrive_changed_files!(base, head)
-      }.to raise_error(DeltaTest::NotInGitRepository)
+      }.to raise_error(DeltaTest::NotInGitRepositoryError)
     end
 
     it 'shoud retrive a list of changed files' do
