@@ -3,8 +3,11 @@ machine:
     version: 2.2.0
 
 dependencies:
+  cache_directories:
+    - vendor/bundle
+    - spec/rails/vendor/bundle
   post:
-    - cd spec/rails && bundle install
+    - bundle check --gemfile=spec/rails/Gemfile --path=spec/rails/vendor/bundle || bundle install --gemfile=spec/rails/Gemfile --path=spec/rails/vendor/bundle --jobs=4 --retry=3
 
 test:
   override:
