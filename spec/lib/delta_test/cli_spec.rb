@@ -1,4 +1,5 @@
 require 'delta_test/cli'
+require 'delta_test/git'
 
 describe DeltaTest::CLI do
 
@@ -154,6 +155,19 @@ describe DeltaTest::CLI do
   end
 
   describe '#run_full_tests?' do
+
+    let(:map) do
+      {
+        'master'      => '0000000000000000000000000000000000000000',
+        'feature/foo' => '1111111111111111111111111111111111111111',
+      }
+    end
+
+    before do
+      map.each do |name, commit_id|
+        allow(DeltaTest::Git).to receive(:rev_parse).with(name).and_return(commit_id)
+      end
+    end
 
     context 'When base and head is the same commit' do
 

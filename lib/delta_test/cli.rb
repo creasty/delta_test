@@ -73,7 +73,7 @@ module DeltaTest
     end
 
     def run_full_tests?
-      @options['base'] == @options['head']
+      Git.same_commit?(@options['base'], @options['head'])
     end
 
     def do_table
