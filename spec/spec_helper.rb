@@ -1,5 +1,6 @@
 require 'rspec'
 require 'fakefs/spec_helpers'
+require 'codeclimate-test-reporter'
 
 require 'delta_test'
 
@@ -15,6 +16,7 @@ module DeltaTestSpecHelper
 
 end
 
+CodeClimate::TestReporter.start
 
 RSpec.configure do |config|
 
