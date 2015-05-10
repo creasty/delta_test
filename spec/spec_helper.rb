@@ -30,7 +30,9 @@ RSpec.configure do |config|
   end
 
   config.after do
-    DeltaTest.deactivate!
+    DeltaTest.active  = false
+    DeltaTest.verbose = false
+
     DeltaTest.setup
   end
 

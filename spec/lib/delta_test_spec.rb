@@ -14,22 +14,104 @@ describe DeltaTest do
 
   describe '::active?' do
 
-    it 'should return a value of ACTIVE_FLAG' do
-      active = (!ENV[DeltaTest::ACTIVE_FLAG].nil? && ENV[DeltaTest::ACTIVE_FLAG] =~ /0|false/i)
-      expect(DeltaTest.active?).to be(active)
+    context 'Initial' do
+
+      before do
+        DeltaTest.active = nil
+      end
+
+      it 'should return true if ACTIVE_FLAG env variable is truly' do
+        allow(ENV).to receive(:[]).with(DeltaTest::ACTIVE_FLAG).and_return('true')
+        expect(DeltaTest.active?).to be(true)
+      end
+
+      it 'should return fales if ACTIVE_FLAG env variable is falsy' do
+        allow(ENV).to receive(:[]).with(DeltaTest::ACTIVE_FLAG).and_return('false')
+        expect(DeltaTest.active?).to be(false)
+      end
+
+    end
+
+    context 'Manual' do
+
+      it 'should return true if it is set to true manually' do
+        DeltaTest.active = true
+        expect(DeltaTest.active?).to be(true)
+      end
+
+      it 'should return false if it is set to false manually' do
+        DeltaTest.active = false
+        expect(DeltaTest.active?).to be(false)
+      end
+
     end
 
   end
 
-  describe '::activate!, ::deactivate!' do
+  describe '::verbose?' do
 
-    it 'should change active flag' do
-      DeltaTest.deactivate!
-      expect(DeltaTest.active?).to be(false)
-      DeltaTest.activate!
-      expect(DeltaTest.active?).to be(true)
-      DeltaTest.deactivate!
-      expect(DeltaTest.active?).to be(false)
+    context 'Initial' do
+
+      before do
+        DeltaTest.verbose = nil
+      end
+
+      it 'should return true if VERBOSE_FLAG env variable is truly' do
+        allow(ENV).to receive(:[]).with(DeltaTest::VERBOSE_FLAG).and_return('true')
+        expect(DeltaTest.verbose?).to be(true)
+      end
+
+      it 'should return fales if VERBOSE_FLAG env variable is falsy' do
+        allow(ENV).to receive(:[]).with(DeltaTest::VERBOSE_FLAG).and_return('false')
+        expect(DeltaTest.verbose?).to be(false)
+      end
+
+    end
+
+    context 'Manual' do
+
+      it 'should return true if it is set to true manually' do
+        DeltaTest.verbose = true
+        expect(DeltaTest.verbose?).to be(true)
+      end
+
+      it 'should return false if it is set to false manually' do
+        DeltaTest.verbose = false
+        expect(DeltaTest.verbose?).to be(false)
+      end
+
+    end
+
+  end
+
+  describe '::log' do
+
+    context 'In verbose mode' do
+
+      before do
+        DeltaTest.verbose = true
+      end
+
+      it 'should print logs' do
+        expect {
+          DeltaTest.log('hello, world')
+        }.to output(/hello, world/).to_stdout
+      end
+
+    end
+
+    context 'Not in verbose mode' do
+
+      before do
+        DeltaTest.verbose = false
+      end
+
+      it 'should not print any logs' do
+        expect {
+          DeltaTest.log('hello, world')
+        }.not_to output.to_stdout
+      end
+
     end
 
   end

@@ -12,7 +12,11 @@ module DeltaTest
   class << self
 
     attr_reader :config
-    attr_writer :verbose
+
+    attr_writer *%i[
+      active
+      verbose
+    ]
 
     def setup
       @config = Configuration.new
@@ -24,20 +28,12 @@ module DeltaTest
     end
 
     def active?
-      return @active unless @active.nil?
+      return !!@active unless @active.nil?
       @active = (!ENV[ACTIVE_FLAG].nil? && ENV[ACTIVE_FLAG] !~ /0|false/i)
     end
 
-    def activate!
-      @active = true
-    end
-
-    def deactivate!
-      @active = false
-    end
-
     def verbose?
-      return @verbose unless @verbose.nil?
+      return !!@verbose unless @verbose.nil?
       @verbose = (!ENV[VERBOSE_FLAG].nil? && ENV[VERBOSE_FLAG] !~ /0|false/i)
     end
 

@@ -26,11 +26,11 @@ describe DeltaTest::Generator do
       config.files      = files
     end
 
-    DeltaTest.activate!
+    DeltaTest.active = true
   end
 
   after do
-    DeltaTest.deactivate!
+    DeltaTest.active = false
     RubyProf.stop if RubyProf.running?
   end
 
