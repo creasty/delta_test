@@ -1,4 +1,4 @@
-delta_test
+delta_test [![Circle CI](https://circleci.com/gh/creasty/delta_test.svg?style=svg)](https://circleci.com/gh/creasty/delta_test)
 ==========
 
 **delta_test** analyzes your tests and runs only related tests for your file changes.
