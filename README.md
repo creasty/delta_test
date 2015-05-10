@@ -29,6 +29,21 @@ patterns:
   - app/**/*.rb
 ```
 
+### Rspec
+
+Include delta_test in your `spec/spec_helper.rb`.
+
+```ruby
+require 'delta_test'
+require 'delta_test/spec_helpers'
+
+RSpec.configure do |config|
+
+  config.include DeltaTest::SpecHelpers
+
+end
+```
+
 
 Usage
 -----
