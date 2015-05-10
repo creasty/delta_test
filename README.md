@@ -1,31 +1,129 @@
-# DeltaTest
+delta_test
+==========
 
-TODO: Write a gem description
+delta_test analyzes your tests and runs only related tests for your file changes.
 
-## Installation
 
-Add this line to your application's Gemfile:
+Setup
+-----
+
+### Installation
+
+Add this line to your Gemfile:
 
 ```ruby
-gem 'delta_test'
+gem 'delta_test', group: :test
 ```
 
-And then execute:
+### Configuration
 
-    $ bundle
+Create configuration file at your project root directory.
 
-Or install it yourself as:
+```bash
+$ vi delta_test.yml
+```
 
-    $ gem install delta_test
+```yaml
+patterns:
+  - lib/**/*.rb
+  - app/**/*.rb
+```
 
-## Usage
 
-TODO: Write usage instructions here
+Usage
+-----
 
-## Contributing
+First you'll need to run full tests to create **Dependencies table**:
 
-1. Fork it ( https://github.com/[my-github-username]/delta_test/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+```bash
+$ git checkout master
+$ delta_test exec bundle exec rspec
+```
+
+Then, on other branch:
+
+```bash
+$ git checkout -b feature/something_awesome
+$ # Make changes & create commits...
+$ delta_test exec bundle exec rspec  # runs only related tests for changes from master
+```
+
+
+Advanced usage
+--------------
+
+### Command
+
+```
+usage: delta_test [--base=<base>] [--head=<head>] [--verbose] <command> [<args>]
+                  [-v]
+
+options:
+    --base=<base>  A branch or a commit id to diff from.
+                   <head> is default to master.
+
+    --head=<head>  A branch or a commit id to diff to.
+                   <head> is default to HEAD. (current branch you're on)
+
+    --verbose      Print more output.
+
+    -v             Show version.
+
+commands:
+    list           List related spec files for changes between base and head.
+                   head is default to master; base is to the current branch.
+
+    table          Show dependencies table.
+
+    exec <script>  Rxecute test script using delta_test.
+                   Run command something like `delta_test list | xargs script'.
+```
+
+### Configurations
+
+```yaml
+table_file: tmp/.delta_test_dt
+
+patterns:
+  - lib/**/*.rb
+  - app/**/*.rb
+
+exclude_patterns:
+  - lib/batch/*.rb
+
+custom_mappings:
+  spec/features/i18n_spec.rb:
+    - config/locales/**/*.yml
+```
+
+
+Contributing
+------------
+
+Contributions are always welcome!
+
+### Bug reports
+
+1. Ensure the bug can be reproduced on the latest master
+1. Check it's not a duplicate
+1. Raise an issue
+
+### Pull requests
+
+1. Fork the repository
+1. Create a branch
+1. Write test-driven code
+1. Update the documentation if necessary
+1. Create a new pull request
+
+
+License
+-------
+
+This project is released under the MIT license. See `LICENSE.txt` file for details.
+
+
+Maintainer
+----------
+
+[@creasty](http://github.com/creasty)

@@ -156,20 +156,28 @@ module DeltaTest
       end
 
       puts <<-HELP
-usage: delta_test <command>
+usage: delta_test [--base=<base>] [--head=<head>] [--verbose] <command> [<args>]
+                  [-v]
 
-Commands:
+options:
+    --base=<base>  A branch or a commit id to diff from.
+                   <head> is default to master.
 
-list <base> <head>
-    List related spec files for changes between base and head.
-    head is default to master; base is to the current branch.
+    --head=<head>  A branch or a commit id to diff to.
+                   <head> is default to HEAD. (current branch you're on)
 
-table
-    Show dependencies table.
+    --verbose      Print more output.
 
-exec <base> <head> <script...>
-    Execute test script for only related files.
-    Run `delta_test list | xargs script...`.
+    -v             Show version.
+
+commands:
+    list           List related spec files for changes between base and head.
+                   head is default to master; base is to the current branch.
+
+    table          Show dependencies table.
+
+    exec <script>  Rxecute test script using delta_test.
+                   Run command something like `delta_test list | xargs script'.
       HELP
     end
 
