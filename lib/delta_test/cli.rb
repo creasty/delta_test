@@ -23,6 +23,8 @@ module DeltaTest
       @command = @args.shift
       @options = parse_options!
 
+      @list = RelatedSpecList.new
+
       invoke
     end
 
@@ -32,7 +34,7 @@ module DeltaTest
         when 'list'
           do_list
         when 'table'
-          do_show_table
+          do_table
         when 'exec'
           do_exec
         else
@@ -70,11 +72,14 @@ module DeltaTest
       exit status
     end
 
-    def do_show_table
-      list = RelatedSpecList.new
-      list.load_table!
+    def run_full_tests?
+      @options['base'] == @options['head']
+    end
 
-      list.table.each do |spec_file, dependencies|
+    def do_table
+      @list.load_table!
+
+      @list.table.each do |spec_file, dependencies|
         puts spec_file
         puts
         dependencies.each do |dependency|
@@ -85,31 +90,27 @@ module DeltaTest
     end
 
     def do_list
-      list = RelatedSpecList.new
-      list.load_table!
-      list.retrive_changed_files!(@options['base'], @options['head'])
+      @list.load_table!
+      @list.retrive_changed_files!(@options['base'], @options['head'])
 
-      puts list.related_spec_files
+      puts @list.related_spec_files
     end
 
     def do_exec
       spec_files = nil
       args = []
 
-      run_full_tests = (@options['base'] == @options['head'])
-
-      if run_full_tests
+      if run_full_tests?
         args << ('%s=%s' % [ACTIVE_FLAG, true])
       else
         args << 'cat'
         args << '|'
         args << 'xargs'
 
-        list = RelatedSpecList.new
-        list.load_table!
-        list.retrive_changed_files!(@options['base'], @options['head'])
+        @list.load_table!
+        @list.retrive_changed_files!(@options['base'], @options['head'])
 
-        spec_files = list.related_spec_files.to_a
+        spec_files = @list.related_spec_files.to_a
 
         if spec_files.empty?
           exit_with_message(0, 'Nothing to test')
@@ -122,7 +123,7 @@ module DeltaTest
       $stdout.sync = true
 
       Open3.popen3(args) do |i, o, e, w|
-        i.write(spec_files.join("\n")) if run_full_tests
+        i.write(spec_files.join("\n")) if run_full_tests?
         i.close
         o.each { |l| puts l }
         e.each { |l| $stderr.puts l }
