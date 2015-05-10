@@ -24,7 +24,7 @@ module DeltaTest
 
       @current_spec_file = nil
 
-      at_exit { teardown! } if _auto_teardown
+      hook_on_exit { teardown! } if _auto_teardown
     end
 
     def start!(spec_file)
@@ -62,6 +62,20 @@ module DeltaTest
 
       @analyzer.stop
       @table.dump(DeltaTest.config.table_file_path)
+    end
+
+
+  private
+
+    def hook_on_exit(&block)
+      at_exit do
+        if defined?(ParallelTests)
+          break unless ParallelTests.first_process?
+          ParallelTests.wait_for_other_processes_to_finish
+        end
+
+        block.call
+      end
     end
 
   end
