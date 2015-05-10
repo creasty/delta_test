@@ -5,6 +5,9 @@ module DeltaTest
 
     attr_reader :result
 
+    ###
+    # Start analyzer
+    ###
     def start
       @result = nil
       @files  = Set.new
@@ -13,11 +16,19 @@ module DeltaTest
       RubyProf.start
     end
 
+    ###
+    # Stop analyzer
+    ###
     def stop
       @result = nil
       @result = RubyProf.stop if RubyProf.running?
     end
 
+    ###
+    # Gather source files in the call stack
+    #
+    # @return {Set<String>}
+    ###
     def related_source_files
       return @files unless @result
 

@@ -11,6 +11,9 @@ module DeltaTest
       changed_files
     ]
 
+    ###
+    # Load table from the file
+    ###
     def load_table!
       unless File.exist?(DeltaTest.config.table_file_path)
         raise TableNotFoundError.new(DeltaTest.config.table_file_path)
@@ -19,6 +22,12 @@ module DeltaTest
       @table = DependenciesTable.load(DeltaTest.config.table_file_path)
     end
 
+    ###
+    # Retrive changed files in git diff
+    #
+    # @params {String} base
+    # @params {String} head
+    ###
     def retrive_changed_files!(base, head)
       unless Git.git_repo?
         raise NotInGitRepositoryError
@@ -27,6 +36,11 @@ module DeltaTest
       @changed_files = Git.changed_files(base, head)
     end
 
+    ###
+    # Calculate related spec files
+    #
+    # @return {Set<String>}
+    ###
     def related_spec_files
       spec_files = Set.new
 

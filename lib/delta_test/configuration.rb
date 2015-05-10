@@ -15,8 +15,9 @@ module DeltaTest
 
     attr_accessor *%i[
       base_path
-      table_file
       files
+
+      table_file
       patterns
       exclude_patterns
       custom_mappings
@@ -42,10 +43,22 @@ module DeltaTest
 
     #  Override setters
     #-----------------------------------------------
+    ###
+    # Store base_path as Pathname
+    #
+    # @params {String|Pathname} path
+    # @return {Pathname}
+    ###
     def base_path=(path)
       @base_path = Pathname.new(path)
     end
 
+    ###
+    # Store table_file as Pathname
+    #
+    # @params {String|Pathname} path
+    # @return {Pathname}
+    ###
     def table_file=(path)
       @table_file = Pathname.new(path)
     end
@@ -53,12 +66,20 @@ module DeltaTest
 
     #  Update
     #-----------------------------------------------
+    ###
+    # Update, verify and precalculate
+    #
+    # @block
+    ###
     def update
       yield self if block_given?
       validate!
       precalculate!
     end
 
+    ###
+    # Validate option values
+    ###
     def validate!
       if self.base_path.relative?
         raise ValidationError.new(:base_path, 'need to be an absolute path')
@@ -85,6 +106,9 @@ module DeltaTest
       end
     end
 
+    ###
+    # Precalculate some values
+    ###
     def precalculate!
       filtered_files = self.files
         .map { |f| Utils.regulate_filepath(f, self.base_path) }
@@ -100,12 +124,19 @@ module DeltaTest
 
     #  Auto configuration
     #-----------------------------------------------
+    ###
+    # Use configuration file and git
+    ###
     def auto_configure!
       load_from_file!
       retrive_files_from_git_index!
       update
     end
 
+    ###
+    # Load configuration file
+    # And update `base_path` to the directory
+    ###
     def load_from_file!
       config_file = Utils.find_file_upward(*CONFIG_FILES)
 
@@ -126,6 +157,10 @@ module DeltaTest
       end
     end
 
+    ###
+    # Retrive files from git index
+    # And update `files`
+    ###
     def retrive_files_from_git_index!
       unless Git.git_repo?
         raise NotInGitRepositoryError

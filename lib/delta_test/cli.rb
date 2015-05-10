@@ -24,6 +24,11 @@ module DeltaTest
       @options = {}
     end
 
+    ###
+    # Run cli
+    #
+    # @params {Array} args
+    ###
     def run(args)
       @args = args.dup
 
@@ -37,6 +42,9 @@ module DeltaTest
       invoke
     end
 
+    ###
+    # Invoke action method
+    ###
     def invoke
       begin
         case @command
@@ -60,6 +68,11 @@ module DeltaTest
       end
     end
 
+    ###
+    # Parse option arguments
+    #
+    # @return {Hash<String, Boolean|String>}
+    ###
     def parse_options!
       options = {}
 
@@ -77,6 +90,12 @@ module DeltaTest
       DEFAULTS.merge(options)
     end
 
+    ###
+    # Print message and exit with a status
+    #
+    # @params {Integer} status - exit code
+    # @params {Object} *args
+    ###
     def exit_with_message(status, *args)
       if status.zero?
         puts(*args)
@@ -87,10 +106,18 @@ module DeltaTest
       exit status
     end
 
+    ###
+    # Whether run full test or not
+    #
+    # @return {Boolean}
+    ###
     def run_full_tests?
       Git.same_commit?(@options['base'], @options['head'])
     end
 
+    ###
+    # Show table contents
+    ###
     def do_table
       @list.load_table!
 
@@ -104,6 +131,9 @@ module DeltaTest
       end
     end
 
+    ###
+    # Show related spec files
+    ###
     def do_list
       @list.load_table!
       @list.retrive_changed_files!(@options['base'], @options['head'])
@@ -111,6 +141,9 @@ module DeltaTest
       puts @list.related_spec_files
     end
 
+    ###
+    # Execute test script with delta_test
+    ###
     def do_exec
       spec_files = nil
       args = []
@@ -146,10 +179,16 @@ module DeltaTest
       end
     end
 
+    ###
+    # Show version
+    ###
     def do_version
       puts 'DeltaTest v%s' % VERSION
     end
 
+    ###
+    # Show help
+    ###
     def do_help
       if !@command.nil? && '-' != @command[0]
         puts "Command not found: #{@command}"

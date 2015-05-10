@@ -11,6 +11,11 @@ module DeltaTest
       table
     ]
 
+    ###
+    # Setup analyzer and table
+    #
+    # @params {Boolean} _auto_teardown
+    ###
     def setup!(_auto_teardown = true)
       return unless DeltaTest.active?
 
@@ -27,6 +32,11 @@ module DeltaTest
       hook_on_exit { teardown! } if _auto_teardown
     end
 
+    ###
+    # Start analyzer for the spec file
+    #
+    # @params {String} spec_file
+    ###
     def start!(spec_file)
       return unless DeltaTest.active?
 
@@ -36,6 +46,9 @@ module DeltaTest
       @analyzer.start
     end
 
+    ###
+    # Stop analyzer and update table
+    ###
     def stop!
       return unless DeltaTest.active?
 
@@ -53,6 +66,9 @@ module DeltaTest
       end
     end
 
+    ###
+    # Save table to the file
+    ###
     def teardown!
       return unless @_setup
       return if @_teardown
@@ -67,6 +83,9 @@ module DeltaTest
 
   private
 
+    ###
+    # Handle exit event
+    ###
     def hook_on_exit(&block)
       at_exit do
         if defined?(ParallelTests)

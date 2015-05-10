@@ -2,12 +2,27 @@ module DeltaTest
   module Utils
     class << self
 
+      ###
+      # Convert to relative and clean path
+      #
+      # @params {String|Pathname} file
+      # @params {Pathname} base_path
+      #
+      # @return {Pathname}
+      ###
       def regulate_filepath(file, base_path)
         file = Pathname.new(file)
         file = file.relative_path_from(base_path) rescue file
         file.cleanpath
       end
 
+      ###
+      # Find file upward from pwd
+      #
+      # @params {String} file_names
+      #
+      # @return {String}
+      ###
       def find_file_upward(*file_names)
         pwd  = Dir.pwd
         base = Hash.new { |h, k| h[k] = pwd }
@@ -25,6 +40,15 @@ module DeltaTest
         nil
       end
 
+      ###
+      # Wildcard pattern matching against a file list
+      #
+      # @params {Array<T as String|Pathname>} files
+      # @params {Array<String>} patterns
+      # @params {Array<String>} exclude_patterns
+      #
+      # @return {Array<T>}
+      ###
       def files_grep(files, patterns = [], exclude_patterns = [])
         patterns = patterns
           .map { |p| grep_pattern_to_regexp(p) }
@@ -48,6 +72,13 @@ module DeltaTest
 
     private
 
+      ###
+      # Convert file wildcard pattern to a regular expression
+      #
+      # @params {String} pattern
+      #
+      # @return {String}
+      ###
       def grep_pattern_to_regexp(pattern)
         pattern = Regexp.escape(pattern)
           .gsub('\*\*/', '.*/?')
