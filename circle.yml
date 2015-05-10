@@ -3,6 +3,9 @@ machine:
     version: 2.2.0
 
 dependencies:
+  cache_directories:
+    - vendor/bundle
+    - spec/rails/vendor/bundle
   post:
     - cd spec/rails && (bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs=4 --retry=3)
 
