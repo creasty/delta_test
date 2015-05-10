@@ -20,7 +20,7 @@ module DeltaTest
     def run(args)
       @args = args.dup
 
-      @command = @args.shift
+      @command = @args.shift unless '-' == @args[0].to_s[0]
       @options = parse_options!
 
       @list = RelatedSpecList.new
@@ -30,6 +30,10 @@ module DeltaTest
 
     def invoke
       begin
+        if @options['v']
+          exit_with_message(0, 'DeltaTest %s' % VERSION)
+        end
+
         case @command
         when 'list'
           do_list
