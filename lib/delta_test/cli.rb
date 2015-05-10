@@ -115,6 +115,8 @@ module DeltaTest
       spec_files = nil
       args = []
 
+      args << ('%s=%s' % [VERBOSE_FLAG, true]) if DeltaTest.verbose?
+
       if run_full_tests?
         args << ('%s=%s' % [ACTIVE_FLAG, true])
       else

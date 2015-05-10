@@ -6,7 +6,8 @@ require_relative 'delta_test/configuration'
 
 module DeltaTest
 
-  ACTIVE_FLAG = 'DELTA_TEST_ACTIVE'
+  ACTIVE_FLAG  = 'DELTA_TEST_ACTIVE'
+  VERBOSE_FLAG = 'DELTA_TEST_VERBOSE'
 
   class << self
 
@@ -36,7 +37,8 @@ module DeltaTest
     end
 
     def verbose?
-      !!@verbose
+      return @verbose unless @verbose.nil?
+      @verbose = (!ENV[VERBOSE_FLAG].nil? && ENV[VERBOSE_FLAG] !~ /0|false/i)
     end
 
     def log(*args)
