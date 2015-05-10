@@ -19,6 +19,7 @@ module DeltaTest
       files
       patterns
       exclude_patterns
+      custom_mappings
     ]
 
     # for precalculated values
@@ -34,6 +35,7 @@ module DeltaTest
         c.files            = []
         c.patterns         = []
         c.exclude_patterns = []
+        c.custom_mappings  = {}
       end
     end
 
@@ -72,6 +74,14 @@ module DeltaTest
 
       unless self.exclude_patterns.is_a?(Array)
         raise ValidationError.new(:exclude_patterns, 'need to be an array')
+      end
+
+      unless self.custom_mappings.is_a?(Hash)
+        raise ValidationError.new(:custom_mappings, 'need to be a hash')
+
+        unless self.custom_mappings.values.all? { |v| v.is_a?(Array) }
+          raise ValidationError.new(:custom_mappings, 'need to have an array in the contents')
+        end
       end
     end
 

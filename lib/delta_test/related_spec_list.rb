@@ -37,6 +37,12 @@ module DeltaTest
         spec_files << spec_file if related
       end
 
+      DeltaTest.config.custom_mappings.each do |spec_file, patterns|
+        if Utils.files_grep(@changed_files, patterns).any?
+          spec_files << spec_file
+        end
+      end
+
       spec_files
     end
 

@@ -25,6 +25,7 @@ describe DeltaTest::RelatedSpecList do
       table['spec/foo_spec.rb'] << 'lib/foo.rb'
       table['spec/bar_spec.rb'] << 'lib/bar.rb'
       table['spec/baz_spec.rb'] << 'lib/baz.rb'
+      table['spec/other_spec.rb']
       table['spec/mixed_spec.rb'] << 'lib/foo.rb'
       table['spec/mixed_spec.rb'] << 'lib/bar.rb'
 
@@ -131,6 +132,43 @@ describe DeltaTest::RelatedSpecList do
           'spec/mixed_spec.rb',
           'spec/baz_spec.rb',
         ]
+      end
+
+      it 'should be included' do
+        expect(list.related_spec_files).to eq(related_spec_files)
+      end
+
+    end
+
+    describe 'Custom dependents' do
+
+      let(:custom_mappings) do
+        {
+          'spec/other_spec.rb' => [
+            'config/locales/**/*.yml',
+          ]
+        }
+      end
+
+      let(:changed_files) do
+        [
+          'lib/foo.rb',
+          'config/locales/something/en.yml',
+        ]
+      end
+
+      let(:related_spec_files) do
+        Set[
+          'spec/foo_spec.rb',
+          'spec/mixed_spec.rb',
+          'spec/other_spec.rb',
+        ]
+      end
+
+      before do
+        DeltaTest.configure do |config|
+          config.custom_mappings = custom_mappings
+        end
       end
 
       it 'should be included' do
