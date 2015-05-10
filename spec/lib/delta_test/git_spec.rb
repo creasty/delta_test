@@ -63,6 +63,64 @@ describe DeltaTest::Git do
 
   end
 
+  describe '::rev_parse' do
+
+    let(:rev)     { 'HEAD' }
+    let(:command) { %Q{git rev-parse #{rev}} }
+    let(:out)     { '818b60efa12b4bd99815e9b550185d1fb6244663' }
+
+    it 'should raise an error if the command is not exist' do
+      allow(Open3).to receive(:capture3).with(command, any_args).and_raise
+
+      expect {
+        DeltaTest::Git.rev_parse(rev)
+      }.to raise_error
+    end
+
+    it 'should return a commit id if success' do
+      allow(Open3).to receive(:capture3).with(command, any_args).and_return(success_status)
+
+      expect(DeltaTest::Git.rev_parse(rev)).to eq(out)
+    end
+
+    it 'should return nil if error' do
+      allow(Open3).to receive(:capture3).with(command, any_args).and_return(error_status)
+
+      expect(DeltaTest::Git.rev_parse(rev)).to be_nil
+    end
+
+  end
+
+  describe '::same_commit?' do
+
+    let(:map) do
+      {
+        'master'      => '0000000000000000000000000000000000000000',
+        'HEAD'        => '1111111111111111111111111111111111111111',
+        'feature/foo' => '1111111111111111111111111111111111111111',
+      }
+    end
+
+    before do
+      map.each do |name, commit_id|
+        allow(DeltaTest::Git).to receive(:rev_parse).with(name).and_return(commit_id)
+      end
+    end
+
+    it 'should compare two names by thier commit ids' do
+      names = map.values
+      names.product(names).each do |r1, r2|
+        expect(DeltaTest::Git).to receive(:rev_parse).with(r1).ordered
+        expect(DeltaTest::Git).to receive(:rev_parse).with(r2).ordered
+
+        is_same = (map[r1] == map[r2])
+
+        expect(DeltaTest::Git.same_commit?(r1, r2)).to be(is_same)
+      end
+    end
+
+  end
+
   describe '::ls_files' do
 
     let(:command) { %q{git ls-files -z} }

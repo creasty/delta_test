@@ -15,6 +15,15 @@ module DeltaTest
         s.success? ? o.strip : nil
       end
 
+      def rev_parse(rev)
+        o, e, s = exec(%q{git rev-parse %s}, rev)
+        s.success? ? o.strip : nil
+      end
+
+      def same_commit?(r1, r2)
+        rev_parse(r1) == rev_parse(r2)
+      end
+
       def ls_files
         o, e, s = exec(%q{git ls-files -z})
         s.success? ? o.split("\x0") : []
