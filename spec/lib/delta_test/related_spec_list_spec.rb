@@ -24,6 +24,7 @@ describe DeltaTest::RelatedSpecList do
 
       table['spec/foo_spec.rb'] << 'lib/foo.rb'
       table['spec/bar_spec.rb'] << 'lib/bar.rb'
+      table['spec/baz_spec.rb'] << 'lib/baz.rb'
       table['spec/mixed_spec.rb'] << 'lib/foo.rb'
       table['spec/mixed_spec.rb'] << 'lib/bar.rb'
 
@@ -100,8 +101,42 @@ describe DeltaTest::RelatedSpecList do
       list.retrive_changed_files!(base, head)
     end
 
-    it 'should return a set of related spec files' do
-      expect(list.related_spec_files).to eq(Set['spec/foo_spec.rb', 'spec/mixed_spec.rb'])
+    describe 'Dependents' do
+
+      let(:related_spec_files) do
+        Set[
+          'spec/foo_spec.rb',
+          'spec/mixed_spec.rb',
+        ]
+      end
+
+      it 'should be included' do
+        expect(list.related_spec_files).to eq(related_spec_files)
+      end
+
+    end
+
+    describe 'Modified spec files' do
+
+      let(:changed_files) do
+        [
+          'lib/foo.rb',
+          'spec/baz_spec.rb',
+        ]
+      end
+
+      let(:related_spec_files) do
+        Set[
+          'spec/foo_spec.rb',
+          'spec/mixed_spec.rb',
+          'spec/baz_spec.rb',
+        ]
+      end
+
+      it 'should be included' do
+        expect(list.related_spec_files).to eq(related_spec_files)
+      end
+
     end
 
   end

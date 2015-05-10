@@ -31,9 +31,10 @@ module DeltaTest
       spec_files = Set.new
 
       @table.each do |spec_file, dependencies|
-        if (dependencies & @changed_files).any?
-          spec_files << spec_file
-        end
+        related = @changed_files.include?(spec_file) \
+          || (dependencies & @changed_files).any?
+
+        spec_files << spec_file if related
       end
 
       spec_files
