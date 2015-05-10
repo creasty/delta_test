@@ -1,0 +1,12 @@
+machine:
+  ruby:
+    version: 2.2.0
+
+dependencies:
+  post:
+    - cd spec/rails && bundle install
+
+test:
+  override:
+    - bundle exec rake test
+    - bundle exec rake rails:test
