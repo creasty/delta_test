@@ -138,7 +138,7 @@ module DeltaTest
       $stdout.sync = true
 
       Open3.popen3(args) do |i, o, e, w|
-        i.write(spec_files.join("\n")) if run_full_tests?
+        i.write(spec_files.join("\n")) if spec_files
         i.close
         o.each { |l| puts l }
         e.each { |l| $stderr.puts l }
