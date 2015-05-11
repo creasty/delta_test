@@ -31,7 +31,7 @@ describe DeltaTest::SpecHelpers do
     context 'before :all' do
 
       it 'should call it' do
-        expect(@rspec_example_group).to receive(:before).with(:context)
+        expect(@rspec_example_group).to receive(:before).with(:all)
         @rspec_example_group.extend DeltaTest::SpecHelpers
       end
 
@@ -45,7 +45,7 @@ describe DeltaTest::SpecHelpers do
     context 'after :all' do
 
       it 'should call it' do
-        expect(@rspec_example_group).to receive(:after).with(:context)
+        expect(@rspec_example_group).to receive(:after).with(:all)
         @rspec_example_group.extend DeltaTest::SpecHelpers
       end
 
