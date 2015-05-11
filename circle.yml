@@ -4,10 +4,9 @@ machine:
 
 dependencies:
   cache_directories:
-    - vendor/bundle
     - spec/rails/vendor/bundle
   post:
-    - bundle check --gemfile=spec/rails/Gemfile --path=spec/rails/vendor/bundle || bundle install --gemfile=spec/rails/Gemfile --path=spec/rails/vendor/bundle --jobs=4 --retry=3
+    - cd spec/rails && (bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs=4 --retry=3)
 
 test:
   override:
