@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    delta_test (0.0.1)
+    delta_test (0.1.0)
       ruby-prof
 
 GEM
