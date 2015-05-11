@@ -75,7 +75,7 @@ Advanced usage
 
 ```
 usage: delta_test <command> [--base=<base>] [--head=<head>] [--verbose] [<args>]
-                  [-v]
+                  [-v|--version]
 
 options:
     --base=<base>  A branch or a commit id to diff from.
@@ -94,7 +94,7 @@ commands:
 
     table          Show dependencies table.
 
-    exec <script>  Rxecute test script using delta_test.
+    exec <script>  Execute test script using delta_test.
                    Run command something like `delta_test list | xargs script'.
 ```
 
