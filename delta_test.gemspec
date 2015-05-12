@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = DeltaTest::VERSION
   spec.authors       = ['Yuki Iwanaga']
   spec.email         = ['yuki@creasty.com']
-  spec.summary       = %q{delta_test analyzes your tests and runs only related tests for your file changes}
+  spec.summary       = %q{It's kinda "delta update" for RSpec}
   spec.description   = %q{delta_test analyzes your tests and runs only related tests for your file changes}
   spec.homepage      = 'http://github.com/creasty/delta_test'
   spec.license       = 'MIT'

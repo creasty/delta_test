@@ -5,11 +5,13 @@ delta_test
 [![Code Climate](https://codeclimate.com/github/creasty/delta_test/badges/gpa.svg)](https://codeclimate.com/github/creasty/delta_test)
 [![Test Coverage](https://codeclimate.com/github/creasty/delta_test/badges/coverage.svg)](https://codeclimate.com/github/creasty/delta_test/coverage)
 
-**delta_test** basically do two things:
+**It's kinda "[delta Update](http://en.wikipedia.org/wiki/Delta_update)" for RSpec.**
+
+It basically do two things:
 
 1. Analyzes your tests and creates a dependencies table
 2. Based on the dependencies table and git diff,  
-   it only runs partial specs that are considered to be related to the file changes.
+   only runs partial specs that are considered to be related to the file changes.
 
 
 Setup
