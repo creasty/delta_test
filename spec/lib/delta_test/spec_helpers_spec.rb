@@ -16,6 +16,10 @@ describe DeltaTest::SpecHelpers do
         def metadata
           { file_path: 'spec/foo/bar.rb' }
         end
+
+        def file_path
+          metadata[:file_path]
+        end
       end
     end
 
