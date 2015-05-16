@@ -11,7 +11,7 @@ module DeltaTest
       $delta_test_generator.setup!
 
       example.before(:all) do
-        $delta_test_generator.start!(example.metadata[:file_path])
+        $delta_test_generator.start!(example.file_path)
       end
 
       example.after(:all) do
