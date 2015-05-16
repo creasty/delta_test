@@ -174,8 +174,11 @@ module DeltaTest
       Open3.popen3(args) do |i, o, e, w|
         i.write(spec_files.join("\n")) if spec_files
         i.close
+
         o.each { |l| puts l }
         e.each { |l| $stderr.puts l }
+
+        exit w.value.exitstatus
       end
     end
 
