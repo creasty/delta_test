@@ -1,4 +1,4 @@
-#include "delta_test.h"
+#include "delta_test_native.h"
 #include <assert.h>
 
 #define DEBUG 0
@@ -193,7 +193,7 @@ dt_profiler_result(VALUE self)
 
 /*=== Define
 ==============================================================================================*/
-void Init_delta_test()
+void Init_delta_test_native()
 {
     mDeltaTest = rb_define_module("DeltaTest");
     cProfiler = rb_define_class_under(mDeltaTest, "Profiler", rb_cObject);

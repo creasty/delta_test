@@ -1,5 +1,5 @@
-#ifndef __DELTA_TEST_H_LOADED__
-#define __DELTA_TEST_H_LOADED__
+#ifndef __DELTA_TEST_NATIVE_H_LOADED__
+#define __DELTA_TEST_NATIVE_H_LOADED__
 
 #include <ruby.h>
 #include <stdio.h>
@@ -16,4 +16,4 @@ typedef struct {
     VALUE result;
 } dt_profiler_t;
 
-#endif // __DELTA_TEST_H_LOADED__
+#endif // __DELTA_TEST_NATIVE_H_LOADED__

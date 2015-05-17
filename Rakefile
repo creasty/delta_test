@@ -2,8 +2,9 @@ require 'bundler/gem_tasks'
 require 'rake/extensiontask'
 
 GEM_NAME = 'delta_test'
+SO_NAME  = 'delta_test_native'
 
-Rake::ExtensionTask.new GEM_NAME do |ext|
+Rake::ExtensionTask.new SO_NAME do |ext|
   ext.ext_dir = "ext/#{GEM_NAME}"
   ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
   ext.cross_compile = true

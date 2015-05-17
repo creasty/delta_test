@@ -9,4 +9,4 @@ end
   'RUBY_VERSION' => RUBY_VERSION.gsub('.', '')
 }.each { |k, v| $defs.push << '-D%s=%s' % [k, v] }
 
-create_makefile('delta_test')
+create_makefile('delta_test_native')
