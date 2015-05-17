@@ -31,7 +31,7 @@ describe DeltaTest::Generator do
 
   after do
     DeltaTest.active = false
-    RubyProf.stop if RubyProf.running?
+    DeltaTest::Profiler.clean!
   end
 
   describe '#setup!' do
@@ -54,13 +54,13 @@ describe DeltaTest::Generator do
     end
 
     it 'should start ruby-prof' do
-      expect(RubyProf.running?).to be(false)
+      expect(generator.profiler.running?).to be(false)
 
       expect {
         generator.start!(spec_file)
       }.not_to raise_error
 
-      expect(RubyProf.running?).to be(true)
+      expect(generator.profiler.running?).to be(true)
     end
 
     describe '#current_spec_file' do
@@ -88,11 +88,11 @@ describe DeltaTest::Generator do
     end
 
     it 'should stop ruby-prof' do
-      expect(RubyProf.running?).to be(false)
+      expect(generator.profiler.running?).to be(false)
       generator.start!(spec_file)
-      expect(RubyProf.running?).to be(true)
+      expect(generator.profiler.running?).to be(true)
       generator.stop!
-      expect(RubyProf.running?).to be(false)
+      expect(generator.profiler.running?).to be(false)
     end
 
     it 'should unset current_spec_file' do
@@ -172,11 +172,11 @@ describe DeltaTest::Generator do
       end
 
       it 'should stop ruby-prof if running' do
-        expect(RubyProf.running?).to be(false)
+        expect(generator.profiler.running?).to be(false)
         generator.start!(spec_file)
-        expect(RubyProf.running?).to be(true)
+        expect(generator.profiler.running?).to be(true)
         generator.teardown!
-        expect(RubyProf.running?).to be(false)
+        expect(generator.profiler.running?).to be(false)
       end
 
       it 'should save the table into a file' do

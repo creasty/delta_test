@@ -7,6 +7,7 @@ dependencies:
     - spec/rails/vendor/bundle
   post:
     - cd spec/rails && (bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs=4 --retry=3)
+    - bundle exec rake compile
 
 test:
   override:

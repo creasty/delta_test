@@ -4,6 +4,14 @@ require_relative 'delta_test/version'
 require_relative 'delta_test/errors'
 require_relative 'delta_test/configuration'
 
+# Load the C binding
+begin
+  RUBY_VERSION =~ /(\d+.\d+)/
+  require_relative "#{$1}/delta_test_native"
+rescue LoadError
+  require_relative 'delta_test_native'
+end
+
 module DeltaTest
 
   ACTIVE_FLAG  = 'DELTA_TEST_ACTIVE'
