@@ -4,6 +4,13 @@ require_relative 'delta_test/version'
 require_relative 'delta_test/errors'
 require_relative 'delta_test/configuration'
 
+begin
+  RUBY_VERSION =~ /(\d+.\d+)/
+  require "#{$1}/delta_test"
+rescue LoadError
+  require 'delta_test'
+end
+
 module DeltaTest
 
   ACTIVE_FLAG  = 'DELTA_TEST_ACTIVE'
