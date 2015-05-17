@@ -1,5 +1,3 @@
-require 'pathname'
-
 require_relative 'delta_test/version'
 require_relative 'delta_test/errors'
 require_relative 'delta_test/configuration'
