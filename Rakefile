@@ -1,13 +1,13 @@
 require 'bundler/gem_tasks'
 require 'rake/extensiontask'
 
-SO_NAME = 'delta_test'
-default_spec = Gem::Specification.load("#{SO_NAME}.gemspec")
+GEM_NAME = 'delta_test'
+default_spec = Gem::Specification.load("#{GEM_NAME}.gemspec")
 
-Rake::ExtensionTask.new 'delta_test' do |ext|
+Rake::ExtensionTask.new GEM_NAME do |ext|
   ext.gem_spec = default_spec
-  ext.name = SO_NAME
-  ext.ext_dir = "ext/#{SO_NAME}"
+  ext.name = GEM_NAME
+  ext.ext_dir = "ext/#{GEM_NAME}"
   ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
   ext.cross_compile = true
   ext.cross_platform = ['x86-mswin32-60', 'x86-mingw32-60']
