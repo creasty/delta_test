@@ -14,7 +14,7 @@ VALUE cProfiler;
 static dt_profiler_t*
 dt_profiler_get_profile(VALUE self)
 {
-    // Can't use Data_Get_Struct because that triggers the event hook
+    // Can't use Data_Get_Struct because that triggers the event hook,
     // ending up in endless recursion.
     return (dt_profiler_t*)RDATA(self)->data;
 }
@@ -71,24 +71,17 @@ dt_profiler_uninstall_hook()
 
 /*=== Memory
 ==============================================================================================*/
-static int
-mark_threads(st_data_t key, st_data_t value, st_data_t result)
-{
-    // thread_data_t *thread = (thread_data_t *) value;
-    // dt_profiler_thread_mark(thread);
-    return ST_CONTINUE;
-}
-
 static void
 dt_profiler_mark(dt_profiler_t *profile)
 {
-    // st_foreach(profile->threads_tbl, mark_threads, 0);
+    if (profile->result != Qnil) {
+        rb_gc_mark(profile->result);
+    }
 }
 
 static void
 dt_profiler_free(dt_profiler_t *profile)
 {
-    /*obj_free(profile->result);*/
     profile->result = Qnil;
 
     xfree(profile);
@@ -119,9 +112,6 @@ dt_profiler_allocate(VALUE klass)
 static VALUE
 dt_profiler_initialize(VALUE self)
 {
-    // dt_profiler_t* profile = dt_profiler_get_profile(self);
-    // profile->measurer = dt_profiler_get_measurer();
-
     return self;
 }
 
@@ -151,8 +141,8 @@ dt_profiler_start(VALUE self)
     dt_profiler_t* profile = dt_profiler_get_profile(self);
 
     if (profile->running == Qfalse) {
-      profile->running = Qtrue;
-      dt_profiler_install_hook(self);
+        profile->running = Qtrue;
+        dt_profiler_install_hook(self);
     }
 
     return self;
@@ -169,8 +159,8 @@ dt_profiler_stop(VALUE self)
     dt_profiler_t* profile = dt_profiler_get_profile(self);
 
     if (profile->running == Qtrue) {
-      dt_profiler_uninstall_hook();
-      profile->running = Qfalse;
+        dt_profiler_uninstall_hook();
+        profile->running = Qfalse;
     }
 
     return self;
