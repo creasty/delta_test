@@ -12,18 +12,5 @@ module DeltaTest
       Set.new(self.result)
     end
 
-    def self.profile
-      profile = new
-      profile.start
-
-      begin
-        yield
-      ensure
-        profile.stop
-      end
-
-      profile.result
-    end
-
   end
 end
