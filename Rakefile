@@ -1,16 +1,8 @@
 require 'bundler/gem_tasks'
 require 'rake/extensiontask'
 
-SO_NAME = 'delta_test'
-default_spec = Gem::Specification.load("#{SO_NAME}.gemspec")
-
 Rake::ExtensionTask.new 'delta_test' do |ext|
-  ext.gem_spec = default_spec
-  ext.name = SO_NAME
-  ext.ext_dir = "ext/#{SO_NAME}"
-  ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
-  ext.cross_compile = true
-  ext.cross_platform = ['x86-mswin32-60', 'x86-mingw32-60']
+  ext.lib_dir = 'lib/delta_test'
 end
 
 desc 'Run unit tests'
