@@ -4,7 +4,7 @@ module DeltaTest
   module SpecHelpers
 
     ###
-    # Setup generator and hook analyzer on contexts
+    # Setup generator and hook profiler on contexts
     ###
     def use_delta_test(example)
       $delta_test_generator ||= DeltaTest::Generator.new

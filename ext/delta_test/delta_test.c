@@ -1,7 +1,7 @@
 #include "delta_test.h"
 #include <assert.h>
 
-#define DEBUG 1
+#define DEBUG 0
 
 VALUE mDeltaTest;
 VALUE cProfiler;
@@ -125,6 +125,18 @@ dt_profiler_initialize(VALUE self)
     return self;
 }
 
+/**
+ * .clean! -> self
+ *
+ * Uninstalls event hook
+ */
+static VALUE
+dt_profiler_clean(VALUE self)
+{
+    dt_profiler_uninstall_hook();
+    return self;
+}
+
 
 /*=== Instance methods
 ==============================================================================================*/
@@ -138,14 +150,10 @@ dt_profiler_start(VALUE self)
 {
     dt_profiler_t* profile = dt_profiler_get_profile(self);
 
-    if (profile->running == Qtrue) {
-        rb_raise(rb_eRuntimeError, "already started");
+    if (profile->running == Qfalse) {
+      profile->running = Qtrue;
+      dt_profiler_install_hook(self);
     }
-
-    profile->running = Qtrue;
-
-    dt_profiler_uninstall_hook();
-    dt_profiler_install_hook(self);
 
     return self;
 }
@@ -160,12 +168,10 @@ dt_profiler_stop(VALUE self)
 {
     dt_profiler_t* profile = dt_profiler_get_profile(self);
 
-    if (profile->running == Qfalse) {
-        rb_raise(rb_eRuntimeError, "not yet started");
+    if (profile->running == Qtrue) {
+      dt_profiler_uninstall_hook();
+      profile->running = Qfalse;
     }
-
-    dt_profiler_uninstall_hook();
-    profile->running = Qfalse;
 
     return self;
 }
@@ -203,6 +209,8 @@ void Init_delta_test()
     cProfiler = rb_define_class_under(mDeltaTest, "Profiler", rb_cObject);
 
     rb_define_alloc_func(cProfiler, dt_profiler_allocate);
+
+    rb_define_singleton_method(cProfiler, "clean!", dt_profiler_clean, 0);
 
     rb_define_method(cProfiler, "initialize", dt_profiler_initialize, 0);
     rb_define_method(cProfiler, "start", dt_profiler_start, 0);
