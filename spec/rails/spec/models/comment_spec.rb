@@ -1,0 +1,3 @@
+describe Comment do
+
+end
