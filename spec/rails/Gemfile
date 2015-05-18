@@ -2,14 +2,17 @@ source 'https://rubygems.org'
 
 gem 'rails', '4.2.1'
 
+gem 'haml-rails'
 gem 'sqlite3'
 gem 'therubyracer', platforms: :ruby
-gem 'haml-rails'
 
 group :development, :test do
+  gem 'database_cleaner'
+  gem 'factory_girl'
+  gem 'minitest'
   gem 'pry-rails'
-  gem 'spring'
   gem 'rspec-rails', '>= 3.2'
+  gem 'spring'
 
   gem 'delta_test', path: '../..'
 end
