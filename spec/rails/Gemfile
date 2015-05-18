@@ -12,6 +12,7 @@ group :development, :test do
   gem 'minitest'
   gem 'pry-rails'
   gem 'rspec-rails', '>= 3.2'
+  gem 'spork'
   gem 'spring'
 
   gem 'delta_test', path: '../..'
