@@ -50,7 +50,7 @@ dt_profiler_list_clean(dt_profiler_t *profile)
 
 /*  To struct
 -----------------------------------------------*/
-static dt_profiler_t*
+static dt_profiler_t *
 dt_profiler_get_profile(VALUE self)
 {
     // Can't use Data_Get_Struct because that triggers the event hook,
@@ -69,19 +69,19 @@ dt_profiler_event_hook(rb_event_flag_t event, VALUE data, VALUE self, ID mid, VA
         rb_frame_method_id_and_class(&mid, &klass);
     }
 
-    dt_profiler_t* profile = dt_profiler_get_profile(data);
+    dt_profiler_t *profile = dt_profiler_get_profile(data);
 
     // Special case
     if (self == mDeltaTest || klass == cProfiler) {
         return;
     }
 
-    const char* source_file = rb_sourcefile();
+    const char *source_file = rb_sourcefile();
     dt_profiler_list_add(profile, source_file);
 
 #if DEBUG
-    const char* class_name   = NULL;
-    const char* method_name  = rb_id2name(mid);
+    const char *class_name   = NULL;
+    const char *method_name  = rb_id2name(mid);
     unsigned int source_line = rb_sourceline();
 
     if (klass != 0) {
@@ -120,7 +120,7 @@ dt_profiler_free(dt_profiler_t *profile)
 static VALUE
 dt_profiler_allocate(VALUE klass)
 {
-    dt_profiler_t* profile;
+    dt_profiler_t *profile;
     VALUE profile_obj = Data_Make_Struct(klass, dt_profiler_t, 0, dt_profiler_free, profile);
 
     profile->running = Qfalse;
@@ -167,7 +167,7 @@ dt_profiler_clean(VALUE self)
 static VALUE
 dt_profiler_start(VALUE self)
 {
-    dt_profiler_t* profile = dt_profiler_get_profile(self);
+    dt_profiler_t *profile = dt_profiler_get_profile(self);
 
     dt_profiler_list_clean(profile);
 
@@ -187,7 +187,7 @@ dt_profiler_start(VALUE self)
 static VALUE
 dt_profiler_stop(VALUE self)
 {
-    dt_profiler_t* profile = dt_profiler_get_profile(self);
+    dt_profiler_t *profile = dt_profiler_get_profile(self);
 
     if (profile->running == Qtrue) {
         dt_profiler_uninstall_hook();
@@ -205,7 +205,7 @@ dt_profiler_stop(VALUE self)
 static VALUE
 dt_profiler_running(VALUE self)
 {
-    dt_profiler_t* profile = dt_profiler_get_profile(self);
+    dt_profiler_t *profile = dt_profiler_get_profile(self);
     return profile->running;
 }
 
@@ -217,7 +217,7 @@ dt_profiler_running(VALUE self)
 static VALUE
 dt_profiler_result(VALUE self)
 {
-    dt_profiler_t* profile = dt_profiler_get_profile(self);
+    dt_profiler_t *profile = dt_profiler_get_profile(self);
     dt_profiler_list_t *list = profile->list_head;
 
     VALUE result = rb_ary_new();
@@ -228,7 +228,6 @@ dt_profiler_result(VALUE self)
 
     while (list) {
         rb_ary_push(result, rb_str_new2(list->file_path));
-
         list = list->next;
     }
 
