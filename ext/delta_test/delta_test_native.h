@@ -9,7 +9,7 @@
 #endif
 
 extern VALUE mDeltaTest;
-extern VALUE cProfiler;
+extern VALUE mProfiler;
 
 typedef struct _dt_profiler_list_t {
     const char *file_path;
