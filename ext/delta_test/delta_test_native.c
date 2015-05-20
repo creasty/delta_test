@@ -163,6 +163,7 @@ dt_profiler_last_result(VALUE self)
     }
 
     VALUE result = rb_ary_new();
+    rb_gc_mark(result);
 
     while (list) {
         rb_ary_push(result, rb_str_new2(list->file_path));
