@@ -11,9 +11,15 @@
 extern VALUE mDeltaTest;
 extern VALUE cProfiler;
 
+typedef struct _dt_profiler_list_t {
+    const char *file_path;
+    struct _dt_profiler_list_t *next;
+} dt_profiler_list_t;
+
 typedef struct {
     VALUE running;
-    VALUE result;
+    dt_profiler_list_t *list_head;
+    dt_profiler_list_t *list_tail;
 } dt_profiler_t;
 
 #endif // __DELTA_TEST_NATIVE_H_LOADED__

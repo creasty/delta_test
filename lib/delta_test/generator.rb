@@ -44,6 +44,7 @@ module DeltaTest
       DeltaTest.log('--- start!(%s)' % spec_file)
 
       @current_spec_file = Utils.regulate_filepath(spec_file, DeltaTest.config.base_path).to_s
+
       @profiler.start
     end
 
@@ -53,12 +54,12 @@ module DeltaTest
     def stop!
       return unless DeltaTest.active?
 
+      @profiler.stop
+
       DeltaTest.log('--- stop!')
 
       spec_file = @current_spec_file
       @current_spec_file = nil
-
-      @profiler.stop
 
       if spec_file
         @profiler.related_source_files.each do |file|

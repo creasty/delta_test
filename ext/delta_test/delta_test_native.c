@@ -9,6 +9,45 @@ VALUE cProfiler;
 
 /*=== Helpers
 ==============================================================================================*/
+/*  List
+-----------------------------------------------*/
+static void
+dt_profiler_list_add(dt_profiler_t *profile, const char *file_path)
+{
+    dt_profiler_list_t *list = (dt_profiler_list_t *)malloc(sizeof(dt_profiler_list_t));
+
+    list->file_path = file_path;
+    list->next = NULL;
+
+    if (!profile->list_head) {
+        profile->list_head = list;
+    }
+
+    if (profile->list_tail) {
+        profile->list_tail->next = list;
+    }
+
+    profile->list_tail = list;
+}
+
+static void
+dt_profiler_list_clean(dt_profiler_t *profile)
+{
+    dt_profiler_list_t *tmp;
+    dt_profiler_list_t *list = profile->list_head;
+
+    profile->list_head = NULL;
+    profile->list_tail = NULL;
+
+    while (list) {
+        tmp = list->next;
+        list->next = NULL;
+        free(list);
+        list = tmp;
+    }
+}
+
+
 /*  To struct
 -----------------------------------------------*/
 static dt_profiler_t*
@@ -38,11 +77,11 @@ dt_profiler_event_hook(rb_event_flag_t event, VALUE data, VALUE self, ID mid, VA
     }
 
     const char* source_file = rb_sourcefile();
-    rb_ary_push(profile->result, rb_str_new2(source_file));
+    dt_profiler_list_add(profile, source_file);
 
 #if DEBUG
-    const char* class_name = NULL;
-    const char* method_name = rb_id2name(mid);
+    const char* class_name   = NULL;
+    const char* method_name  = rb_id2name(mid);
     unsigned int source_line = rb_sourceline();
 
     if (klass != 0) {
@@ -72,33 +111,23 @@ dt_profiler_uninstall_hook()
 /*=== Memory
 ==============================================================================================*/
 static void
-dt_profiler_mark(dt_profiler_t *profile)
-{
-    if (profile->result != Qnil) {
-        rb_gc_mark(profile->result);
-    }
-}
-
-static void
 dt_profiler_free(dt_profiler_t *profile)
 {
-    profile->result = Qnil;
-
+    dt_profiler_list_clean(profile);
     xfree(profile);
 }
 
 static VALUE
 dt_profiler_allocate(VALUE klass)
 {
-    VALUE result;
     dt_profiler_t* profile;
-
-    result = Data_Make_Struct(klass, dt_profiler_t, dt_profiler_mark, dt_profiler_free, profile);
+    VALUE profile_obj = Data_Make_Struct(klass, dt_profiler_t, 0, dt_profiler_free, profile);
 
     profile->running = Qfalse;
-    profile->result = rb_ary_new();
+    profile->list_head = NULL;
+    profile->list_tail = NULL;
 
-    return result;
+    return profile_obj;
 }
 
 
@@ -139,6 +168,8 @@ static VALUE
 dt_profiler_start(VALUE self)
 {
     dt_profiler_t* profile = dt_profiler_get_profile(self);
+
+    dt_profiler_list_clean(profile);
 
     if (profile->running == Qfalse) {
         profile->running = Qtrue;
@@ -187,7 +218,21 @@ static VALUE
 dt_profiler_result(VALUE self)
 {
     dt_profiler_t* profile = dt_profiler_get_profile(self);
-    return profile->result;
+    dt_profiler_list_t *list = profile->list_head;
+
+    VALUE result = rb_ary_new();
+
+    if (profile->running) {
+        return result;
+    }
+
+    while (list) {
+        rb_ary_push(result, rb_str_new2(list->file_path));
+
+        list = list->next;
+    }
+
+    return result;
 }
 
 
