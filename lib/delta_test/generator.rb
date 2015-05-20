@@ -64,6 +64,8 @@ module DeltaTest
           @table.add(spec_file, file)
         end
       end
+
+      DeltaTest::Profiler.clean!
     end
 
     ###
