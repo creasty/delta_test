@@ -220,11 +220,11 @@ dt_profiler_result(VALUE self)
     dt_profiler_t *profile = dt_profiler_get_profile(self);
     dt_profiler_list_t *list = profile->list_head;
 
-    VALUE result = rb_ary_new();
-
-    if (profile->running) {
-        return result;
+    if (profile->running || !list) {
+        return Qnil;
     }
+
+    VALUE result = rb_ary_new();
 
     while (list) {
         rb_ary_push(result, rb_str_new2(list->file_path));

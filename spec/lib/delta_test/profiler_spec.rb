@@ -39,8 +39,7 @@ describe DeltaTest::Profiler do
     end
 
     it 'should set result' do
-      expect(profiler.result).to be_a(Array)
-      expect(profiler.result).to be_empty
+      expect(profiler.result).to be_nil
 
       profiler.start
 
