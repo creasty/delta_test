@@ -1,8 +1,6 @@
 #include "delta_test_native.h"
 #include <assert.h>
 
-#define DEBUG 0
-
 VALUE mDeltaTest;
 VALUE cProfiler;
 
@@ -64,35 +62,13 @@ dt_profiler_get_profile(VALUE self)
 static void
 dt_profiler_event_hook(rb_event_flag_t event, VALUE data, VALUE self, ID mid, VALUE klass)
 {
-    // If we don't have a valid method id, try to retrieve one
-    if (mid == 0) {
-        rb_frame_method_id_and_class(&mid, &klass);
-    }
-
     dt_profiler_t *profile = dt_profiler_get_profile(data);
 
-    // Special case
     if (self == mDeltaTest || klass == cProfiler) {
         return;
     }
 
-    const char *source_file = rb_sourcefile();
-    dt_profiler_list_add(profile, source_file);
-
-#if DEBUG
-    const char *class_name   = NULL;
-    const char *method_name  = rb_id2name(mid);
-    unsigned int source_line = rb_sourceline();
-
-    if (klass != 0) {
-        klass = (BUILTIN_TYPE(klass) == T_ICLASS ? RBASIC(klass)->klass : klass);
-    }
-
-    class_name = rb_class2name(klass);
-
-    printf("%s:%2d  %s#%s\n", source_file, source_line, class_name, method_name);
-    fflush(stdout);
-#endif
+    dt_profiler_list_add(profile, rb_sourcefile());
 }
 
 static void
