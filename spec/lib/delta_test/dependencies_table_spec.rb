@@ -53,6 +53,41 @@ describe DeltaTest::DependenciesTable do
 
   end
 
+  describe '#reverse_merge!' do
+
+    let(:one_table)   { DeltaTest::DependenciesTable.new }
+    let(:other_table) { DeltaTest::DependenciesTable.new }
+
+    it 'should raise an error if other is not an instance of DependenciesTable' do
+      expect {
+        one_table.reverse_merge!({})
+      }.to raise_error(TypeError)
+    end
+
+    it 'should merge other table into self' do
+      one_table[:foo] << 1
+      one_table[:foo] << 2
+      one_table[:bar] << 3
+      one_table[:one] << 4
+
+      other_table[:foo] << 10
+      other_table[:foo] << 20
+      other_table[:bar] << 30
+      other_table[:other] << 40
+
+      expect {
+        one_table.reverse_merge!(other_table)
+      }.not_to raise_error
+
+      expect(one_table.keys).to eq(one_table.keys | other_table.keys)
+      expect(one_table[:foo]).to eq(Set[1, 2, 10, 20])
+      expect(one_table[:bar]).to eq(Set[3, 30])
+      expect(one_table[:one]).to eq(Set[4])
+      expect(one_table[:other]).to eq(Set[40])
+    end
+
+  end
+
   describe '#without_default_proc' do
 
     it 'should reset default_proc temporary inside a block' do

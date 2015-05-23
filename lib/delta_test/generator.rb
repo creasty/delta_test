@@ -28,7 +28,7 @@ module DeltaTest
 
       @current_spec_file = nil
 
-      hook_on_exit { teardown! } if _auto_teardown
+      at_exit { teardown! } if _auto_teardown
     end
 
     ###
@@ -79,24 +79,28 @@ module DeltaTest
       DeltaTest.log('--- teardown!')
 
       Profiler.clean!
-      @table.dump(DeltaTest.config.table_file_path)
-    end
 
-
-  private
-
-    ###
-    # Handle exit event
-    ###
-    def hook_on_exit(&block)
-      at_exit do
-        if defined?(ParallelTests)
-          break unless ParallelTests.first_process?
+      if defined?(ParallelTests)
+        if ParallelTests.first_process?
           ParallelTests.wait_for_other_processes_to_finish
-        end
 
-        block.call
+          table_file_path = DeltaTest.config.table_file_path
+            .sub_ext('.parallel-tests-*')
+
+          Dir.glob(table_file_path).each do |part_file|
+            part_table = DependenciesTable.load(part_file)
+            @table.merge_table!(part_table)
+          end
+        else
+          table_file_path = DeltaTest.config.table_file_path
+            .sub_ext('.parallel-tests-%s' % ENV['TEST_ENV_NUMBER'])
+
+          @table.dump(table_file_path)
+          return
+        end
       end
+
+      @table.dump(DeltaTest.config.table_file_path)
     end
 
   end
