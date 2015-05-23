@@ -53,14 +53,14 @@ describe DeltaTest::Generator do
       generator.setup!(false)  # disable tearadown
     end
 
-    it 'should start ruby-prof' do
-      expect(generator.profiler.running?).to be(false)
+    it 'should start the profiler' do
+      expect(DeltaTest::Profiler.running?).to be(false)
 
       expect {
         generator.start!(spec_file)
       }.not_to raise_error
 
-      expect(generator.profiler.running?).to be(true)
+      expect(DeltaTest::Profiler.running?).to be(true)
     end
 
     describe '#current_spec_file' do
@@ -87,12 +87,12 @@ describe DeltaTest::Generator do
       generator.setup!(false)  # disable tearadown
     end
 
-    it 'should stop ruby-prof' do
-      expect(generator.profiler.running?).to be(false)
+    it 'should stop the profiler' do
+      expect(DeltaTest::Profiler.running?).to be(false)
       generator.start!(spec_file)
-      expect(generator.profiler.running?).to be(true)
+      expect(DeltaTest::Profiler.running?).to be(true)
       generator.stop!
-      expect(generator.profiler.running?).to be(false)
+      expect(DeltaTest::Profiler.running?).to be(false)
     end
 
     it 'should unset current_spec_file' do
@@ -171,12 +171,12 @@ describe DeltaTest::Generator do
         generator.setup!(false)  # disable tearadown
       end
 
-      it 'should stop ruby-prof if running' do
-        expect(generator.profiler.running?).to be(false)
+      it 'should stop the profiler if running' do
+        expect(DeltaTest::Profiler.running?).to be(false)
         generator.start!(spec_file)
-        expect(generator.profiler.running?).to be(true)
+        expect(DeltaTest::Profiler.running?).to be(true)
         generator.teardown!
-        expect(generator.profiler.running?).to be(false)
+        expect(DeltaTest::Profiler.running?).to be(false)
       end
 
       it 'should save the table into a file' do

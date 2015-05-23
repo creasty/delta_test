@@ -8,12 +8,11 @@ module DeltaTest
 
     attr_reader *%i[
       current_spec_file
-      profiler
       table
     ]
 
     ###
-    # Setup profiler and table
+    # Setup table
     #
     # @params {Boolean} _auto_teardown
     ###
@@ -25,8 +24,7 @@ module DeltaTest
 
       DeltaTest.log('--- setup!')
 
-      @profiler = Profiler.new
-      @table    = DependenciesTable.load(DeltaTest.config.table_file_path)
+      @table = DependenciesTable.load(DeltaTest.config.table_file_path)
 
       @current_spec_file = nil
 
@@ -44,7 +42,8 @@ module DeltaTest
       DeltaTest.log('--- start!(%s)' % spec_file)
 
       @current_spec_file = Utils.regulate_filepath(spec_file, DeltaTest.config.base_path).to_s
-      @profiler.start
+
+      Profiler.start!
     end
 
     ###
@@ -53,18 +52,20 @@ module DeltaTest
     def stop!
       return unless DeltaTest.active?
 
+      Profiler.stop!
+
       DeltaTest.log('--- stop!')
 
       spec_file = @current_spec_file
       @current_spec_file = nil
 
-      @profiler.stop
-
       if spec_file
-        @profiler.related_source_files.each do |file|
+        Profiler.last_result.each do |file|
           @table.add(spec_file, file)
         end
       end
+
+      DeltaTest::Profiler.clean!
     end
 
     ###
@@ -77,7 +78,7 @@ module DeltaTest
 
       DeltaTest.log('--- teardown!')
 
-      @profiler.stop
+      Profiler.clean!
       @table.dump(DeltaTest.config.table_file_path)
     end
 
