@@ -10,71 +10,6 @@ static VALUE profile_obj;
 
 /*=== Helpers
 ==============================================================================================*/
-/*  List
------------------------------------------------*/
-static dt_profiler_list_t *
-dt_profiler_list_create()
-{
-    dt_profiler_list_t *list = (dt_profiler_list_t *)malloc(sizeof(dt_profiler_list_t));
-
-    list->file_path = NULL;
-    list->next      = NULL;
-
-    return list;
-}
-
-static void
-dt_profiler_list_add(const char *file_path)
-{
-    dt_profiler_list_t *list = NULL;
-
-    if (profile->list_tail) {
-        if (!profile->list_tail->file_path) {
-          list = profile->list_tail;
-          profile->list_head = list;
-        } else if (profile->list_tail->next) {
-            list = profile->list_tail->next;
-        } else {
-            list = dt_profiler_list_create();
-            profile->list_tail->next = list;
-        }
-    } else {
-        list = dt_profiler_list_create();
-        profile->list_head = list;
-    }
-
-    profile->list_tail = list;
-
-    list->file_path = file_path;
-}
-
-static void
-dt_profiler_list_clean(bool is_free_list)
-{
-    dt_profiler_list_t *tmp;
-    dt_profiler_list_t *list = profile->list_head;
-
-    if (is_free_list) {
-        profile->list_head = NULL;
-        profile->list_tail = NULL;
-
-        while (list) {
-            tmp = list->next;
-            list->next = NULL;
-            free(list);
-            list = tmp;
-        }
-    } else {
-        profile->list_tail = profile->list_head;
-
-        while (list) {
-            list->file_path = NULL;
-            list = list->next;
-        }
-    }
-}
-
-
 /*  Event hook
 -----------------------------------------------*/
 static void
@@ -84,7 +19,7 @@ dt_profiler_event_hook(rb_event_flag_t event, VALUE data, VALUE self, ID mid, VA
         return;
     }
 
-    dt_profiler_list_add(rb_sourcefile());
+    st_insert(profile->file_table, (st_data_t)rb_sourcefile(), Qtrue);
 }
 
 static void
@@ -107,10 +42,8 @@ dt_profiler_init()
 {
     profile = (dt_profiler_t *)malloc(sizeof(dt_profiler_t));
 
-    profile->running   = Qfalse;
-
-    profile->list_head = NULL;
-    profile->list_tail = NULL;
+    profile->running    = Qfalse;
+    profile->file_table = st_init_strtable();
 }
 
 
@@ -124,9 +57,11 @@ dt_profiler_init()
 static VALUE
 dt_profiler_clean(VALUE self)
 {
+    st_clear(profile->file_table);
+
     profile->running = Qfalse;
-    dt_profiler_list_clean(false);
     dt_profiler_uninstall_hook();
+
     return self;
 }
 
@@ -138,7 +73,7 @@ dt_profiler_clean(VALUE self)
 static VALUE
 dt_profiler_start(VALUE self)
 {
-    dt_profiler_list_clean(false);
+    st_clear(profile->file_table);
 
     if (profile->running == Qfalse) {
         profile->running = Qtrue;
@@ -180,22 +115,24 @@ dt_profiler_running(VALUE self)
  *
  * Returns an array of source files
  */
+static int
+dt_profiler_last_result_collect(st_data_t key, st_data_t value, st_data_t result)
+{
+    rb_ary_push((VALUE)result, rb_str_new2((const char *)key));
+
+    return ST_CONTINUE;
+}
+
 static VALUE
 dt_profiler_last_result(VALUE self)
 {
-    dt_profiler_list_t *list = profile->list_head;
-
     if (profile->running) {
         return Qnil;
     }
 
     VALUE result = rb_ary_new();
+    st_foreach(profile->file_table, dt_profiler_last_result_collect, result);
     rb_gc_mark(result);
-
-    while (list && list->file_path) {
-        rb_ary_push(result, rb_str_new2(list->file_path));
-        list = list->next;
-    }
 
     return result;
 }

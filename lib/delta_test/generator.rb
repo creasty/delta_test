@@ -60,7 +60,7 @@ module DeltaTest
       @current_spec_file = nil
 
       if spec_file
-        Profiler.last_result.tap(&:uniq!).each do |file|
+        Profiler.last_result.each do |file|
           @table.add(spec_file, file)
         end
       end
