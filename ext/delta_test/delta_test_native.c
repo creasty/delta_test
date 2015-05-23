@@ -12,39 +12,65 @@ static VALUE profile_obj;
 ==============================================================================================*/
 /*  List
 -----------------------------------------------*/
-static void
-dt_profiler_list_add(const char *file_path)
+static dt_profiler_list_t *
+dt_profiler_list_create()
 {
     dt_profiler_list_t *list = (dt_profiler_list_t *)malloc(sizeof(dt_profiler_list_t));
 
-    list->file_path = file_path;
-    list->next = NULL;
+    list->file_path = NULL;
+    list->next      = NULL;
 
-    if (!profile->list_head) {
-        profile->list_head = list;
-    }
-
-    if (profile->list_tail) {
-        profile->list_tail->next = list;
-    }
-
-    profile->list_tail = list;
+    return list;
 }
 
 static void
-dt_profiler_list_clean()
+dt_profiler_list_add(const char *file_path)
+{
+    dt_profiler_list_t *list = NULL;
+
+    if (profile->list_tail) {
+        if (!profile->list_tail->file_path) {
+          list = profile->list_tail;
+          profile->list_head = list;
+        } else if (profile->list_tail->next) {
+            list = profile->list_tail->next;
+        } else {
+            list = dt_profiler_list_create();
+            profile->list_tail->next = list;
+        }
+    } else {
+        list = dt_profiler_list_create();
+        profile->list_head = list;
+    }
+
+    profile->list_tail = list;
+
+    list->file_path = file_path;
+}
+
+static void
+dt_profiler_list_clean(bool is_free_list)
 {
     dt_profiler_list_t *tmp;
     dt_profiler_list_t *list = profile->list_head;
 
-    profile->list_head = NULL;
-    profile->list_tail = NULL;
+    if (is_free_list) {
+        profile->list_head = NULL;
+        profile->list_tail = NULL;
 
-    while (list) {
-        tmp = list->next;
-        list->next = NULL;
-        free(list);
-        list = tmp;
+        while (list) {
+            tmp = list->next;
+            list->next = NULL;
+            free(list);
+            list = tmp;
+        }
+    } else {
+        profile->list_tail = profile->list_head;
+
+        while (list) {
+            list->file_path = NULL;
+            list = list->next;
+        }
     }
 }
 
@@ -82,6 +108,7 @@ dt_profiler_init()
     profile = (dt_profiler_t *)malloc(sizeof(dt_profiler_t));
 
     profile->running   = Qfalse;
+
     profile->list_head = NULL;
     profile->list_tail = NULL;
 }
@@ -98,7 +125,7 @@ static VALUE
 dt_profiler_clean(VALUE self)
 {
     profile->running = Qfalse;
-    dt_profiler_list_clean();
+    dt_profiler_list_clean(false);
     dt_profiler_uninstall_hook();
     return self;
 }
@@ -111,7 +138,7 @@ dt_profiler_clean(VALUE self)
 static VALUE
 dt_profiler_start(VALUE self)
 {
-    dt_profiler_list_clean();
+    dt_profiler_list_clean(false);
 
     if (profile->running == Qfalse) {
         profile->running = Qtrue;
@@ -165,7 +192,7 @@ dt_profiler_last_result(VALUE self)
     VALUE result = rb_ary_new();
     rb_gc_mark(result);
 
-    while (list) {
+    while (list && list->file_path) {
         rb_ary_push(result, rb_str_new2(list->file_path));
         list = list->next;
     }

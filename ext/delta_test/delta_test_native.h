@@ -3,6 +3,7 @@
 
 #include <ruby.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #if RUBY_VERSION < 192
 #error un-supported ruby version. Please upgrade to 1.9.3 or higher.
