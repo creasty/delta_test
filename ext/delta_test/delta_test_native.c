@@ -1,5 +1,7 @@
+#include <stdio.h>
+#include <stdbool.h>
+
 #include "delta_test_native.h"
-#include <assert.h>
 
 VALUE mDeltaTest;
 VALUE mProfiler;
