@@ -168,6 +168,23 @@ module DeltaTest
         end
       end
 
+      @args.map! { |arg| Shellwords.escape(arg) }
+
+      if (splitter = @args.index('--'))
+        @args = @args[0...splitter]
+        files = @args[splitter + 1..-1]
+
+        if files && files.any?
+          if spec_files
+            pattern = files.map { |file| Regexp.escape(file) }
+            pattern = '^(%s)' % pattern.join('|')
+            spec_files = spec_files.grep(pattern)
+          else
+            spec_files = files
+          end
+        end
+      end
+
       args += @args
       args = args.join(' ')
 
