@@ -13,10 +13,8 @@ module DeltaTest
 
     ###
     # Setup table
-    #
-    # @params {Boolean} _auto_teardown
     ###
-    def setup!(_auto_teardown = true)
+    def setup!
       return unless DeltaTest.active?
 
       return if @_setup
@@ -27,8 +25,6 @@ module DeltaTest
       @table = DependenciesTable.load(DeltaTest.config.table_file_path)
 
       @current_spec_file = nil
-
-      at_exit { teardown! } if _auto_teardown
     end
 
     ###
@@ -99,6 +95,13 @@ module DeltaTest
       end
 
       @table.dump(DeltaTest.config.table_file_path)
+    end
+
+    ###
+    # Hook teardown! on exit
+    ###
+    def hook_on_exit
+      at_exit { teardown! }
     end
 
   end

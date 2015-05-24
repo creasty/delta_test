@@ -38,7 +38,7 @@ describe DeltaTest::Generator do
 
     it 'should setup a generator' do
       expect {
-        generator.setup!(false)  # disable tearadown
+        generator.setup!
       }.not_to raise_error
 
       expect(generator).to be_respond_to(:table)
@@ -50,7 +50,7 @@ describe DeltaTest::Generator do
   describe '#start!' do
 
     before do
-      generator.setup!(false)  # disable tearadown
+      generator.setup!
     end
 
     it 'should start the profiler' do
@@ -84,7 +84,7 @@ describe DeltaTest::Generator do
   describe '#stop!' do
 
     before do
-      generator.setup!(false)  # disable tearadown
+      generator.setup!
     end
 
     it 'should stop the profiler' do
@@ -108,7 +108,7 @@ describe DeltaTest::Generator do
   describe '#table' do
 
     before do
-      generator.setup!(false)  # disable tearadown
+      generator.setup!
     end
 
     it 'should return a set of source files' do
@@ -168,7 +168,7 @@ describe DeltaTest::Generator do
     context 'When `setup!` is called' do
 
       before do
-        generator.setup!(false)  # disable tearadown
+        generator.setup!
       end
 
       it 'should stop the profiler if running' do
@@ -194,6 +194,23 @@ describe DeltaTest::Generator do
         expect(table_file.content).not_to be_empty
       end
 
+    end
+
+  end
+
+  describe '#hook_on_exit' do
+
+    before do
+      allow(Kernel).to receive(:at_exit).and_return(nil)
+    end
+
+    it 'should call at_exit' do
+      # FIXME
+      # expect(Kernel).to receive(:at_exit)
+
+      expect {
+        generator.hook_on_exit
+      }.not_to raise_error
     end
 
   end
