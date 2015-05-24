@@ -3,11 +3,10 @@
 
 #include "delta_test_native.h"
 
-VALUE mDeltaTest;
-VALUE mProfiler;
+static VALUE mDeltaTest;
+static VALUE mProfiler;
 
 static dt_profiler_t *profile;
-static VALUE profile_obj;
 
 
 /*=== Helpers

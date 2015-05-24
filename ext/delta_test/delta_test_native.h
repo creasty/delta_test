@@ -7,9 +7,6 @@
 #error un-supported ruby version. Please upgrade to 1.9.3 or higher.
 #endif
 
-extern VALUE mDeltaTest;
-extern VALUE mProfiler;
-
 typedef struct {
     VALUE running;
     st_table *file_table;
