@@ -89,7 +89,7 @@ module DeltaTest
 
           Dir.glob(table_file_path).each do |part_file|
             part_table = DependenciesTable.load(part_file)
-            @table.merge_table!(part_table)
+            @table.reverse_merge!(part_table)
           end
         else
           table_file_path = DeltaTest.config.table_file_path
