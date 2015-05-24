@@ -1,17 +1,16 @@
-#include "delta_test_native.h"
-#include <assert.h>
+#include <stdio.h>
+#include <stdbool.h>
 
-VALUE mDeltaTest;
-VALUE mProfiler;
+#include "delta_test_native.h"
+
+static VALUE mDeltaTest;
+static VALUE mProfiler;
 
 static dt_profiler_t *profile;
-static VALUE profile_obj;
 
 
 /*=== Helpers
 ==============================================================================================*/
-/*  Event hook
------------------------------------------------*/
 static void
 dt_profiler_event_hook(rb_event_flag_t event, VALUE data, VALUE self, ID mid, VALUE klass)
 {
