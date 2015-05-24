@@ -104,7 +104,8 @@ commands:
 
     table          Show dependencies table.
 
-    exec <script>  Execute test script using delta_test.
+    exec <script> -- <files>
+                   Execute test script using delta_test.
                    Run command something like `delta_test list | xargs script'.
 ```
 
