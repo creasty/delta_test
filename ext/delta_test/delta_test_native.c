@@ -11,8 +11,6 @@ static dt_profiler_t *profile;
 
 /*=== Helpers
 ==============================================================================================*/
-/*  Event hook
------------------------------------------------*/
 static void
 dt_profiler_event_hook(rb_event_flag_t event, VALUE data, VALUE self, ID mid, VALUE klass)
 {
