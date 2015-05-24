@@ -14,6 +14,8 @@ module DeltaTest
       'verbose' => false,
     }.freeze
 
+    SPLITTER = '--'
+
     attr_reader *%i[
       args
       command
@@ -170,9 +172,9 @@ module DeltaTest
 
       @args.map! { |arg| Shellwords.escape(arg) }
 
-      if (splitter = @args.index('--'))
-        @args = @args[0...splitter]
-        files = @args[splitter + 1..-1]
+      if (splitter = @args.index(SPLITTER))
+        @args = @args.take(splitter)
+        files = @args.drop(splitter + 1)
 
         if files && files.any?
           if spec_files
