@@ -13,6 +13,8 @@ module DeltaTest
       'delta_test.yaml',
     ].freeze
 
+    PART_FILE_EXT = '.part-%s'
+
     attr_accessor *%i[
       base_path
       files
@@ -61,6 +63,26 @@ module DeltaTest
     ###
     def table_file=(path)
       @table_file = Pathname.new(path)
+    end
+
+
+    #  Override getters
+    #-----------------------------------------------
+    ###
+    # Returns file path for the table
+    #
+    # @params {String} part
+    #
+    # @return {Pathname}
+    ###
+    def table_file_path(part = nil)
+      return unless @table_file_path
+
+      if part
+        @table_file_path.sub_ext(PART_FILE_EXT % part)
+      else
+        @table_file_path
+      end
     end
 
 
