@@ -1,5 +1,7 @@
 require 'open3'
 require 'shellwords'
+require 'thread'
+require 'thwait'
 
 require_relative 'related_spec_list'
 
@@ -175,9 +177,11 @@ module DeltaTest
         i.write(spec_files.join("\n")) if spec_files
         i.close
 
-        Thread.new { o.each { |l| puts l } }
-        Thread.new { e.each { |l| $stderr.puts l } }
+        threads = []
+        threads << Thread.new { o.each { |l| puts l } }
+        threads << Thread.new { e.each { |l| $stderr.puts l } }
 
+        ThreadsWait.all_waits(*threads)
         exit w.value.exitstatus
       end
     end
