@@ -14,6 +14,8 @@ module DeltaTest
       'verbose' => false,
     }.freeze
 
+    SPLITTER = '--'
+
     attr_reader *%i[
       args
       command
@@ -168,6 +170,23 @@ module DeltaTest
         end
       end
 
+      @args.map! { |arg| Shellwords.escape(arg) }
+
+      if (splitter = @args.index(SPLITTER))
+        @args = @args.take(splitter)
+        files = @args.drop(splitter + 1)
+
+        if files && files.any?
+          if spec_files
+            pattern = files.map { |file| Regexp.escape(file) }
+            pattern = '^(%s)' % pattern.join('|')
+            spec_files = spec_files.grep(pattern)
+          else
+            spec_files = files
+          end
+        end
+      end
+
       args += @args
       args = args.join(' ')
 
@@ -222,7 +241,8 @@ commands:
 
     table          Show dependencies table.
 
-    exec <script>  Execute test script using delta_test.
+    exec <script> -- <files>
+                   Execute test script using delta_test.
                    Run command something like `delta_test list | xargs script'.
       HELP
     end

@@ -17,6 +17,8 @@ module DeltaTest
       example.after(:all) do
         $delta_test_generator.stop!
       end
+
+      $delta_test_generator.hook_on_exit
     end
 
     ###

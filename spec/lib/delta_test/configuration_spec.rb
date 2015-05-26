@@ -218,6 +218,18 @@ describe DeltaTest::Configuration do
         expect(configuration.table_file_path).to eq(Pathname.new('/somewhere/table_file'))
       end
 
+      context 'With part' do
+
+        it 'should return a path with a part extension' do
+          configuration.base_path  = '/base_path'
+          configuration.table_file = 'somewhere/table_file'
+
+          configuration.precalculate!
+          expect(configuration.table_file_path(1)).to eq(Pathname.new('/base_path/somewhere/table_file.part-1'))
+        end
+
+      end
+
     end
 
   end

@@ -42,6 +42,21 @@ module DeltaTest
     end
 
     ###
+    # Reverse merge other table
+    #
+    # @params {DependenciesTable} other
+    ###
+    def reverse_merge!(other)
+      raise TypeError unless other.is_a?(self.class)
+
+      other.each do |spec_file, source_files|
+        self[spec_file] |= source_files
+      end
+
+      nil
+    end
+
+    ###
     # Temporary disable default_proc
     # Because Marshal can't dump Hash with default_proc
     #
