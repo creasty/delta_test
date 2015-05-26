@@ -173,8 +173,8 @@ module DeltaTest
       @args.map! { |arg| Shellwords.escape(arg) }
 
       if (splitter = @args.index(SPLITTER))
-        @args = @args.take(splitter)
         files = @args.drop(splitter + 1)
+        @args = @args.take(splitter)
 
         if files && files.any?
           if spec_files
