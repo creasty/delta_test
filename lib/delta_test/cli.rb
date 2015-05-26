@@ -116,7 +116,7 @@ module DeltaTest
     # @return {Boolean}
     ###
     def run_full_tests?
-      Git.same_commit?(@options['base'], @options['head'])
+      @run_full_tests ||= Git.same_commit?(@options['base'], @options['head'])
     end
 
     ###
@@ -152,11 +152,7 @@ module DeltaTest
       spec_files = nil
       args = []
 
-      if run_full_tests?
-        args << ('%s=%s' % [VERBOSE_FLAG, true]) if DeltaTest.verbose?
-        args << ('%s=%s' % [ACTIVE_FLAG, true])
-      else
-
+      unless run_full_tests?
         @list.load_table!
         @list.retrive_changed_files!(@options['base'], @options['head'])
 
@@ -182,6 +178,11 @@ module DeltaTest
             spec_files = files
           end
         end
+      end
+
+      if run_full_tests?
+        args << ('%s=%s' % [VERBOSE_FLAG, true]) if DeltaTest.verbose?
+        args << ('%s=%s' % [ACTIVE_FLAG, true])
       end
 
       if spec_files
