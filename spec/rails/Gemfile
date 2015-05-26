@@ -2,14 +2,20 @@ source 'https://rubygems.org'
 
 gem 'rails', '4.2.1'
 
+gem 'haml-rails'
 gem 'sqlite3'
 gem 'therubyracer', platforms: :ruby
-gem 'haml-rails'
 
 group :development, :test do
+  gem 'capybara'
+  gem 'database_cleaner'
+  gem 'factory_girl_rails'
+  gem 'minitest'
+  gem 'poltergeist', github: 'teampoltergeist/poltergeist'
   gem 'pry-rails'
-  gem 'spring'
   gem 'rspec-rails', '>= 3.2'
+  gem 'spork'
+  gem 'spring'
 
   gem 'delta_test', path: '../..'
 end

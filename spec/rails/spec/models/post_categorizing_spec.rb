@@ -1,0 +1,3 @@
+describe PostCategorizing do
+
+end

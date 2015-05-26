@@ -20,8 +20,10 @@ end
 namespace :rails do
   desc 'Run rails tests'
   task :test do
-    s = system('cd spec/rails && DELTA_TEST_ACTIVE=true DELTA_TEST_VERBOSE=true bundle exec rspec')
-    exit $? unless s
+    Bundler.with_clean_env do
+      s = system('cd spec/rails && DELTA_TEST_ACTIVE=true DELTA_TEST_VERBOSE=true bundle exec rspec')
+      exit $? unless s
+    end
   end
 end
 
