@@ -121,6 +121,9 @@ patterns:
 exclude_patterns:
   - lib/batch/*.rb
 
+full_test_patterns:
+  - Gemfile.lock
+
 custom_mappings:
   spec/features/i18n_spec.rb:
     - config/locales/**/*.yml

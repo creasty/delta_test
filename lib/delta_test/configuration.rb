@@ -55,6 +55,7 @@ module DeltaTest
       table_file
       patterns
       exclude_patterns
+      full_test_patterns
       custom_mappings
     ]
 
@@ -80,6 +81,10 @@ module DeltaTest
       self.exclude_patterns.is_a?(Array)
     end
 
+    validate :full_test_patterns, 'need to be an array' do
+      self.full_test_patterns.is_a?(Array)
+    end
+
     validate :custom_mappings, 'need to be a hash' do
       self.custom_mappings.is_a?(Hash)
     end
@@ -90,12 +95,13 @@ module DeltaTest
 
     def initialize
       update do |c|
-        c.base_path        = File.expand_path('.')
-        c.table_file       = 'tmp/.delta_test_dt'
-        c.files            = []
-        c.patterns         = []
-        c.exclude_patterns = []
-        c.custom_mappings  = {}
+        c.base_path          = File.expand_path('.')
+        c.table_file         = 'tmp/.delta_test_dt'
+        c.files              = []
+        c.patterns           = []
+        c.exclude_patterns   = []
+        c.full_test_patterns = []
+        c.custom_mappings    = {}
       end
     end
 
