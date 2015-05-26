@@ -156,9 +156,6 @@ module DeltaTest
         args << ('%s=%s' % [VERBOSE_FLAG, true]) if DeltaTest.verbose?
         args << ('%s=%s' % [ACTIVE_FLAG, true])
       else
-        args << 'cat'
-        args << '|'
-        args << 'xargs'
 
         @list.load_table!
         @list.retrive_changed_files!(@options['base'], @options['head'])
@@ -185,6 +182,11 @@ module DeltaTest
             spec_files = files
           end
         end
+      end
+
+      if spec_files
+        args.unshift('cat', '|')
+        args << 'xargs'
       end
 
       args += @args
