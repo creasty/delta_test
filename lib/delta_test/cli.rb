@@ -220,7 +220,7 @@ module DeltaTest
         puts "Command not found: #{@command}"
       end
 
-      puts <<-HELP
+      puts <<HELP
 usage: delta_test <command> [--base=<base>] [--head=<head>] [--verbose] [<args>]
                   [-v|--version]
 
@@ -241,10 +241,10 @@ commands:
 
     table          Show dependencies table.
 
-    exec <script> -- <files>
+    exec <script> [-- <files>]
                    Execute test script using delta_test.
                    Run command something like `delta_test list | xargs script'.
-      HELP
+HELP
     end
 
   end
