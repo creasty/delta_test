@@ -8,6 +8,39 @@ require_relative 'utils'
 module DeltaTest
   class Configuration
 
+    module Validator
+
+      def self.included(base)
+        base.include(InstanceMethods)
+        base.extend(ClassMethods)
+      end
+
+      module ClassMethods
+
+        def _validators
+          @_validators ||= []
+        end
+
+        def validate(attr, message, &block)
+          _validators << [attr, message, block]
+        end
+
+      end
+
+      module InstanceMethods
+
+        def validate!
+          self.class._validators.each do |attr, message, block|
+            raise ValidationError.new(attr, message) unless self.instance_eval(&block)
+          end
+        end
+
+      end
+
+    end
+
+    include Validator
+
     CONFIG_FILES = [
       'delta_test.yml',
       'delta_test.yaml',
@@ -30,6 +63,30 @@ module DeltaTest
       filtered_files
       table_file_path
     ]
+
+    validate :base_path, 'need to be an absolute path' do
+      self.base_path.absolute?
+    end
+
+    validate :files, 'need to be an array' do
+      self.files.is_a?(Array)
+    end
+
+    validate :patterns, 'need to be an array' do
+      self.patterns.is_a?(Array)
+    end
+
+    validate :exclude_patterns, 'need to be an array' do
+      self.exclude_patterns.is_a?(Array)
+    end
+
+    validate :custom_mappings, 'need to be a hash' do
+      self.custom_mappings.is_a?(Hash)
+    end
+
+    validate :custom_mappings, 'need to have an array in the contents' do
+      self.custom_mappings.values.all? { |v| v.is_a?(Array) }
+    end
 
     def initialize
       update do |c|
@@ -97,35 +154,6 @@ module DeltaTest
       yield self if block_given?
       validate!
       precalculate!
-    end
-
-    ###
-    # Validate option values
-    ###
-    def validate!
-      if self.base_path.relative?
-        raise ValidationError.new(:base_path, 'need to be an absolute path')
-      end
-
-      unless self.files.is_a?(Array)
-        raise ValidationError.new(:files, 'need to be an array')
-      end
-
-      unless self.patterns.is_a?(Array)
-        raise ValidationError.new(:patterns, 'need to be an array')
-      end
-
-      unless self.exclude_patterns.is_a?(Array)
-        raise ValidationError.new(:exclude_patterns, 'need to be an array')
-      end
-
-      unless self.custom_mappings.is_a?(Hash)
-        raise ValidationError.new(:custom_mappings, 'need to be a hash')
-
-        unless self.custom_mappings.values.all? { |v| v.is_a?(Array) }
-          raise ValidationError.new(:custom_mappings, 'need to have an array in the contents')
-        end
-      end
     end
 
     ###
