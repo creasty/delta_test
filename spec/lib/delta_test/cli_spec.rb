@@ -306,7 +306,7 @@ describe DeltaTest::CLI do
       context 'Full tests' do
 
         before do
-          expect(cli).to receive(:run_full_tests?).with(no_args).and_return(true)
+          allow(cli).to receive(:run_full_tests?).with(no_args).and_return(true)
         end
 
         it 'should run script with a flag' do
@@ -325,7 +325,7 @@ describe DeltaTest::CLI do
       context 'Partial tests' do
 
         before do
-          expect(cli).to receive(:run_full_tests?).with(no_args).and_return(false)
+          allow(cli).to receive(:run_full_tests?).with(no_args).and_return(false)
         end
 
         context 'Any related files' do
