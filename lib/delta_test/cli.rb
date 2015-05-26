@@ -152,15 +152,21 @@ module DeltaTest
       spec_files = nil
       args = []
 
-      unless run_full_tests?
-        @list.load_table!
-        @list.retrive_changed_files!(@options['base'], @options['head'])
+      force_run_full_tests = false
 
-        spec_files = @list.related_spec_files.to_a
+      begin
+        unless run_full_tests?
+          @list.load_table!
+          @list.retrive_changed_files!(@options['base'], @options['head'])
 
-        if spec_files.empty?
-          exit_with_message(0, 'Nothing to test')
+          spec_files = @list.related_spec_files.to_a
+
+          if spec_files.empty?
+            exit_with_message(0, 'Nothing to test')
+          end
         end
+      rescue
+        force_run_full_tests = true
       end
 
       @args.map! { |arg| Shellwords.escape(arg) }
@@ -180,7 +186,7 @@ module DeltaTest
         end
       end
 
-      if run_full_tests?
+      if run_full_tests? || force_run_full_tests
         args << ('%s=%s' % [VERBOSE_FLAG, true]) if DeltaTest.verbose?
         args << ('%s=%s' % [ACTIVE_FLAG, true])
       end
