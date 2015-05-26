@@ -7,18 +7,18 @@ module DeltaTest
     # Setup generator and hook profiler on contexts
     ###
     def use_delta_test(example)
-      $delta_test_generator ||= DeltaTest::Generator.new
-      $delta_test_generator.setup!
+      generator = DeltaTest::GeneratorSingleton.instance
+      generator.setup!
 
       example.before(:all) do
-        $delta_test_generator.start!(example.file_path)
+        generator.start!(example.file_path)
       end
 
       example.after(:all) do
-        $delta_test_generator.stop!
+        generator.stop!
       end
 
-      $delta_test_generator.hook_on_exit
+      generator.hook_on_exit
     end
 
     ###

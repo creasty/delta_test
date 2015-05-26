@@ -1,3 +1,5 @@
+require 'singleton'
+
 require_relative 'profiler'
 require_relative 'dependencies_table'
 
@@ -104,5 +106,9 @@ module DeltaTest
       at_exit { teardown! }
     end
 
+  end
+
+  class GeneratorSingleton < Generator
+    include Singleton
   end
 end

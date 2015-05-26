@@ -26,8 +26,10 @@ describe DeltaTest::SpecHelpers do
     allow(DeltaTest).to receive(:active?).and_return(false)
   end
 
+  let(:generator) { DeltaTest::GeneratorSingleton.instance }
+
   it 'should define a global generator' do
-    expect(defined?($delta_test_generator)).not_to be(false)
+    expect(defined?(generator)).not_to be(false)
   end
 
   describe 'when extending' do
@@ -40,7 +42,7 @@ describe DeltaTest::SpecHelpers do
       end
 
       it 'should start the generator' do
-        expect($delta_test_generator).to receive(:start!).with("spec/foo/bar.rb")
+        expect(generator).to receive(:start!).with('spec/foo/bar.rb')
         @rspec_example_group.extend DeltaTest::SpecHelpers
       end
 
@@ -54,7 +56,7 @@ describe DeltaTest::SpecHelpers do
       end
 
       it 'should stop the generator' do
-        expect($delta_test_generator).to receive(:stop!)
+        expect(generator).to receive(:stop!)
         @rspec_example_group.extend DeltaTest::SpecHelpers
       end
 
