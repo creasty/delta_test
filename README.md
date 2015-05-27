@@ -66,7 +66,7 @@ First you'll need to run full tests to create **dependencies table**:
 
 ```bash
 $ git checkout master
-$ delta_test exec bundle exec rspec --tty
+$ delta_test exec rspec --tty
 ```
 
 Then, on other branch:
@@ -74,7 +74,7 @@ Then, on other branch:
 ```bash
 $ git checkout -b feature/something_awesome
 $ # Make changes & create commits...
-$ delta_test exec bundle exec rspec --tty  # runs only related tests for changes from master
+$ delta_test exec rspec --tty  # runs only related tests for changes from master
 ```
 
 
