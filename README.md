@@ -60,7 +60,7 @@ end
 Usage
 -----
 
-For the first time you use `delta_test`, it'll run full test cases to create **dependencies table**:
+For the first time and whenever on master, it'll run full test cases to create **dependencies table**:
 
 ```bash
 $ git checkout master
@@ -109,10 +109,9 @@ commands:
 
 #### `exec` example
 
-RSpec command can be rewrite to:
+RSpec command is rewritten to:
 
 ```bash
-# rspec
 $ bundle exec rspec
 ↓
 $ bundle exec delta_test exec rspec
