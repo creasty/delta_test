@@ -1,10 +1,11 @@
+:warning: **currently in development**
+
 delta_test
 ==========
 
 [![Circle CI](https://circleci.com/gh/creasty/delta_test.svg?style=shield)](https://circleci.com/gh/creasty/delta_test)
 [![Code Climate](https://codeclimate.com/github/creasty/delta_test/badges/gpa.svg)](https://codeclimate.com/github/creasty/delta_test)
 [![Test Coverage](https://codeclimate.com/github/creasty/delta_test/badges/coverage.svg)](https://codeclimate.com/github/creasty/delta_test/coverage)
-
 
 **It's kinda "[delta update](http://en.wikipedia.org/wiki/Delta_update)" for RSpec.**
 
@@ -13,9 +14,6 @@ It basically do two things:
 1. Analyzes your tests and creates a dependencies table
 2. Based on the dependencies table and git diff,  
    only runs partial specs that are considered to be related to the file changes.
-
-
-> :warning: Betas currently in development
 
 
 Setup
@@ -62,7 +60,7 @@ end
 Usage
 -----
 
-First you'll need to run full tests to create **dependencies table**:
+For the first time you use `delta_test`, it'll run full test cases to create **dependencies table**:
 
 ```bash
 $ git checkout master
@@ -109,6 +107,39 @@ commands:
                    Run command something like `delta_test list | xargs script'.
 ```
 
+#### `exec` example
+
+RSpec command can be rewrite to:
+
+```bash
+# rspec
+$ bundle exec rspec
+↓
+$ bundle exec delta_test exec rspec
+```
+
+With file lists:
+
+```bash
+$ bundle exec rspec spec/{models,controllers}
+↓
+$ bundle exec delta_test exec rspec -- spec/{models,controllers}
+```
+
+And to colorize RSpec outputs, use `--tty` option of `rspec` command:
+
+```bash
+$ bundle exec delta_test exec rspec --tty
+```
+
+Also delta_test supports [parallel_tests](https://github.com/grosser/parallel_tests):
+
+```bash
+$ bundle exec parallel_test -t rspec -n 4 spec/features
+↓
+$ bundle exec delta_test exec parallel_test -t rspec -n 4 -- spec/features
+```
+
 ### Configurations
 
 ```yaml
@@ -133,11 +164,7 @@ Testing
 Run units tests:
 
 ```bash
-$ rspec
-
-# or
-
-$ rake test
+$ rake test  # or you can use `rspec`
 ```
 
 Run integration tests:
