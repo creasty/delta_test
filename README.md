@@ -64,15 +64,15 @@ For the first time and whenever on master, it'll run full test cases to create *
 
 ```bash
 $ git checkout master
-$ delta_test exec rspec --tty
+$ delta_test exec rspec
 ```
 
-Then, on other branch:
+And on other branch, it'll run only related tests for your changes from master:
 
 ```bash
 $ git checkout -b feature/something_awesome
 $ # Make changes & create commits...
-$ delta_test exec rspec --tty  # runs only related tests for changes from master
+$ delta_test exec rspec
 ```
 
 
