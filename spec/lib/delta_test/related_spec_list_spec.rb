@@ -92,7 +92,7 @@ describe DeltaTest::RelatedSpecList do
 
   end
 
-  describe '#related_spec_files' do
+  context 'Related spec files' do
 
     include_examples :_mock_table_and_changed_files
 
@@ -102,45 +102,49 @@ describe DeltaTest::RelatedSpecList do
       list.retrive_changed_files!(base, head)
     end
 
-    describe 'Dependents' do
+    describe '#dependents' do
 
-      let(:related_spec_files) do
-        Set[
-          'spec/foo_spec.rb',
-          'spec/mixed_spec.rb',
-        ]
+      describe 'Dependents' do
+
+        let(:dependents) do
+          Set[
+            'spec/foo_spec.rb',
+            'spec/mixed_spec.rb',
+          ]
+        end
+
+        it 'should be included' do
+          expect(list.dependents).to eq(dependents)
+        end
+
       end
 
-      it 'should be included' do
-        expect(list.related_spec_files).to eq(related_spec_files)
+      describe 'Modified spec files' do
+
+        let(:changed_files) do
+          [
+            'lib/foo.rb',
+            'spec/baz_spec.rb',
+          ]
+        end
+
+        let(:dependents) do
+          Set[
+            'spec/foo_spec.rb',
+            'spec/mixed_spec.rb',
+            'spec/baz_spec.rb',
+          ]
+        end
+
+        it 'should be included' do
+          expect(list.dependents).to eq(dependents)
+        end
+
       end
 
     end
 
-    describe 'Modified spec files' do
-
-      let(:changed_files) do
-        [
-          'lib/foo.rb',
-          'spec/baz_spec.rb',
-        ]
-      end
-
-      let(:related_spec_files) do
-        Set[
-          'spec/foo_spec.rb',
-          'spec/mixed_spec.rb',
-          'spec/baz_spec.rb',
-        ]
-      end
-
-      it 'should be included' do
-        expect(list.related_spec_files).to eq(related_spec_files)
-      end
-
-    end
-
-    describe 'Custom dependents' do
+    describe '#customs' do
 
       let(:custom_mappings) do
         {
@@ -152,15 +156,12 @@ describe DeltaTest::RelatedSpecList do
 
       let(:changed_files) do
         [
-          'lib/foo.rb',
           'config/locales/something/en.yml',
         ]
       end
 
-      let(:related_spec_files) do
+      let(:customs) do
         Set[
-          'spec/foo_spec.rb',
-          'spec/mixed_spec.rb',
           'spec/other_spec.rb',
         ]
       end
@@ -177,23 +178,13 @@ describe DeltaTest::RelatedSpecList do
         end
       end
 
-      it 'should be included' do
-        expect(list.related_spec_files).to eq(related_spec_files)
+      it 'should include custom mapped files' do
+        expect(list.customs).to eq(customs)
       end
 
     end
 
-    describe 'Run full tests' do
-
-      let(:full_spec_files) do
-        Set[
-          'spec/foo_spec.rb',
-          'spec/bar_spec.rb',
-          'spec/baz_spec.rb',
-          'spec/other_spec.rb',
-          'spec/mixed_spec.rb',
-        ]
-      end
+    describe '#full_tests?' do
 
       context 'No file in full test patterns is changed' do
 
@@ -203,16 +194,8 @@ describe DeltaTest::RelatedSpecList do
           ]
         end
 
-        let(:related_spec_files) do
-          Set[
-            'spec/foo_spec.rb',
-            'spec/mixed_spec.rb',
-            'spec/baz_spec.rb',
-          ]
-        end
-
-        it 'should not return full spec files' do
-          expect(list.related_spec_files).not_to eq(full_spec_files)
+        it 'should return false' do
+          expect(list.full_tests?).to be(false)
         end
 
       end
@@ -243,8 +226,67 @@ describe DeltaTest::RelatedSpecList do
           end
         end
 
+        it 'should return true' do
+          expect(list.full_tests?).to be(true)
+        end
+
+      end
+
+    end
+
+    describe '#full' do
+
+      let(:full_spec_files) do
+        Set[
+          'spec/foo_spec.rb',
+          'spec/bar_spec.rb',
+          'spec/baz_spec.rb',
+          'spec/other_spec.rb',
+          'spec/mixed_spec.rb',
+        ]
+      end
+
+      it 'should return full spec files in the table' do
+        expect(list.full).to eq(full_spec_files)
+      end
+
+    end
+
+    describe '#related_spec_files' do
+
+      context 'If `full_tests?` is true' do
+
+        before do
+          allow(list).to receive(:full_tests?).and_return(true)
+        end
+
         it 'should return full spec files' do
-          expect(list.related_spec_files).to eq(full_spec_files)
+          expect(list).to receive(:full)
+          expect(list).not_to receive(:dependents)
+          expect(list).not_to receive(:customs)
+
+          list.related_spec_files
+        end
+
+      end
+
+      context 'If `full_tests?` is false' do
+
+        let(:dependents) { Set['dependent_1'] }
+        let(:customs)    { Set['custom_1'] }
+
+        before do
+          allow(list).to receive(:full_tests?).and_return(false)
+          allow(list).to receive(:dependents).and_return(dependents)
+          allow(list).to receive(:customs).and_return(customs)
+        end
+
+        it 'should return a union set of dependents and custom' do
+          expect(list).not_to receive(:full)
+          expect(list).to receive(:dependents)
+          expect(list).to receive(:customs)
+
+          expect(list.related_spec_files).to eq(dependents | customs)
         end
 
       end
