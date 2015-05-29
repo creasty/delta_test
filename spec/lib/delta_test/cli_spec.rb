@@ -365,6 +365,26 @@ describe DeltaTest::CLI do
 
     end
 
+    describe '#do_clear' do
+
+      before do
+        allow(Open3).to receive(:capture3).and_return(nil)
+      end
+
+      let(:table_file_path) { '/path/to/table' }
+
+      it 'should remove table files' do
+        allow(DeltaTest.config).to receive(:table_file_path).and_return(table_file_path)
+        expect(DeltaTest.config).to receive(:table_file_path).with('')
+        expect(Open3).to receive(:capture3).with('rm %s*' % table_file_path)
+
+        expect {
+          cli.do_clear
+        }.not_to raise_error
+      end
+
+    end
+
     describe '#do_help' do
 
       it 'should print help' do
@@ -394,6 +414,7 @@ describe DeltaTest::CLI do
         'list'  => 'do_list',
         'table' => 'do_table',
         'exec'  => 'do_exec',
+        'clear' => 'do_clear',
         'help'  => 'do_help',
         '-v'    => 'do_version',
       }

@@ -60,6 +60,8 @@ module DeltaTest
           do_table
         when 'exec'
           do_exec
+        when 'clear'
+          do_clear
         when '-v', '--version'
           do_version
         else
@@ -220,6 +222,22 @@ module DeltaTest
     end
 
     ###
+    # Clean up tables and caches
+    ###
+    def do_clear
+      table_file_path = DeltaTest.config.table_file_path('')
+
+      return unless table_file_path
+
+      args = [
+        'rm',
+        '%s*' % Shellwords.escape(table_file_path),
+      ]
+
+      Open3.capture3(args.join(' ')) rescue nil
+    end
+
+    ###
     # Show version
     ###
     def do_version
@@ -261,6 +279,8 @@ commands:
                    it'll run full test cases with a profile mode to create a table.
                    Otherwise, it'll run test script with only related spec files
                    passed by its arguments, like `delta_test list | xargs script'.
+
+    clear          Clean up tables and caches.
 HELP
     end
 
