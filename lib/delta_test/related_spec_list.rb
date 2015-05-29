@@ -37,27 +37,86 @@ module DeltaTest
     end
 
     ###
+    # Return if full tests are related
+    #
+    # @return {Boolean}
+    ###
+    def full_tests?
+      return false unless @changed_files
+
+      @full_tests ||= if DeltaTest.config.full_test_patterns.empty?
+          false
+        else
+          Utils.files_grep(
+            @changed_files,
+            DeltaTest.config.full_test_patterns
+          ).any?
+        end
+    end
+
+    ###
+    # Dependent spec files
+    #
+    # @return {Set|Nil}
+    ###
+    def dependents
+      return nil unless @changed_files && @table
+
+      return @dependents if @dependents
+      @dependents = Set.new
+
+      @table.each do |spec_file, dependencies|
+        dependent = @changed_files.include?(spec_file) \
+          || (dependencies & @changed_files).any?
+
+        @dependents << spec_file if dependent
+      end
+
+      @dependents
+    end
+
+    ###
+    # Custom spec files
+    #
+    # @return {Set|Nil}
+    ###
+    def customs
+      return nil unless @changed_files
+
+      return @customs if @customs
+      @customs = Set.new
+
+      DeltaTest.config.custom_mappings.each do |spec_file, patterns|
+        if Utils.files_grep(@changed_files, patterns).any?
+          @customs << spec_file
+        end
+      end
+
+      @customs
+    end
+
+    ###
+    # Full spec files
+    #
+    # @return {Set|Nil}
+    ###
+    def full
+      return nil unless @table
+
+      @full ||= Set.new(@table.keys)
+    end
+
+    ###
     # Calculate related spec files
     #
     # @return {Set<String>}
     ###
     def related_spec_files
-      spec_files = Set.new
-
-      @table.each do |spec_file, dependencies|
-        related = @changed_files.include?(spec_file) \
-          || (dependencies & @changed_files).any?
-
-        spec_files << spec_file if related
+      if full_tests?
+        full
+      else
+        dependents | customs
       end
-
-      DeltaTest.config.custom_mappings.each do |spec_file, patterns|
-        if Utils.files_grep(@changed_files, patterns).any?
-          spec_files << spec_file
-        end
-      end
-
-      spec_files
     end
 
   end

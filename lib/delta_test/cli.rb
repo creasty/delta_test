@@ -117,8 +117,8 @@ module DeltaTest
     #
     # @return {Boolean}
     ###
-    def run_full_tests?
-      @run_full_tests ||= Git.same_commit?(@options['base'], @options['head'])
+    def profile_mode?
+      @profile_mode ||= Git.same_commit?(@options['base'], @options['head'])
     end
 
     ###
@@ -154,10 +154,8 @@ module DeltaTest
       spec_files = nil
       args = []
 
-      force_run_full_tests = false
-
       begin
-        unless run_full_tests?
+        unless profile_mode?
           @list.load_table!
           @list.retrive_changed_files!(@options['base'], @options['head'])
 
@@ -167,8 +165,9 @@ module DeltaTest
             exit_with_message(0, 'Nothing to test')
           end
         end
-      rescue
-        force_run_full_tests = true
+      rescue TableNotFoundError
+        # force profile mode cuz we don't have a table
+        @profile_mode = true
       end
 
       @args.map! { |arg| Shellwords.escape(arg) }
@@ -188,7 +187,7 @@ module DeltaTest
         end
       end
 
-      if run_full_tests? || force_run_full_tests
+      if profile_mode?
         args << ('%s=%s' % [VERBOSE_FLAG, true]) if DeltaTest.verbose?
         args << ('%s=%s' % [ACTIVE_FLAG, true])
       end
@@ -258,7 +257,10 @@ commands:
 
     exec <script> [-- <files>]
                    Execute test script using delta_test.
-                   Run command something like `delta_test list | xargs script'.
+                   if <base> and <head> is the same commit or no dependencies table is found,
+                   it'll run full test cases with a profile mode to create a table.
+                   Otherwise, it'll run test script with only related spec files
+                   passed by its arguments, like `delta_test list | xargs script'.
 HELP
     end
 
