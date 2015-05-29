@@ -204,37 +204,26 @@ module DeltaTest
       end
 
       args += @args
-      args = args.join(' ')
 
       $stdout.sync = true
 
-      Open3.popen3(args) do |i, o, e, w|
-        i.write(spec_files.join("\n")) if spec_files
-        i.close
-
-        threads = []
-        threads << Thread.new { o.each { |l| puts l } }
-        threads << Thread.new { e.each { |l| $stderr.puts l } }
-
-        ThreadsWait.all_waits(*threads)
-        exit w.value.exitstatus
-      end
+      exec_with_data(args.join(' '), spec_files)
     end
 
     ###
     # Clean up tables and caches
     ###
     def do_clear
-      table_file_path = DeltaTest.config.table_file_path('')
+      return unless DeltaTest.config.table_file_path
 
-      return unless table_file_path
+      files = []
+      files << DeltaTest.config.table_file_path
+      files += Dir.glob(DeltaTest.config.table_file_path('*'))
+      files.map! { |f| Shellwords.escape(f) }
 
-      args = [
-        'rm',
-        '%s*' % Shellwords.escape(table_file_path),
-      ]
+      args = ['cat', '|', 'xargs', 'rm']
 
-      Open3.capture3(args.join(' ')) rescue nil
+      exec_with_data(args.join(' '), files, 0) rescue nil
     end
 
     ###
@@ -305,6 +294,27 @@ HELP
       end
 
       false
+    end
+
+    ###
+    # Exec command with data passed as stdin
+    #
+    # @params {String} args
+    # @params {Array} ary
+    # @params {Integer|Nil} status
+    ###
+    def exec_with_data(args, ary, status = nil)
+      Open3.popen3(args) do |i, o, e, w|
+        i.write(ary.join("\n")) if ary
+        i.close
+
+        threads = []
+        threads << Thread.new { o.each { |l| puts l } }
+        threads << Thread.new { e.each { |l| $stderr.puts l } }
+
+        ThreadsWait.all_waits(*threads)
+        exit(status.nil? ? w.value.exitstatus : status)
+      end
     end
 
   end

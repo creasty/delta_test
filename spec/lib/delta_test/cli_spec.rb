@@ -300,7 +300,7 @@ describe DeltaTest::CLI do
         allow(cli.list).to receive(:retrive_changed_files!).with(any_args).and_return(nil)
         allow(cli.list).to receive(:related_spec_files).with(no_args).and_return(related_spec_files)
 
-        allow(Open3).to receive(:popen3).with(any_args).and_return(nil)
+        allow(cli).to receive(:exec_with_data).and_return(nil)
       end
 
       context 'Full tests' do
@@ -313,7 +313,7 @@ describe DeltaTest::CLI do
           expect(cli.list).not_to receive(:related_spec_files).with(no_args)
 
           _args = ['%s=%s' % [DeltaTest::ACTIVE_FLAG, true], *args[1..-1]].join(' ')
-          expect(Open3).to receive(:popen3).with(_args)
+          expect(cli).to receive(:exec_with_data).with(_args, nil)
 
           expect {
             cli.do_exec
@@ -334,7 +334,7 @@ describe DeltaTest::CLI do
             expect(cli.list).to receive(:related_spec_files).with(no_args)
 
             _args = ['cat', '|', 'xargs', *args[1..-1]].join(' ')
-            expect(Open3).to receive(:popen3).with(_args)
+            expect(cli).to receive(:exec_with_data).with(_args, related_spec_files)
 
             expect {
               cli.do_exec
@@ -367,16 +367,25 @@ describe DeltaTest::CLI do
 
     describe '#do_clear' do
 
+      let(:table_file_path) { '/path/to/table' }
+      let(:table_file_path_parts) { '/path/to/table.part-*' }
+      let(:table_file_path_part_1) { '/path/to/table.part-1' }
+
       before do
-        allow(Open3).to receive(:capture3).and_return(nil)
+        allow(cli).to receive(:exec_with_data).and_return(nil)
+        allow(Dir).to receive(:glob).and_return([table_file_path_part_1])
+        allow(DeltaTest.config).to receive(:table_file_path).with(no_args).and_return(table_file_path)
+        allow(DeltaTest.config).to receive(:table_file_path).with('*').and_return(table_file_path_parts)
       end
 
-      let(:table_file_path) { '/path/to/table' }
-
       it 'should remove table files' do
-        allow(DeltaTest.config).to receive(:table_file_path).and_return(table_file_path)
-        expect(DeltaTest.config).to receive(:table_file_path).with('')
-        expect(Open3).to receive(:capture3).with('rm %s*' % table_file_path)
+        expect(DeltaTest.config).to receive(:table_file_path).with(no_args)
+        expect(DeltaTest.config).to receive(:table_file_path).with('*')
+        expect(cli).to receive(:exec_with_data).with(
+          'cat | xargs rm',
+          [table_file_path, table_file_path_part_1],
+          0
+        )
 
         expect {
           cli.do_clear
