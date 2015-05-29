@@ -154,7 +154,7 @@ describe DeltaTest::CLI do
 
   end
 
-  describe '#run_full_tests?' do
+  describe '#profile_mode?' do
 
     let(:map) do
       {
@@ -179,7 +179,7 @@ describe DeltaTest::CLI do
       end
 
       it 'should return true' do
-        expect(cli.run_full_tests?).to be(true)
+        expect(cli.profile_mode?).to be(true)
       end
 
     end
@@ -194,7 +194,7 @@ describe DeltaTest::CLI do
       end
 
       it 'should return false' do
-        expect(cli.run_full_tests?).to be(false)
+        expect(cli.profile_mode?).to be(false)
       end
 
     end
@@ -306,7 +306,7 @@ describe DeltaTest::CLI do
       context 'Full tests' do
 
         before do
-          allow(cli).to receive(:run_full_tests?).with(no_args).and_return(true)
+          allow(cli).to receive(:profile_mode?).with(no_args).and_return(true)
         end
 
         it 'should run script with a flag' do
@@ -325,7 +325,7 @@ describe DeltaTest::CLI do
       context 'Partial tests' do
 
         before do
-          allow(cli).to receive(:run_full_tests?).with(no_args).and_return(false)
+          allow(cli).to receive(:profile_mode?).with(no_args).and_return(false)
         end
 
         context 'Any related files' do
