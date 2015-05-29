@@ -108,6 +108,8 @@ commands:
                    it'll run full test cases with a profile mode to create a table.
                    Otherwise, it'll run test script with only related spec files
                    passed by its arguments, like `delta_test list | xargs script'.
+
+    clear          Clean up tables and caches.
 ```
 
 #### `exec` example
