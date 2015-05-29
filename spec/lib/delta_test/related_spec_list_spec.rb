@@ -171,8 +171,82 @@ describe DeltaTest::RelatedSpecList do
         end
       end
 
+      after do
+        DeltaTest.configure do |config|
+          config.custom_mappings = {}
+        end
+      end
+
       it 'should be included' do
         expect(list.related_spec_files).to eq(related_spec_files)
+      end
+
+    end
+
+    describe 'Run full tests' do
+
+      let(:full_spec_files) do
+        Set[
+          'spec/foo_spec.rb',
+          'spec/bar_spec.rb',
+          'spec/baz_spec.rb',
+          'spec/other_spec.rb',
+          'spec/mixed_spec.rb',
+        ]
+      end
+
+      context 'No file in full test patterns is changed' do
+
+        let(:changed_files) do
+          [
+            'spec/other_spec.rb',
+          ]
+        end
+
+        let(:related_spec_files) do
+          Set[
+            'spec/foo_spec.rb',
+            'spec/mixed_spec.rb',
+            'spec/baz_spec.rb',
+          ]
+        end
+
+        it 'should not return full spec files' do
+          expect(list.related_spec_files).not_to eq(full_spec_files)
+        end
+
+      end
+
+      context 'No file in full test patterns is changed' do
+
+        let(:full_test_patterns) do
+          [
+            'spec/other_spec.rb',
+          ]
+        end
+
+        let(:changed_files) do
+          [
+            'spec/other_spec.rb',
+          ]
+        end
+
+        before do
+          DeltaTest.configure do |config|
+            config.full_test_patterns = full_test_patterns
+          end
+        end
+
+        after do
+          DeltaTest.configure do |config|
+            config.full_test_patterns = []
+          end
+        end
+
+        it 'should return full spec files' do
+          expect(list.related_spec_files).to eq(full_spec_files)
+        end
+
       end
 
     end
