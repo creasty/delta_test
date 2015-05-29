@@ -85,7 +85,6 @@ module DeltaTest
     # @params {String|Pathname} file
     ###
     def dump(file)
-      # Marshal can't dump hash with default proc
       without_default_proc do
         cleanup!
         data = Marshal.dump(self)

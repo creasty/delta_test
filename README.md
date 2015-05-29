@@ -160,9 +160,6 @@ full_test_patterns:
 custom_mappings:
   spec/features/i18n_spec.rb:
     - config/locales/**/*.yml
-
-full_test_patterns:
-  - Gemfile.lock
 ```
 
 
