@@ -257,7 +257,10 @@ commands:
 
     exec <script> [-- <files>]
                    Execute test script using delta_test.
-                   Run command something like `delta_test list | xargs script'.
+                   if <base> and <head> is the same commit or no dependencies table is found,
+                   it'll run full test cases with a profile mode to create a table.
+                   Otherwise, it'll run test script with only related spec files
+                   passed by its arguments, like `delta_test list | xargs script'.
 HELP
     end
 
