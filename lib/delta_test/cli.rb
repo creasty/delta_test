@@ -14,6 +14,8 @@ module DeltaTest
       'verbose' => false,
     }.freeze
 
+    BUNDLE_EXEC = ['bundle', 'exec'].freeze
+
     SPLITTER = '--'
 
     attr_reader *%i[
@@ -116,7 +118,7 @@ module DeltaTest
     # @return {Boolean}
     ###
     def run_full_tests?
-      Git.same_commit?(@options['base'], @options['head'])
+      @run_full_tests ||= Git.same_commit?(@options['base'], @options['head'])
     end
 
     ###
@@ -152,29 +154,28 @@ module DeltaTest
       spec_files = nil
       args = []
 
-      if run_full_tests?
-        args << ('%s=%s' % [VERBOSE_FLAG, true]) if DeltaTest.verbose?
-        args << ('%s=%s' % [ACTIVE_FLAG, true])
-      else
-        args << 'cat'
-        args << '|'
-        args << 'xargs'
+      force_run_full_tests = false
 
-        @list.load_table!
-        @list.retrive_changed_files!(@options['base'], @options['head'])
+      begin
+        unless run_full_tests?
+          @list.load_table!
+          @list.retrive_changed_files!(@options['base'], @options['head'])
 
-        spec_files = @list.related_spec_files.to_a
+          spec_files = @list.related_spec_files.to_a
 
-        if spec_files.empty?
-          exit_with_message(0, 'Nothing to test')
+          if spec_files.empty?
+            exit_with_message(0, 'Nothing to test')
+          end
         end
+      rescue
+        force_run_full_tests = true
       end
 
       @args.map! { |arg| Shellwords.escape(arg) }
 
       if (splitter = @args.index(SPLITTER))
-        @args = @args.take(splitter)
         files = @args.drop(splitter + 1)
+        @args = @args.take(splitter)
 
         if files && files.any?
           if spec_files
@@ -185,6 +186,20 @@ module DeltaTest
             spec_files = files
           end
         end
+      end
+
+      if run_full_tests? || force_run_full_tests
+        args << ('%s=%s' % [VERBOSE_FLAG, true]) if DeltaTest.verbose?
+        args << ('%s=%s' % [ACTIVE_FLAG, true])
+      end
+
+      if spec_files
+        args.unshift('cat', '|')
+        args << 'xargs'
+      end
+
+      if bundler_enabled? && BUNDLE_EXEC != @args.take(2)
+        args += BUNDLE_EXEC
       end
 
       args += @args
@@ -245,6 +260,29 @@ commands:
                    Execute test script using delta_test.
                    Run command something like `delta_test list | xargs script'.
 HELP
+    end
+
+
+  private
+
+    ###
+    # Check bundler existance
+    #
+    # @see http://github.com/carlhuda/bundler Bundler::SharedHelpers#find_gemfile
+    ###
+    def bundler_enabled?
+      return true if Object.const_defined?(:Bundler)
+
+      previous = nil
+      current = File.expand_path(Dir.pwd)
+
+      until !File.directory?(current) || current == previous
+        filename = File.join(current, 'Gemfile')
+        return true if File.exist?(filename)
+        current, previous = File.expand_path('..', current), current
+      end
+
+      false
     end
 
   end
