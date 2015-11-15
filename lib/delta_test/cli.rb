@@ -279,21 +279,10 @@ HELP
     ###
     # Check bundler existance
     #
-    # @see http://github.com/carlhuda/bundler Bundler::SharedHelpers#find_gemfile
+    # @return {Boolean}
     ###
     def bundler_enabled?
-      return true if Object.const_defined?(:Bundler)
-
-      previous = nil
-      current = File.expand_path(Dir.pwd)
-
-      until !File.directory?(current) || current == previous
-        filename = File.join(current, 'Gemfile')
-        return true if File.exist?(filename)
-        current, previous = File.expand_path('..', current), current
-      end
-
-      false
+      Object.const_defined?(:Bundler) || !!Utils.find_file_upward('Gemfile')
     end
 
     ###
