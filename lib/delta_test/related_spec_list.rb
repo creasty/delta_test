@@ -7,9 +7,14 @@ module DeltaTest
   class RelatedSpecList
 
     attr_reader(*%i[
+      git
       table
       changed_files
     ])
+
+    def initialize
+      @git = Git.new
+    end
 
     ###
     # Load table from the file
@@ -29,11 +34,11 @@ module DeltaTest
     # @params {String} head
     ###
     def retrive_changed_files!(base, head)
-      unless Git.git_repo?
+      unless @git.git_repo?
         raise NotInGitRepositoryError
       end
 
-      @changed_files = Git.changed_files(base, head)
+      @changed_files = @git.changed_files(base, head)
     end
 
     ###

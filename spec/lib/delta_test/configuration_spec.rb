@@ -339,7 +339,7 @@ stats_path: #{stats_path}
     describe 'retrive_files_from_git_index!' do
 
       it 'should raise an error if not in git repo' do
-        allow(DeltaTest::Git).to receive(:git_repo?).with(no_args).and_return(false)
+        allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).with(no_args).and_return(false)
 
         expect {
           configuration.retrive_files_from_git_index!
@@ -352,8 +352,8 @@ stats_path: #{stats_path}
           'a/file_2',
         ]
 
-        allow(DeltaTest::Git).to receive(:git_repo?).with(no_args).and_return(true)
-        allow(DeltaTest::Git).to receive(:ls_files).with(no_args).and_return(files)
+        allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).with(no_args).and_return(true)
+        allow_any_instance_of(DeltaTest::Git).to receive(:ls_files).with(no_args).and_return(files)
 
         expect {
           configuration.retrive_files_from_git_index!

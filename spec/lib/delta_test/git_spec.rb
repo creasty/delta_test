@@ -6,6 +6,27 @@ describe DeltaTest::Git do
   let(:success_status) { [out, '', double(success?: true)] }
   let(:error_status)   { ['', '', double(success?: false)] }
 
+  let(:git) { DeltaTest::Git.new }
+
+  describe '::new' do
+
+    it 'should execute commands in the base_path' do
+      git = DeltaTest::Git.new
+      expect(git.dir).to eq(DeltaTest.config.base_path)
+    end
+
+    context 'with dir' do
+
+      it 'sholud execute commands in the specified directory' do
+        dir = '/dir'
+        git = DeltaTest::Git.new(dir)
+        expect(git.dir).to eq(dir)
+      end
+
+    end
+
+  end
+
   describe '::git_repo?' do
 
     let(:command) { %q{git rev-parse --is-inside-work-tree} }
@@ -16,7 +37,7 @@ describe DeltaTest::Git do
       result = nil
 
       expect {
-        result = DeltaTest::Git.git_repo?
+        result = git.git_repo?
       }.not_to raise_error
 
       expect(result).to be(false)
@@ -25,13 +46,13 @@ describe DeltaTest::Git do
     it 'should return true exit code is 0' do
       allow(Open3).to receive(:capture3).with(command, any_args).and_return(success_status)
 
-      expect(DeltaTest::Git.git_repo?).to be(true)
+      expect(git.git_repo?).to be(true)
     end
 
     it 'should return false exit code not is 0' do
       allow(Open3).to receive(:capture3).with(command, any_args).and_return(error_status)
 
-      expect(DeltaTest::Git.git_repo?).to be(false)
+      expect(git.git_repo?).to be(false)
     end
 
   end
@@ -45,20 +66,20 @@ describe DeltaTest::Git do
       allow(Open3).to receive(:capture3).with(command, any_args).and_raise
 
       expect {
-        DeltaTest::Git.root_dir
+        git.root_dir
       }.to raise_error
     end
 
     it 'should return a root directory path if success' do
       allow(Open3).to receive(:capture3).with(command, any_args).and_return(success_status)
 
-      expect(DeltaTest::Git.root_dir).to eq(out)
+      expect(git.root_dir).to eq(out)
     end
 
     it 'should return nil if error' do
       allow(Open3).to receive(:capture3).with(command, any_args).and_return(error_status)
 
-      expect(DeltaTest::Git.root_dir).to be_nil
+      expect(git.root_dir).to be_nil
     end
 
   end
@@ -73,20 +94,20 @@ describe DeltaTest::Git do
       allow(Open3).to receive(:capture3).with(command, any_args).and_raise
 
       expect {
-        DeltaTest::Git.rev_parse(rev)
+        git.rev_parse(rev)
       }.to raise_error
     end
 
     it 'should return a commit id if success' do
       allow(Open3).to receive(:capture3).with(command, any_args).and_return(success_status)
 
-      expect(DeltaTest::Git.rev_parse(rev)).to eq(out)
+      expect(git.rev_parse(rev)).to eq(out)
     end
 
     it 'should return nil if error' do
       allow(Open3).to receive(:capture3).with(command, any_args).and_return(error_status)
 
-      expect(DeltaTest::Git.rev_parse(rev)).to be_nil
+      expect(git.rev_parse(rev)).to be_nil
     end
 
   end
@@ -103,19 +124,19 @@ describe DeltaTest::Git do
 
     before do
       map.each do |name, commit_id|
-        allow(DeltaTest::Git).to receive(:rev_parse).with(name).and_return(commit_id)
+        allow(git).to receive(:rev_parse).with(name).and_return(commit_id)
       end
     end
 
     it 'should compare two names by thier commit ids' do
       names = map.values
       names.product(names).each do |r1, r2|
-        expect(DeltaTest::Git).to receive(:rev_parse).with(r1).ordered
-        expect(DeltaTest::Git).to receive(:rev_parse).with(r2).ordered
+        expect(git).to receive(:rev_parse).with(r1).ordered
+        expect(git).to receive(:rev_parse).with(r2).ordered
 
         is_same = (map[r1] == map[r2])
 
-        expect(DeltaTest::Git.same_commit?(r1, r2)).to be(is_same)
+        expect(git.same_commit?(r1, r2)).to be(is_same)
       end
     end
 
@@ -130,20 +151,20 @@ describe DeltaTest::Git do
       allow(Open3).to receive(:capture3).with(command, any_args).and_raise
 
       expect {
-        DeltaTest::Git.ls_files
+        git.ls_files
       }.to raise_error
     end
 
     it 'should return an array if success' do
       allow(Open3).to receive(:capture3).with(command, any_args).and_return(success_status)
 
-      expect(DeltaTest::Git.ls_files).to eq(out.split("\x0"))
+      expect(git.ls_files).to eq(out.split("\x0"))
     end
 
     it 'should return an empty array if error' do
       allow(Open3).to receive(:capture3).with(command, any_args).and_return(error_status)
 
-      expect(DeltaTest::Git.ls_files).to eq([])
+      expect(git.ls_files).to eq([])
     end
 
   end
@@ -157,20 +178,20 @@ describe DeltaTest::Git do
       allow(Open3).to receive(:capture3).with(command, any_args).and_raise
 
       expect {
-        DeltaTest::Git.changed_files
+        git.changed_files
       }.to raise_error
     end
 
     it 'should return an array if success' do
       allow(Open3).to receive(:capture3).with(command, any_args).and_return(success_status)
 
-      expect(DeltaTest::Git.changed_files).to eq(out.split("\x0"))
+      expect(git.changed_files).to eq(out.split("\x0"))
     end
 
     it 'should return an empty array if error' do
       allow(Open3).to receive(:capture3).with(command, any_args).and_return(error_status)
 
-      expect(DeltaTest::Git.changed_files).to eq([])
+      expect(git.changed_files).to eq([])
     end
 
   end

@@ -40,8 +40,8 @@ describe DeltaTest::RelatedSpecList do
     before do
       allow(DeltaTest::DependenciesTable).to receive(:load).with(Pathname.new(table_file_path)).and_return(table)
 
-      allow(DeltaTest::Git).to receive(:git_repo?).and_return(true)
-      allow(DeltaTest::Git).to receive(:changed_files).with(base, head).and_return(changed_files)
+      allow(list.git).to receive(:git_repo?).and_return(true)
+      allow(list.git).to receive(:changed_files).with(base, head).and_return(changed_files)
     end
 
   end
@@ -73,7 +73,7 @@ describe DeltaTest::RelatedSpecList do
     include_examples :_mock_table_and_changed_files
 
     it 'shoud raise an error if the directory is not managed by git' do
-      allow(DeltaTest::Git).to receive(:git_repo?).and_return(false)
+      allow(list.git).to receive(:git_repo?).and_return(false)
 
       expect {
         list.retrive_changed_files!(base, head)

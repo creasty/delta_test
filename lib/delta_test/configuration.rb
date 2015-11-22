@@ -208,11 +208,13 @@ module DeltaTest
     # And update `files`
     ###
     def retrive_files_from_git_index!
-      unless Git.git_repo?
+      git = Git.new
+
+      unless git.git_repo?
         raise NotInGitRepositoryError
       end
 
-      self.files = Git.ls_files
+      self.files = git.ls_files
     end
 
 
