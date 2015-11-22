@@ -163,6 +163,8 @@ module DeltaTest
       filtered_files = Utils.files_grep(filtered_files, self.patterns, self.exclude_patterns)
 
       @filtered_files = Set.new(filtered_files)
+
+      @stats_path = Pathname.new(File.absolute_path(self.stats_path, self.base_path))
     end
 
 
@@ -211,6 +213,18 @@ module DeltaTest
       end
 
       self.files = Git.ls_files
+    end
+
+
+    #  Getters
+    #-----------------------------------------------
+    ###
+    # Temporary stats file path
+    #
+    # @return {Pathname}
+    ###
+    def tmp_stats_file_path
+      self.stats_path.join('tmp', DeltaTest.tester_id)
     end
 
   end

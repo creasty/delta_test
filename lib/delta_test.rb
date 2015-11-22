@@ -27,6 +27,8 @@ module DeltaTest
     def setup
       @config = Configuration.new
       @config.auto_configure! if active?
+
+      tester_id
     end
 
     def configure(&block)
@@ -45,6 +47,12 @@ module DeltaTest
 
     def log(*args)
       puts(*args) if verbose?
+    end
+
+    def tester_id
+      return @tester_id if @tester_id
+      t = Time.now
+      @tester_id = 'p%dt%dn%d' % [$$, t.to_i, t.nsec]
     end
 
   end
