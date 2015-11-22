@@ -12,8 +12,7 @@ describe DeltaTest::RelatedSpecList do
 
   before do
     DeltaTest.configure do |config|
-      config.base_path  = base_path
-      config.table_file = table_file_path
+      config.base_path = base_path
     end
   end
 
@@ -51,7 +50,7 @@ describe DeltaTest::RelatedSpecList do
 
     it 'should raise an error if a table file is not exist' do
       expect {
-        list.load_table!
+        list.load_table!(table_file_path)
       }.to raise_error(DeltaTest::TableNotFoundError)
     end
 
@@ -61,7 +60,7 @@ describe DeltaTest::RelatedSpecList do
       expect(list.table).to be_nil
 
       expect {
-        list.load_table!
+        list.load_table!(table_file_path)
       }.not_to raise_error
 
       expect(list.table).to be_a(DeltaTest::DependenciesTable)
@@ -98,7 +97,7 @@ describe DeltaTest::RelatedSpecList do
 
     before do
       table_file
-      list.load_table!
+      list.load_table!(table_file_path)
       list.retrive_changed_files!(base, head)
     end
 

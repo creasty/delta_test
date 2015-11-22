@@ -14,12 +14,12 @@ module DeltaTest
     ###
     # Load table from the file
     ###
-    def load_table!
-      unless File.exist?(DeltaTest.config.table_file_path)
-        raise TableNotFoundError.new(DeltaTest.config.table_file_path)
+    def load_table!(table_file_path)
+      unless File.exist?(table_file_path)
+        raise TableNotFoundError.new(table_file_path)
       end
 
-      @table = DependenciesTable.load(DeltaTest.config.table_file_path)
+      @table = DependenciesTable.load(table_file_path)
     end
 
     ###
