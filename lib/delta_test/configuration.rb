@@ -52,7 +52,9 @@ module DeltaTest
       base_path
       files
 
-      table_file
+      stats_repository
+      stats_path
+
       patterns
       exclude_patterns
       full_test_patterns
@@ -62,11 +64,10 @@ module DeltaTest
     # for precalculated values
     attr_reader *%i[
       filtered_files
-      table_file_path
     ]
 
     validate :base_path, 'need to be an absolute path' do
-      self.base_path.absolute?
+      self.base_path.absolute? rescue false
     end
 
     validate :files, 'need to be an array' do
@@ -75,6 +76,10 @@ module DeltaTest
 
     validate :patterns, 'need to be an array' do
       self.patterns.is_a?(Array)
+    end
+
+    validate :stats_path, 'need to be an absolute path' do
+      self.stats_path.absolute? rescue false
     end
 
     validate :exclude_patterns, 'need to be an array' do
@@ -95,9 +100,12 @@ module DeltaTest
 
     def initialize
       update do |c|
-        c.base_path          = File.expand_path('.')
-        c.table_file         = 'tmp/.delta_test_dt'
-        c.files              = []
+        c.base_path = File.expand_path('.')
+        c.files     = []
+
+        c.stats_repository = nil
+        c.stats_path       = File.expand_path('tmp/delta_test_stats')
+
         c.patterns           = []
         c.exclude_patterns   = []
         c.full_test_patterns = []
@@ -115,37 +123,19 @@ module DeltaTest
     # @return {Pathname}
     ###
     def base_path=(path)
+      return unless path
       @base_path = Pathname.new(path)
     end
 
     ###
-    # Store table_file as Pathname
+    # Store stats_path as Pathname
     #
     # @params {String|Pathname} path
     # @return {Pathname}
     ###
-    def table_file=(path)
-      @table_file = Pathname.new(path)
-    end
-
-
-    #  Override getters
-    #-----------------------------------------------
-    ###
-    # Returns file path for the table
-    #
-    # @params {String} part
-    #
-    # @return {Pathname}
-    ###
-    def table_file_path(part = nil)
-      return unless @table_file_path
-
-      if part
-        @table_file_path.sub_ext(PART_FILE_EXT % part)
-      else
-        @table_file_path
-      end
+    def stats_path=(path)
+      return unless path
+      @stats_path = Pathname.new(path)
     end
 
 
@@ -173,8 +163,6 @@ module DeltaTest
       filtered_files = Utils.files_grep(filtered_files, self.patterns, self.exclude_patterns)
 
       @filtered_files = Set.new(filtered_files)
-
-      @table_file_path = Pathname.new(File.absolute_path(self.table_file, self.base_path))
     end
 
 
