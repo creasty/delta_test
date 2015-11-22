@@ -2,7 +2,7 @@ describe DeltaTest::Configuration do
 
   let(:configuration) do
     DeltaTest::Configuration.new.tap do |c|
-      c.stats_repository = 'git:///test/test.git'
+      c.stats_repository = 'git@example.com:test/test.git'
     end
   end
 

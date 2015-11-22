@@ -24,7 +24,7 @@ module DeltaTest
 
       DeltaTest.log('--- setup!')
 
-      @table = DependenciesTable.load(DeltaTest.config.table_file_path)
+      @table = DependenciesTable.new
 
       @current_spec_file = nil
     end
