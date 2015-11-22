@@ -11,7 +11,7 @@ module DeltaTest
       # @return {Boolean}
       ###
       def git_repo?
-        o, e, s = exec(%q{git rev-parse --is-inside-work-tree}) rescue []
+        _, _, s = exec(%q{git rev-parse --is-inside-work-tree}) rescue []
         !!s && s.success?
       end
 
@@ -21,7 +21,7 @@ module DeltaTest
       # @return {String}
       ###
       def root_dir
-        o, e, s = exec(%q{git rev-parse --show-toplevel})
+        o, _, s = exec(%q{git rev-parse --show-toplevel})
         s.success? ? o.strip : nil
       end
 
@@ -33,7 +33,7 @@ module DeltaTest
       # @return {String}
       ###
       def rev_parse(rev)
-        o, e, s = exec(%q{git rev-parse %s}, rev)
+        o, _, s = exec(%q{git rev-parse %s}, rev)
         s.success? ? o.strip : nil
       end
 
@@ -55,7 +55,7 @@ module DeltaTest
       # @return {Array<String>}
       ###
       def ls_files
-        o, e, s = exec(%q{git ls-files -z})
+        o, _, s = exec(%q{git ls-files -z})
         s.success? ? o.split("\x0") : []
       end
 
@@ -68,7 +68,7 @@ module DeltaTest
       # @return {Array<String>}
       ###
       def changed_files(base = 'master', head = 'HEAD')
-        o, e, s = exec(%q{git --no-pager diff --name-only -z %s %s}, base, head)
+        o, _, s = exec(%q{git --no-pager diff --name-only -z %s %s}, base, head)
         s.success? ? o.split("\x0") : []
       end
 

@@ -48,7 +48,7 @@ module DeltaTest
 
     PART_FILE_EXT = '.part-%s'
 
-    attr_accessor *%i[
+    attr_accessor(*%i[
       base_path
       files
 
@@ -59,12 +59,12 @@ module DeltaTest
       exclude_patterns
       full_test_patterns
       custom_mappings
-    ]
+    ])
 
     # for precalculated values
-    attr_reader *%i[
+    attr_reader(*%i[
       filtered_files
-    ]
+    ])
 
     validate :base_path, 'need to be an absolute path' do
       self.base_path.absolute? rescue false

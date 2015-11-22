@@ -8,10 +8,10 @@ require_relative 'utils'
 module DeltaTest
   class Generator
 
-    attr_reader *%i[
+    attr_reader(*%i[
       current_spec_file
       table
-    ]
+    ])
 
     ###
     # Setup table

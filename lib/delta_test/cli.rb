@@ -18,11 +18,11 @@ module DeltaTest
 
     SPLITTER = '--'
 
-    attr_reader *%i[
+    attr_reader(*%i[
       args
       command
       options
-    ]
+    ])
 
     def initialize
       @args    = []

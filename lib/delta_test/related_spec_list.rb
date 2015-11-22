@@ -6,10 +6,10 @@ require_relative 'dependencies_table'
 module DeltaTest
   class RelatedSpecList
 
-    attr_reader *%i[
+    attr_reader(*%i[
       table
       changed_files
-    ]
+    ])
 
     ###
     # Load table from the file

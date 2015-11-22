@@ -19,10 +19,10 @@ module DeltaTest
 
     attr_reader :config
 
-    attr_writer *%i[
+    attr_writer(*%i[
       active
       verbose
-    ]
+    ])
 
     def setup
       @config = Configuration.new
@@ -44,7 +44,7 @@ module DeltaTest
     end
 
     def log(*args)
-      puts *args if verbose?
+      puts(*args) if verbose?
     end
 
   end
