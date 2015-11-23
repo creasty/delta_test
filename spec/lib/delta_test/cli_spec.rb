@@ -1,5 +1,4 @@
 require 'delta_test/cli'
-require 'delta_test/git'
 
 describe DeltaTest::CLI do
 
@@ -165,7 +164,7 @@ describe DeltaTest::CLI do
 
     before do
       map.each do |name, commit_id|
-        allow(DeltaTest::Git).to receive(:rev_parse).with(name).and_return(commit_id)
+        allow(cli.git).to receive(:rev_parse).with(name).and_return(commit_id)
       end
     end
 

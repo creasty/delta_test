@@ -22,12 +22,15 @@ module DeltaTest
       args
       command
       options
+      git
     ])
 
     def initialize
       @args    = []
       @command = nil
       @options = {}
+
+      @git = Git.new
     end
 
     ###
@@ -120,7 +123,7 @@ module DeltaTest
     # @return {Boolean}
     ###
     def profile_mode?
-      @profile_mode ||= Git.same_commit?(@options['base'], @options['head'])
+      @profile_mode ||= @git.same_commit?(@options['base'], @options['head'])
     end
 
     ###

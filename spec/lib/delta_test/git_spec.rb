@@ -144,7 +144,7 @@ describe DeltaTest::Git do
 
   describe '#ls_files' do
 
-    let(:command) { %q{git ls-files -z} }
+    let(:command) { %q{git ls-files -z .} }
     let(:out)     { "/a/file/1\x0/a/file/2\x0/a/file/3" }
 
     it 'should raise an error if the command is not exist' do

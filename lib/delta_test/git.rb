@@ -59,8 +59,8 @@ module DeltaTest
     #
     # @return {Array<String>}
     ###
-    def ls_files
-      o, _, s = exec(%q{git ls-files -z})
+    def ls_files(path = '.')
+      o, _, s = exec(%q{git ls-files -z %s}, path)
       s.success? ? o.split("\x0") : []
     end
 
@@ -96,7 +96,7 @@ module DeltaTest
     # @return {Array<String>}
     ###
     def ls_hashes(n)
-      o, _, s = exec(%q{git --no-pager log -z -n %s --format='%%H'}, n.to_i)
+      o, _, s = exec(%q{git --no-pager log -z -n %d --format='%%H'}, n.to_i)
       s.success? ? o.split("\x0") : []
     end
 
@@ -107,7 +107,7 @@ module DeltaTest
     # Util for executing command
     ###
     def exec(command, *args)
-      args = args.map { |a| Shellwords.escape(a) }
+      args = args.map { |a| a.is_a?(String) ? Shellwords.escape(a) : a }
       Open3.capture3(command % args, chdir: @dir)
     end
 
