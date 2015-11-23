@@ -1,4 +1,4 @@
-table_file: tmp/.delta_test_dt
+stats_repository: git@example.com:test/test.git
 
 patterns:
   - app/**/*.rb
