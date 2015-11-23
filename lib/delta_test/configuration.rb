@@ -54,6 +54,7 @@ module DeltaTest
 
       stats_repository
       stats_path
+      stats_life
 
       patterns
       exclude_patterns
@@ -82,6 +83,10 @@ module DeltaTest
       self.stats_path.absolute? rescue false
     end
 
+    validate :stats_life, 'need to be a real number' do
+      self.stats_life.is_a?(Integer) && self.stats_life > 0
+    end
+
     validate :exclude_patterns, 'need to be an array' do
       self.exclude_patterns.is_a?(Array)
     end
@@ -105,6 +110,7 @@ module DeltaTest
 
         c.stats_repository = nil
         c.stats_path       = File.expand_path('tmp/delta_test_stats')
+        c.stats_life       = 1000  # commits
 
         c.patterns           = []
         c.exclude_patterns   = []

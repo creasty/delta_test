@@ -12,6 +12,7 @@ describe DeltaTest::Configuration do
       %i[
         base_path
         files
+        stats_life
       ]
     end
 
@@ -80,6 +81,26 @@ describe DeltaTest::Configuration do
         expect {
           configuration.validate!
         }.not_to raise_error
+      end
+
+    end
+
+    describe '#stats_life' do
+
+      it 'should raise an error if `stats_life` is not an integer' do
+        configuration.stats_life = '100'
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/stats_life/)
+      end
+
+      it 'should raise an error if `stats_life` is not a real number' do
+        configuration.stats_life = -100
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/stats_life/)
       end
 
     end
