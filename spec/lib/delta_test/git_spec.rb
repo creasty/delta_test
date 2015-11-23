@@ -27,7 +27,7 @@ describe DeltaTest::Git do
 
   end
 
-  describe '::git_repo?' do
+  describe '#git_repo?' do
 
     let(:command) { %q{git rev-parse --is-inside-work-tree} }
 
@@ -57,7 +57,7 @@ describe DeltaTest::Git do
 
   end
 
-  describe '::root_dir' do
+  describe '#root_dir' do
 
     let(:command) { %q{git rev-parse --show-toplevel} }
     let(:out)     { '/root/dir' }
@@ -84,7 +84,7 @@ describe DeltaTest::Git do
 
   end
 
-  describe '::rev_parse' do
+  describe '#rev_parse' do
 
     let(:rev)     { 'HEAD' }
     let(:command) { %Q{git rev-parse #{rev}} }
@@ -112,7 +112,7 @@ describe DeltaTest::Git do
 
   end
 
-  describe '::same_commit?' do
+  describe '#same_commit?' do
 
     let(:map) do
       {
@@ -142,7 +142,7 @@ describe DeltaTest::Git do
 
   end
 
-  describe '::ls_files' do
+  describe '#ls_files' do
 
     let(:command) { %q{git ls-files -z} }
     let(:out)     { "/a/file/1\x0/a/file/2\x0/a/file/3" }
@@ -169,7 +169,7 @@ describe DeltaTest::Git do
 
   end
 
-  describe '::changed_files' do
+  describe '#changed_files' do
 
     let(:command) { %q{git --no-pager diff --name-only -z master HEAD} }
     let(:out)     { "/a/file/1\x0/a/file/2\x0/a/file/3" }
@@ -192,6 +192,43 @@ describe DeltaTest::Git do
       allow(Open3).to receive(:capture3).with(command, any_args).and_return(error_status)
 
       expect(git.changed_files).to eq([])
+    end
+
+  end
+
+  describe '#changed_files_n' do
+
+    it 'should call changed_files' do
+      allow(git).to receive(:changed_files).and_return(nil)
+      expect(git).to receive(:changed_files).with('HEAD', 'HEAD~10')
+      git.changed_files_n(10)
+    end
+
+  end
+
+  describe '#ls_hashes' do
+
+    let(:command) { %q{git --no-pager log -z -n 10 --format='%H'} }
+    let(:out)     { "0000\x01111\x02222" }
+
+    it 'should raise an error if the command is not exist' do
+      allow(Open3).to receive(:capture3).with(command, any_args).and_raise
+
+      expect {
+        git.ls_hashes(10)
+      }.to raise_error
+    end
+
+    it 'should return an array if success' do
+      allow(Open3).to receive(:capture3).with(command, any_args).and_return(success_status)
+
+      expect(git.ls_hashes(10)).to eq(out.split("\x0"))
+    end
+
+    it 'should return an empty array if error' do
+      allow(Open3).to receive(:capture3).with(command, any_args).and_return(error_status)
+
+      expect(git.ls_hashes(10)).to eq([])
     end
 
   end

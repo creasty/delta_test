@@ -77,6 +77,29 @@ module DeltaTest
       s.success? ? o.split("\x0") : []
     end
 
+    ###
+    # Get list of modified files for the last N commits
+    #
+    # @params {Integer} n
+    #
+    # @return {Array<String>}
+    ###
+    def changed_files_n(n)
+      changed_files('HEAD', 'HEAD~%d' % [n.to_i])
+    end
+
+    ###
+    # Get list of hashes for the last N commits
+    #
+    # @params {Integer} n
+    #
+    # @return {Array<String>}
+    ###
+    def ls_hashes(n)
+      o, _, s = exec(%q{git --no-pager log -z -n %s --format='%%H'}, n.to_i)
+      s.success? ? o.split("\x0") : []
+    end
+
 
   private
 
