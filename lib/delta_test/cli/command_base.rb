@@ -79,15 +79,6 @@ module DeltaTest
       end
 
       ###
-      # Check bundler existance
-      #
-      # @return {Boolean}
-      ###
-      def bundler_enabled?
-        Object.const_defined?(:Bundler) || !!Utils.find_file_upward('Gemfile')
-      end
-
-      ###
       # Exec command with data passed as stdin
       #
       # @params {String} args
@@ -106,6 +97,15 @@ module DeltaTest
           ThreadsWait.all_waits(*threads)
           exit(status.nil? ? w.value.exitstatus : status)
         end
+      end
+
+      ###
+      # Check bundler existance
+      #
+      # @return {Boolean}
+      ###
+      def bundler_enabled?
+        Object.const_defined?(:Bundler) || !!Utils.find_file_upward('Gemfile')
       end
 
     end
