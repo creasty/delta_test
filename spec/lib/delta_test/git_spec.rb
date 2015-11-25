@@ -196,16 +196,6 @@ describe DeltaTest::Git do
 
   end
 
-  describe '#changed_files_n' do
-
-    it 'should call changed_files' do
-      allow(git).to receive(:changed_files).and_return(nil)
-      expect(git).to receive(:changed_files).with('HEAD', 'HEAD~10')
-      git.changed_files_n(10)
-    end
-
-  end
-
   describe '#ls_hashes' do
 
     let(:command) { %q{git --no-pager log -z -n 10 --format='%H'} }

@@ -1,4 +1,4 @@
-require_relative './command_base'
+require_relative 'command_base'
 
 module DeltaTest
   class CLI

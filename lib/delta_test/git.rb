@@ -59,7 +59,7 @@ module DeltaTest
     #
     # @return {Array<String>}
     ###
-    def ls_files(path = '.')
+    def ls_files(path: '.')
       o, _, s = exec(%q{git ls-files -z %s}, path)
       s.success? ? o.split("\x0") : []
     end
@@ -72,20 +72,9 @@ module DeltaTest
     #
     # @return {Array<String>}
     ###
-    def changed_files(base = 'master', head = 'HEAD')
-      o, _, s = exec(%q{git --no-pager diff --name-only -z %s %s}, base, head)
+    def changed_files(base = 'master', head = 'HEAD', path: '.')
+      o, _, s = exec(%q{git --no-pager diff --name-only -z %s %s %s}, base, head, path)
       s.success? ? o.split("\x0") : []
-    end
-
-    ###
-    # Get list of modified files for the last N commits
-    #
-    # @params {Integer} n
-    #
-    # @return {Array<String>}
-    ###
-    def changed_files_n(n)
-      changed_files('HEAD', 'HEAD~%d' % [n.to_i])
     end
 
     ###
