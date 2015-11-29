@@ -100,6 +100,36 @@ module DeltaTest
     end
 
     ###
+    # Pull from the origin master
+    #
+    # @return {Boolean}
+    ###
+    def pull
+      _, _, s = exec(%q{pull origin master})
+      s.success?
+    end
+
+    ###
+    # Push to the origin master
+    #
+    # @return {Boolean}
+    ###
+    def push
+      _, _, s = exec(%q{push origin master})
+      s.success?
+    end
+
+    ###
+    # Create commit
+    #
+    # @return {Boolean}
+    ###
+    def commit(message)
+      _, _, s = exec(%q{commit -m %s}, message.to_s)
+      s.success?
+    end
+
+    ###
     # Util for executing command
     ###
     def exec(subcommand, *args)

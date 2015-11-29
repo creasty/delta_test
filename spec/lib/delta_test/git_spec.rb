@@ -251,7 +251,7 @@ describe DeltaTest::Git do
       }.to raise_error
     end
 
-    it 'should return a root directory path if success' do
+    it 'should return an url if success' do
       expect(git).to receive(:exec).with(*subcommand).and_call_original
       allow(Open3).to receive(:capture3).and_return(success_status)
 
@@ -263,6 +263,64 @@ describe DeltaTest::Git do
       allow(Open3).to receive(:capture3).and_return(error_status)
 
       expect(git.origin_url).to be_nil
+    end
+
+  end
+
+  describe '#pull' do
+
+    let(:subcommand) { ['pull origin master'] }
+
+    it 'should raise an error if the command is not exist' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_raise
+
+      expect {
+        git.pull
+      }.to raise_error
+    end
+
+    it 'should return true if success' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(success_status)
+
+      expect(git.pull).to be(true)
+    end
+
+    it 'should return false if error' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(error_status)
+
+      expect(git.pull).to be(false)
+    end
+
+  end
+
+  describe '#push' do
+
+    let(:subcommand) { ['push origin master'] }
+
+    it 'should raise an error if the command is not exist' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_raise
+
+      expect {
+        git.push
+      }.to raise_error
+    end
+
+    it 'should return true if success' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(success_status)
+
+      expect(git.push).to be(true)
+    end
+
+    it 'should return false if error' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(error_status)
+
+      expect(git.push).to be(false)
     end
 
   end

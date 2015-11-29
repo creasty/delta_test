@@ -3,6 +3,9 @@ require_relative 'git'
 module DeltaTest
   class Stats
 
+    attr_reader :base_git
+    attr_reader :stats_git
+
     def initialize
       @base_git  = Git.new(DeltaTest.config.base_path)
       @stats_git = Git.new(DeltaTest.config.stats_path)
