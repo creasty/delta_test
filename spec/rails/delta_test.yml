@@ -1,5 +1,7 @@
 base_path: ../..
 
+stats_path: spec/rails/tmp/delta_test_stats
+
 patterns:
   - spec/rails/app/**/*.rb
   - spec/rails/config/locales/**/*.yml
