@@ -1,4 +1,4 @@
-stats_repository: git@example.com:test/test.git
+base_path: ../..
 
 patterns:
   - app/**/*.rb

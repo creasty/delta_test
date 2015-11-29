@@ -111,7 +111,7 @@ module DeltaTest
     end
 
     def initialize
-      update do |c|
+      update(validate: false) do |c|
         c.base_path = File.expand_path('.')
         c.files     = []
 
@@ -158,9 +158,9 @@ module DeltaTest
     #
     # @block
     ###
-    def update
+    def update(validate: true)
       yield self if block_given?
-      validate!
+      validate! if validate
       precalculate!
     end
 
@@ -204,7 +204,9 @@ module DeltaTest
 
       yaml = YAML.load_file(config_file)
 
-      self.base_path = File.dirname(config_file)
+      _base_path = yaml.delete('base_path')
+      yaml_dir = File.dirname(config_file)
+      self.base_path = _base_path ? File.absolute_path(_base_path, yaml_dir) : yaml_dir
 
       yaml.each do |k, v|
         if self.respond_to?("#{k}=")
