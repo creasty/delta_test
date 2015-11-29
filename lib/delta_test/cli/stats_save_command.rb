@@ -17,14 +17,16 @@ module DeltaTest
 
         table.dump(stats.table_file_path)
 
-        stats.stats_git.add(stats.table_file_path)
-        stats.stats_git.commit(stats.base_commit)
+        status = true
+        status &&= stats.stats_git.add(stats.table_file_path)
+        status &&= stats.stats_git.commit(stats.base_commit)
 
         if stats.stats_git.has_remote?
-          unless stats.stats_git.pull && stats.stats_git.push
-            raise StatsRepositorySyncError
-          end
+          status &&= stats.stats_git.pull
+          status &&= stats.stats_git.push
         end
+
+        raise StatsRepositorySyncError unless status
       end
 
       def tmp_table_files
