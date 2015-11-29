@@ -1,6 +1,7 @@
 require 'delta_test/cli'
 require 'delta_test/cli/exec_command'
 require 'delta_test/cli/specs_command'
+require 'delta_test/cli/stats_clean_command'
 require 'delta_test/cli/stats_show_command'
 require 'delta_test/cli/stats_save_command'
 require 'delta_test/cli/version_command'
@@ -28,6 +29,17 @@ describe DeltaTest::CLI do
         expect_any_instance_of(DeltaTest::CLI::SpecsCommand).to receive(:invoke).and_return(nil)
 
         DeltaTest::CLI.new(['specs']).run
+      end
+
+    end
+
+    describe 'stats:clean' do
+
+      it 'should call invoke on StatsCleanCommand' do
+        expect(DeltaTest::CLI::StatsCleanCommand).to receive(:new).with([]).and_call_original
+        expect_any_instance_of(DeltaTest::CLI::StatsCleanCommand).to receive(:invoke).and_return(nil)
+
+        DeltaTest::CLI.new(['stats:clean']).run
       end
 
     end
