@@ -58,6 +58,21 @@ describe DeltaTest::CLI::StatsSaveCommand do
       command.invoke!
     end
 
+    context 'with --no-sync' do
+
+      let(:command) { DeltaTest::CLI::StatsSaveCommand.new(['--no-sync']) }
+
+      it 'should not sync the repository' do
+        expect(command).to receive(:load_tmp_table_files).and_return(nil).once.ordered
+        expect(command).to receive(:cleanup_tmp_table_files).and_return(nil).once.ordered
+        expect(command).to receive(:save_table_file).and_return(nil).once.ordered
+        expect(command).to receive(:stage_table_file).and_return(nil).once.ordered
+        expect(command).not_to receive(:sync_table_file)
+        command.invoke!
+      end
+
+    end
+
   end
 
   describe '#tmp_table_files' do
