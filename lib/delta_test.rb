@@ -24,15 +24,14 @@ module DeltaTest
       verbose
     ])
 
-    def setup
-      @config = Configuration.new
-      @config.auto_configure! if active?
-
-      tester_id
+    def config
+      @config ||= Configuration.new.tap do |c|
+        c.auto_configure! if active?
+      end
     end
 
     def configure(&block)
-      @config.update(&block)
+      config.update(&block)
     end
 
     def active?
@@ -57,5 +56,3 @@ module DeltaTest
 
   end
 end
-
-DeltaTest.setup
