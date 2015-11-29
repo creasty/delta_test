@@ -24,6 +24,7 @@ namespace :rails do
       s = system('cd spec/rails && bundle exec delta_test stats:clean')
       s &&= system('cd spec/rails && bundle exec delta_test exec --verbose rspec --color')
       s &&= system('cd spec/rails && bundle exec delta_test stats:save --no-sync')
+      s &&= system('cd spec/rails && bundle exec delta_test stats:show')
       exit $?.exitstatus unless s
     end
   end
