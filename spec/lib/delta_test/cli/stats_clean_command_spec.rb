@@ -29,7 +29,7 @@ describe DeltaTest::CLI::StatsCleanCommand do
 
       expect(File.directory?(tmp_dir)).to be(true)
       expect {
-        command.invoke!
+        command.cleanup_tmp_table_files
       }.not_to raise_error
       expect(File.directory?(tmp_dir)).to be(false)
     end
