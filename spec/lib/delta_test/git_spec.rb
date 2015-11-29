@@ -325,4 +325,62 @@ describe DeltaTest::Git do
 
   end
 
+  describe '#add' do
+
+    let(:subcommand) { ['add %s', '/a/path'] }
+
+    it 'should raise an error if the command is not exist' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_raise
+
+      expect {
+        git.add('/a/path')
+      }.to raise_error
+    end
+
+    it 'should return true if success' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(success_status)
+
+      expect(git.add('/a/path')).to be(true)
+    end
+
+    it 'should return false if error' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(error_status)
+
+      expect(git.add('/a/path')).to be(false)
+    end
+
+  end
+
+  describe '#commit' do
+
+    let(:subcommand) { ['commit -m %s', 'message'] }
+
+    it 'should raise an error if the command is not exist' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_raise
+
+      expect {
+        git.commit('message')
+      }.to raise_error
+    end
+
+    it 'should return true if success' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(success_status)
+
+      expect(git.commit('message')).to be(true)
+    end
+
+    it 'should return false if error' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(error_status)
+
+      expect(git.commit('message')).to be(false)
+    end
+
+  end
+
 end

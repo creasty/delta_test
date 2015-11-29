@@ -120,6 +120,16 @@ module DeltaTest
     end
 
     ###
+    # Add a path to the index
+    #
+    # @return {Boolean}
+    ###
+    def add(path)
+      _, _, s = exec(%q{add %s}, path.to_s)
+      s.success?
+    end
+
+    ###
     # Create commit
     #
     # @return {Boolean}
