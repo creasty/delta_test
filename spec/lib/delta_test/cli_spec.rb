@@ -1,336 +1,90 @@
 require 'delta_test/cli'
+require 'delta_test/cli/exec_command'
+require 'delta_test/cli/specs_command'
+require 'delta_test/cli/stats_show_command'
+require 'delta_test/cli/stats_save_command'
+require 'delta_test/cli/version_command'
+require 'delta_test/cli/help_command'
 
 describe DeltaTest::CLI do
 
-  let(:cli) { DeltaTest::CLI.new }
-
-  before do
-    DeltaTest::CLI.class_eval do
-      attr_writer :args
-      attr_writer :options
-      attr_writer :command
-      attr_reader :list
-    end
-
-    # ignore outputs
-    allow($stdout).to receive(:puts).with(any_args).and_return(nil)
-    allow($stderr).to receive(:puts).with(any_args).and_return(nil)
-  end
-
   describe '#run' do
 
-    before do
-      allow(cli).to receive(:invoke).with(no_args).and_return(nil)
-    end
+    describe 'exec' do
 
-    it 'should set the first argument as command' do
-      args = ['command', 'foo', 'bar']
-      cli.run(args)
-      expect(cli.command).to eq(args[0])
-    end
+      it 'should call invoke on ExecCommand' do
+        expect(DeltaTest::CLI::ExecCommand).to receive(:new).with(['echo']).and_call_original
+        expect_any_instance_of(DeltaTest::CLI::ExecCommand).to receive(:invoke).and_return(nil)
 
-    it 'should call `parse_options!` and `invoke`' do
-      expect(cli).to receive(:parse_options!).with(no_args).and_return({}).once.ordered
-      expect(cli).to receive(:invoke).with(no_args).once.ordered
-
-      args = ['command', 'foo', 'bar']
-      cli.run(args)
-    end
-
-  end
-
-
-  describe '#profile_mode?' do
-
-    let(:map) do
-      {
-        'master'      => '0000000000000000000000000000000000000000',
-        'feature/foo' => '1111111111111111111111111111111111111111',
-      }
-    end
-
-    before do
-      map.each do |name, commit_id|
-        allow(cli.git).to receive(:rev_parse).with(name).and_return(commit_id)
-      end
-    end
-
-    context 'When base and head is the same commit' do
-
-      before do
-        cli.options = {
-          'base' => 'master',
-          'head' => 'master',
-        }
-      end
-
-      it 'should return true' do
-        expect(cli.profile_mode?).to be(true)
+        DeltaTest::CLI.new(['exec', 'echo']).run
       end
 
     end
 
-    context 'When base and head is a different commit' do
+    describe 'specs' do
 
-      before do
-        cli.options = {
-          'base' => 'master',
-          'head' => 'feature/foo',
-        }
-      end
+      it 'should call invoke on SpecsCommand' do
+        expect(DeltaTest::CLI::SpecsCommand).to receive(:new).with([]).and_call_original
+        expect_any_instance_of(DeltaTest::CLI::SpecsCommand).to receive(:invoke).and_return(nil)
 
-      it 'should return false' do
-        expect(cli.profile_mode?).to be(false)
+        DeltaTest::CLI.new(['specs']).run
       end
 
     end
 
-  end
+    describe 'stats:show' do
 
-  context 'Commands' do
+      it 'should call invoke on StatsShowCommand' do
+        expect(DeltaTest::CLI::StatsShowCommand).to receive(:new).with([]).and_call_original
+        expect_any_instance_of(DeltaTest::CLI::StatsShowCommand).to receive(:invoke).and_return(nil)
 
-    describe '#do_table' do
-
-      let(:table) do
-        {
-          'spec/foo_spec.rb' => ['lib/foo.rb']
-        }
-      end
-
-      before do
-        allow(cli).to receive(:invoke).with(no_args).and_return(nil)
-
-        cli.run([])
-
-        allow(cli.list).to receive(:load_table!).with(no_args).and_return(nil)
-        allow(cli.list).to receive(:table).with(no_args).and_return(table)
-      end
-
-      it 'should load a table file' do
-        expect(cli.list).to receive(:load_table!).with(no_args).once.ordered
-        expect(cli.list).to receive(:table).with(no_args).once.ordered
-
-        expect {
-          cli.do_table
-        }.not_to raise_error
-      end
-
-      it 'should show the table contents' do
-        expect(cli.list).to receive(:load_table!).with(no_args).once.ordered
-        expect(cli.list).to receive(:table).with(no_args).once.ordered
-
-        expect {
-          cli.do_table
-        }.to output(/foo_spec\.rb/).to_stdout
+        DeltaTest::CLI.new(['stats:show']).run
       end
 
     end
 
-    describe '#do_list' do
+    describe 'stats:save' do
 
-      let(:related_spec_files) do
-        [
-          'spec/foo_spec.rb',
-        ]
-      end
+      it 'should call invoke on StatsSaveCommand' do
+        expect(DeltaTest::CLI::StatsSaveCommand).to receive(:new).with([]).and_call_original
+        expect_any_instance_of(DeltaTest::CLI::StatsSaveCommand).to receive(:invoke).and_return(nil)
 
-      before do
-        allow(cli).to receive(:invoke).with(no_args).and_return(nil)
-
-        cli.run([])
-
-        allow(cli.list).to receive(:load_table!).with(no_args).and_return(nil)
-        allow(cli.list).to receive(:retrive_changed_files!).with(any_args).and_return(nil)
-        allow(cli.list).to receive(:related_spec_files).with(no_args).and_return(related_spec_files)
-      end
-
-      it 'should load a table file and retrive changed files' do
-        expect(cli.list).to receive(:load_table!).with(no_args).once.ordered
-        expect(cli.list).to receive(:retrive_changed_files!).with(any_args).once.ordered
-
-        expect {
-          cli.do_list
-        }.not_to raise_error
-      end
-
-      it 'should show a list of related spec files' do
-        expect(cli.list).to receive(:load_table!).with(no_args).once.ordered
-        expect(cli.list).to receive(:retrive_changed_files!).with(any_args).once.ordered
-        expect(cli.list).to receive(:related_spec_files).with(no_args).once.ordered
-
-        expect {
-          cli.do_list
-        }.to output(/foo_spec\.rb/).to_stdout
+        DeltaTest::CLI.new(['stats:save']).run
       end
 
     end
 
-    describe '#do_exec' do
+    describe 'version' do
 
-      let(:args) do
-        ['exec', 'bundle', 'exec', 'rspec']
-      end
+      it 'should call invoke on VersionCommand' do
+        expect(DeltaTest::CLI::VersionCommand).to receive(:new).with([]).and_call_original
+        expect_any_instance_of(DeltaTest::CLI::VersionCommand).to receive(:invoke).and_return(nil)
 
-      let(:related_spec_files) do
-        [
-          'spec/foo_spec.rb',
-        ]
-      end
-
-      before do
-        allow(cli).to receive(:invoke).with(no_args).and_return(nil)
-
-        cli.run(args)
-
-        allow(cli.list).to receive(:load_table!).with(no_args).and_return(nil)
-        allow(cli.list).to receive(:retrive_changed_files!).with(any_args).and_return(nil)
-        allow(cli.list).to receive(:related_spec_files).with(no_args).and_return(related_spec_files)
-
-        allow(cli).to receive(:exec_with_data).and_return(nil)
-      end
-
-      context 'Full tests' do
-
-        before do
-          allow(cli).to receive(:profile_mode?).with(no_args).and_return(true)
-        end
-
-        it 'should run script with a flag' do
-          expect(cli.list).not_to receive(:related_spec_files).with(no_args)
-
-          _args = ['%s=%s' % [DeltaTest::ACTIVE_FLAG, true], *args[1..-1]].join(' ')
-          expect(cli).to receive(:exec_with_data).with(_args, nil)
-
-          expect {
-            cli.do_exec
-          }.not_to raise_error
-        end
-
-      end
-
-      context 'Partial tests' do
-
-        before do
-          allow(cli).to receive(:profile_mode?).with(no_args).and_return(false)
-        end
-
-        context 'Any related files' do
-
-          it 'should run script with related spec files' do
-            expect(cli.list).to receive(:related_spec_files).with(no_args)
-
-            _args = ['cat', '|', 'xargs', *args[1..-1]].join(' ')
-            expect(cli).to receive(:exec_with_data).with(_args, related_spec_files)
-
-            expect {
-              cli.do_exec
-            }.not_to raise_error
-          end
-
-        end
-
-        context 'No related files' do
-
-          let(:related_spec_files) { [] }
-
-          it 'should not run script and exit with a message' do
-            expect(cli.list).to receive(:related_spec_files).with(no_args)
-
-            expect {
-              begin
-                cli.do_exec
-              rescue SystemExit => e
-                expect(e.status).to eq(0)
-              end
-            }.to output(/Nothing/).to_stdout
-          end
-
-        end
-
+        DeltaTest::CLI.new(['version']).run
       end
 
     end
 
-    describe '#do_clear' do
+    describe 'help' do
 
-      let(:table_file_path) { '/path/to/table' }
-      let(:table_file_path_parts) { '/path/to/table.part-*' }
-      let(:table_file_path_part_1) { '/path/to/table.part-1' }
+      it 'should call invoke on HelpCommand' do
+        expect(DeltaTest::CLI::HelpCommand).to receive(:new).with([]).and_call_original
+        expect_any_instance_of(DeltaTest::CLI::HelpCommand).to receive(:invoke).and_return(nil)
 
-      before do
-        allow(cli).to receive(:exec_with_data).and_return(nil)
-        allow(Dir).to receive(:glob).and_return([table_file_path_part_1])
-        allow(DeltaTest.config).to receive(:table_file_path).with(no_args).and_return(table_file_path)
-        allow(DeltaTest.config).to receive(:table_file_path).with('*').and_return(table_file_path_parts)
-      end
-
-      it 'should remove table files' do
-        expect(DeltaTest.config).to receive(:table_file_path).with(no_args)
-        expect(DeltaTest.config).to receive(:table_file_path).with('*')
-        expect(cli).to receive(:exec_with_data).with(
-          'cat | xargs rm',
-          [table_file_path, table_file_path_part_1],
-          0
-        )
-
-        expect {
-          cli.do_clear
-        }.not_to raise_error
+        DeltaTest::CLI.new(['help']).run
       end
 
     end
 
-    describe '#do_help' do
+    describe '(other)' do
 
-      it 'should print help' do
-        expect {
-          cli.do_help
-        }.to output(/usage/).to_stdout
+      it 'should call invoke on HelpCommand' do
+        expect(DeltaTest::CLI::HelpCommand).to receive(:new).with([]).and_call_original
+        expect_any_instance_of(DeltaTest::CLI::HelpCommand).to receive(:invoke).and_return(nil)
+
+        DeltaTest::CLI.new(['foo']).run
       end
 
-    end
-
-    describe '#do_version' do
-
-      it 'should print gem version' do
-        expect {
-          cli.do_version
-        }.to output(/v\d+\.\d+.\d+/).to_stdout
-      end
-
-    end
-
-  end
-
-  describe '#invoke' do
-
-    let(:commands) do
-      {
-        'list'  => 'do_list',
-        'table' => 'do_table',
-        'exec'  => 'do_exec',
-        'clear' => 'do_clear',
-        'help'  => 'do_help',
-        '-v'    => 'do_version',
-      }
-    end
-
-    before do
-      commands.each do |_, action|
-        allow(cli).to receive(action).with(no_args).and_return(nil)
-      end
-    end
-
-    it 'should invoke method for a command' do
-      commands.each do |command, action|
-        expect(cli).to receive(action).with(no_args)
-
-        cli.command = command
-
-        expect {
-          cli.invoke
-        }.not_to raise_error
-      end
     end
 
   end
