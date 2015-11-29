@@ -6,7 +6,7 @@ describe DeltaTest::Profiler do
     DeltaTest::Profiler.clean!
   end
 
-  describe '::start!' do
+  describe '.start!' do
 
     it 'should start profiler' do
       expect(DeltaTest::Profiler.running?).to be(false)
@@ -20,7 +20,7 @@ describe DeltaTest::Profiler do
 
   end
 
-  describe '::stop!' do
+  describe '.stop!' do
 
     it 'should not raise error if the profiler not yet started' do
       expect {
@@ -43,7 +43,7 @@ describe DeltaTest::Profiler do
 
   end
 
-  describe '::last_result' do
+  describe '.last_result' do
 
     it 'should retrun an array if not yet started' do
       files = DeltaTest::Profiler.last_result

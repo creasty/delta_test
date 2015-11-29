@@ -3,7 +3,7 @@ require 'delta_test/git'
 
 describe DeltaTest::Stats do
 
-  describe '::new' do
+  describe '.new' do
 
     it 'should initialize git instances for base_path and stats_path' do
       expect(DeltaTest::Git).to receive(:new).with(DeltaTest.config.base_path)

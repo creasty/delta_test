@@ -8,7 +8,7 @@ describe DeltaTest::Git do
 
   let(:git) { DeltaTest::Git.new('.') }
 
-  describe '::new' do
+  describe '.new' do
 
     it 'sholud execute commands in the specified directory' do
       dir = '/dir'

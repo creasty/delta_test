@@ -145,7 +145,7 @@ describe DeltaTest::DependenciesTable do
 
   end
 
-  describe '::load' do
+  describe '.load' do
 
     include_examples :_create_table
 

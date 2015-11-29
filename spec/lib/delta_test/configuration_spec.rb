@@ -2,7 +2,7 @@ describe DeltaTest::Configuration do
 
   let(:configuration) { DeltaTest::Configuration.new }
 
-  describe '::new' do
+  describe '.new' do
 
     let(:options) do
       %i[
