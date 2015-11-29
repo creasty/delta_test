@@ -38,7 +38,7 @@ module DeltaTest
         raise NotInGitRepositoryError
       end
 
-      @changed_files = @git.changed_files('HEAD', commit)
+      @changed_files = @git.changed_files(commit, 'HEAD')
     end
 
     ###
