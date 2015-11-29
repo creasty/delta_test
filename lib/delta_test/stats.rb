@@ -8,9 +8,11 @@ module DeltaTest
 
     TABLE_FILENAME = 'table.marshal'
 
-    def initialize
+    def initialize(head: false)
       @base_git  = Git.new(DeltaTest.config.base_path)
       @stats_git = Git.new(DeltaTest.config.stats_path)
+
+      @base_commit = @base_git.rev_parse('HEAD') if head
     end
 
     def base_commit

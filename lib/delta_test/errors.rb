@@ -28,6 +28,14 @@ module DeltaTest
 
   end
 
+  class StatsRepositorySyncError < StandardError
+
+    def message
+      'failed to sync the stats repository'
+    end
+
+  end
+
   class NoConfigurationFileFoundError < IOError
 
     def message
