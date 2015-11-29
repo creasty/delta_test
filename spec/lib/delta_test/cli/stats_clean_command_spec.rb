@@ -7,6 +7,15 @@ describe DeltaTest::CLI::StatsCleanCommand do
 
   describe '#invoke!' do
 
+    it 'should call cleanup_tmp_table_files' do
+      expect(command).to receive(:cleanup_tmp_table_files).and_return(nil)
+      command.invoke!
+    end
+
+  end
+
+  describe '#cleanup_tmp_table_files' do
+
     it 'should not raise any error if a tmporary directory does not exist' do
       expect(File.directory?(tmp_dir)).to be(false)
       expect {
