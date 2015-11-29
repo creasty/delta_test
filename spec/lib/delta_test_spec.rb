@@ -1,6 +1,6 @@
 describe DeltaTest do
 
-  describe '::configure' do
+  describe '.configure' do
 
     it 'should change option values inside a block' do
       expect {
@@ -12,7 +12,7 @@ describe DeltaTest do
 
   end
 
-  describe '::active?' do
+  describe '.active?' do
 
     context 'Initial' do
 
@@ -48,7 +48,7 @@ describe DeltaTest do
 
   end
 
-  describe '::verbose?' do
+  describe '.verbose?' do
 
     context 'Initial' do
 
@@ -84,7 +84,7 @@ describe DeltaTest do
 
   end
 
-  describe '::log' do
+  describe '.log' do
 
     context 'In verbose mode' do
 
@@ -112,6 +112,15 @@ describe DeltaTest do
         }.not_to output.to_stdout
       end
 
+    end
+
+  end
+
+  describe '.tester_id' do
+
+    it 'should return an unique id for process' do
+      expect(DeltaTest.tester_id).to be_a(String)
+      expect(DeltaTest.tester_id).to match(/\Ap\d+t\d+n\d+\z/)
     end
 
   end

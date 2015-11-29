@@ -2,13 +2,14 @@ describe DeltaTest::Configuration do
 
   let(:configuration) { DeltaTest::Configuration.new }
 
-  describe '::new' do
+  describe '.new' do
 
     let(:options) do
       %i[
         base_path
-        table_file
+        stats_path
         files
+        stats_life
       ]
     end
 
@@ -40,21 +41,21 @@ describe DeltaTest::Configuration do
 
   end
 
-  describe '#table_file, #table_file=' do
+  describe '#stats_path, #stats_path=' do
 
     it 'should return an instance of Pathname' do
-      expect(configuration.table_file).to be_a(Pathname)
+      expect(configuration.stats_path).to be_a(Pathname)
     end
 
     it 'should store an instance of Pathname from a string in the setter' do
       path = 'foo/bar'
 
       expect {
-        configuration.table_file = path
+        configuration.stats_path = path
       }.not_to raise_error
 
-      expect(configuration.table_file).to be_a(Pathname)
-      expect(configuration.table_file.to_s).to eq(path)
+      expect(configuration.stats_path).to be_a(Pathname)
+      expect(configuration.stats_path.to_s).to eq(path)
     end
 
   end
@@ -64,7 +65,7 @@ describe DeltaTest::Configuration do
     describe '#base_path' do
 
       it 'should raise an error if `base_path` is a relative path' do
-        configuration.base_path = "relative/path"
+        configuration.base_path = 'relative/path'
 
         expect {
           configuration.validate!
@@ -72,11 +73,69 @@ describe DeltaTest::Configuration do
       end
 
       it 'should not raise if `base_path` is a absolute path' do
-        configuration.base_path = "/absolute/path"
+        configuration.base_path = '/absolute/path'
 
         expect {
           configuration.validate!
         }.not_to raise_error
+      end
+
+      it 'should raise if `base_path` is not managed by git' do
+        configuration.base_path = '/absolute/path'
+        allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).and_return(false)
+
+        expect {
+          configuration.validate!
+        }.to raise_error
+      end
+
+    end
+
+    describe '#stats_path' do
+
+      it 'should raise an error if `stats_path` is a relative path' do
+        configuration.stats_path = 'relative/path'
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/stats_path/)
+      end
+
+      it 'should not raise if `stats_path` is a absolute path' do
+        configuration.stats_path= '/absolute/path'
+
+        expect {
+          configuration.validate!
+        }.not_to raise_error
+      end
+
+      it 'should raise if `stats_path` is not managed by git' do
+        configuration.stats_path = '/absolute/path'
+        allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).and_return(false)
+
+        expect {
+          configuration.validate!
+        }.to raise_error
+      end
+
+    end
+
+    describe '#stats_life' do
+
+      it 'should raise an error if `stats_life` is not an integer' do
+        configuration.stats_life = '100'
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/stats_life/)
+      end
+
+      it 'should raise an error if `stats_life` is not a real number' do
+        configuration.stats_life = -100
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/stats_life/)
       end
 
     end
@@ -200,39 +259,40 @@ describe DeltaTest::Configuration do
 
     end
 
-    describe '#table_file_path' do
+    describe '#stats_path' do
 
-      it 'should return an absolute path to the table file if `table_file` is a relative' do
+      it 'should return an absolute path to the table file if `stats_path` is a relative' do
         configuration.base_path  = '/base_path'
-        configuration.table_file = 'somewhere/table_file'
+        configuration.stats_path = 'somewhere/stats_path'
 
         configuration.precalculate!
-        expect(configuration.table_file_path).to eq(Pathname.new('/base_path/somewhere/table_file'))
+        expect(configuration.stats_path).to eq(Pathname.new('/base_path/somewhere/stats_path'))
       end
 
-      it 'should return the same value to the table file if `table_file` is a absolute' do
+      it 'should return the same value to the table file if `stats_path` is a absolute' do
         configuration.base_path  = '/base_path'
-        configuration.table_file = '/somewhere/table_file'
+        configuration.stats_path = '/somewhere/stats_path'
 
         configuration.precalculate!
-        expect(configuration.table_file_path).to eq(Pathname.new('/somewhere/table_file'))
-      end
-
-      context 'With part' do
-
-        it 'should return a path with a part extension' do
-          configuration.base_path  = '/base_path'
-          configuration.table_file = 'somewhere/table_file'
-
-          configuration.precalculate!
-          expect(configuration.table_file_path(1)).to eq(Pathname.new('/base_path/somewhere/table_file.part-1'))
-        end
-
+        expect(configuration.stats_path).to eq(Pathname.new('/somewhere/stats_path'))
       end
 
     end
 
   end
+
+  describe '#tmp_table_file' do
+
+      it 'should return a path with a part extension' do
+        configuration.base_path  = '/base_path'
+        configuration.stats_path = 'somewhere/stats_path'
+        tmp_table_file = Pathname.new('%s/%s/tmp/%s' % [configuration.base_path, configuration.stats_path, DeltaTest.tester_id])
+
+        configuration.precalculate!
+        expect(configuration.tmp_table_file).to eq(tmp_table_file)
+      end
+
+    end
 
   describe '#update' do
 
@@ -241,10 +301,10 @@ describe DeltaTest::Configuration do
       allow(dummy).to receive(:not_yet_called)
       allow(dummy).to receive(:already_called)
 
-      expect(dummy).to receive(:not_yet_called).with(no_args).once.ordered
-      expect(configuration).to receive(:validate!).with(no_args).once.ordered
-      expect(configuration).to receive(:precalculate!).with(no_args).once.ordered
-      expect(dummy).to receive(:already_called).with(no_args).once.ordered
+      expect(dummy).to receive(:not_yet_called).once.ordered
+      expect(configuration).to receive(:validate!).once.ordered
+      expect(configuration).to receive(:precalculate!).once.ordered
+      expect(dummy).to receive(:already_called).once.ordered
 
       configuration.update do |config|
         dummy.not_yet_called
@@ -263,9 +323,9 @@ describe DeltaTest::Configuration do
         allow(configuration).to receive(:load_from_file!).and_return(true)
         allow(configuration).to receive(:retrive_files_from_git_index!).and_return(true)
 
-        expect(configuration).to receive(:load_from_file!).with(no_args).once.ordered
-        expect(configuration).to receive(:retrive_files_from_git_index!).with(no_args).once.ordered
-        expect(configuration).to receive(:update).with(no_args).once.ordered
+        expect(configuration).to receive(:load_from_file!).once.ordered
+        expect(configuration).to receive(:retrive_files_from_git_index!).once.ordered
+        expect(configuration).to receive(:update).once.ordered
 
         configuration.auto_configure!
       end
@@ -274,15 +334,15 @@ describe DeltaTest::Configuration do
 
     describe '#load_from_file!' do
 
-      let(:pwd)             { '/path/to/pwd' }
-      let(:yaml_file_path)  { '/path/to/delta_test.yml' }
-      let(:table_file_path) { '/path/to/table_file' }
+      let(:pwd)            { '/path/to/pwd' }
+      let(:yaml_file_path) { '/path/to/delta_test.yml' }
+      let(:stats_path)     { '/path/to/stats_path' }
 
       let(:yaml_file) do
         file = FakeFS::FakeFile.new
 
         file.content = <<-YAML
-  table_file: #{table_file_path}
+stats_path: #{stats_path}
         YAML
 
         file
@@ -316,7 +376,7 @@ describe DeltaTest::Configuration do
           configuration.load_from_file!
         }.not_to raise_error
 
-        expect(configuration.table_file).to eq(Pathname.new(table_file_path))
+        expect(configuration.stats_path).to eq(Pathname.new(stats_path))
       end
 
       it 'should raise an error if there is invalid option in yaml' do
@@ -334,22 +394,14 @@ describe DeltaTest::Configuration do
 
     describe 'retrive_files_from_git_index!' do
 
-      it 'should raise an error if not in git repo' do
-        allow(DeltaTest::Git).to receive(:git_repo?).with(no_args).and_return(false)
-
-        expect {
-          configuration.retrive_files_from_git_index!
-        }.to raise_error(DeltaTest::NotInGitRepositoryError)
-      end
-
       it 'should set `files` from the file indices of git' do
         files = [
           'a/file_1',
           'a/file_2',
         ]
 
-        allow(DeltaTest::Git).to receive(:git_repo?).with(no_args).and_return(true)
-        allow(DeltaTest::Git).to receive(:ls_files).with(no_args).and_return(files)
+        allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).and_return(true)
+        allow_any_instance_of(DeltaTest::Git).to receive(:ls_files).and_return(files)
 
         expect {
           configuration.retrive_files_from_git_index!

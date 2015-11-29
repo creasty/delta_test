@@ -11,4 +11,8 @@ class Category < ActiveRecord::Base
     presence: true,
     length: { maximum: 100 }
 
+  def test
+    true
+  end
+
 end

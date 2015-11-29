@@ -4,16 +4,14 @@ describe DeltaTest::RelatedSpecList do
 
   include_examples :defer_create_table_file
 
-  let(:base) { 'master' }
-  let(:head) { 'feature/foo' }
   let(:list) { DeltaTest::RelatedSpecList.new }
 
-  let(:base_path) { '/base_path' }
+  let(:base_commit) { '1111111111111111111111111111111111111111' }
+  let(:base_path)   { '/base_path' }
 
   before do
     DeltaTest.configure do |config|
-      config.base_path  = base_path
-      config.table_file = table_file_path
+      config.base_path = base_path
     end
   end
 
@@ -41,8 +39,8 @@ describe DeltaTest::RelatedSpecList do
     before do
       allow(DeltaTest::DependenciesTable).to receive(:load).with(Pathname.new(table_file_path)).and_return(table)
 
-      allow(DeltaTest::Git).to receive(:git_repo?).and_return(true)
-      allow(DeltaTest::Git).to receive(:changed_files).with(base, head).and_return(changed_files)
+      allow(list.git).to receive(:git_repo?).and_return(true)
+      allow(list.git).to receive(:changed_files).with(base_commit).and_return(changed_files)
     end
 
   end
@@ -51,7 +49,7 @@ describe DeltaTest::RelatedSpecList do
 
     it 'should raise an error if a table file is not exist' do
       expect {
-        list.load_table!
+        list.load_table!(table_file_path)
       }.to raise_error(DeltaTest::TableNotFoundError)
     end
 
@@ -61,7 +59,7 @@ describe DeltaTest::RelatedSpecList do
       expect(list.table).to be_nil
 
       expect {
-        list.load_table!
+        list.load_table!(table_file_path)
       }.not_to raise_error
 
       expect(list.table).to be_a(DeltaTest::DependenciesTable)
@@ -74,17 +72,17 @@ describe DeltaTest::RelatedSpecList do
     include_examples :_mock_table_and_changed_files
 
     it 'shoud raise an error if the directory is not managed by git' do
-      allow(DeltaTest::Git).to receive(:git_repo?).and_return(false)
+      allow(list.git).to receive(:git_repo?).and_return(false)
 
       expect {
-        list.retrive_changed_files!(base, head)
+        list.retrive_changed_files!(base_commit)
       }.to raise_error(DeltaTest::NotInGitRepositoryError)
     end
 
     it 'shoud retrive a list of changed files' do
       expect(list.changed_files).to be_nil
 
-      list.retrive_changed_files!(base, head)
+      list.retrive_changed_files!(base_commit)
 
       expect(list.changed_files).to be_a(Array)
       expect(list.changed_files).not_to be_empty
@@ -98,8 +96,8 @@ describe DeltaTest::RelatedSpecList do
 
     before do
       table_file
-      list.load_table!
-      list.retrive_changed_files!(base, head)
+      list.load_table!(table_file_path)
+      list.retrive_changed_files!(base_commit)
     end
 
     describe '#dependents' do

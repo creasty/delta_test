@@ -22,8 +22,8 @@ describe DeltaTest::Generator do
   before do
     DeltaTest.configure do |config|
       config.base_path  = base_path
-      config.table_file = table_file_path
       config.files      = files
+      config.stats_path = stats_path
     end
 
     DeltaTest.active = true
@@ -187,11 +187,11 @@ describe DeltaTest::Generator do
         generator.stop!
 
         expect(generator.table).not_to be_empty
-        expect(table_file.content).to be_empty
+        expect(tmp_stats_file.content).to be_empty
 
         generator.teardown!
 
-        expect(table_file.content).not_to be_empty
+        expect(tmp_stats_file.content).not_to be_empty
       end
 
     end

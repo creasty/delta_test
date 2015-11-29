@@ -19,18 +19,19 @@ module DeltaTest
 
     attr_reader :config
 
-    attr_writer *%i[
+    attr_writer(*%i[
       active
       verbose
-    ]
+    ])
 
-    def setup
-      @config = Configuration.new
-      @config.auto_configure! if active?
+    def config
+      @config ||= Configuration.new.tap do |c|
+        c.auto_configure! if active?
+      end
     end
 
     def configure(&block)
-      @config.update(&block)
+      config.update(&block)
     end
 
     def active?
@@ -44,10 +45,14 @@ module DeltaTest
     end
 
     def log(*args)
-      puts *args if verbose?
+      puts(*args) if verbose?
+    end
+
+    def tester_id
+      return @tester_id if @tester_id
+      t = Time.now
+      @tester_id = 'p%dt%dn%d' % [$$, t.to_i, t.nsec]
     end
 
   end
 end
-
-DeltaTest.setup

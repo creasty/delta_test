@@ -48,25 +48,30 @@ module DeltaTest
 
     PART_FILE_EXT = '.part-%s'
 
-    attr_accessor *%i[
+    attr_accessor(*%i[
       base_path
       files
 
-      table_file
+      stats_path
+      stats_life
+
       patterns
       exclude_patterns
       full_test_patterns
       custom_mappings
-    ]
+    ])
 
     # for precalculated values
-    attr_reader *%i[
+    attr_reader(*%i[
       filtered_files
-      table_file_path
-    ]
+    ])
 
     validate :base_path, 'need to be an absolute path' do
-      self.base_path.absolute?
+      self.base_path.absolute? rescue false
+    end
+
+    validate :base_path, 'need to be managed by git' do
+      Git.new(self.base_path).git_repo?
     end
 
     validate :files, 'need to be an array' do
@@ -75,6 +80,18 @@ module DeltaTest
 
     validate :patterns, 'need to be an array' do
       self.patterns.is_a?(Array)
+    end
+
+    validate :stats_path, 'need to be an absolute path' do
+      self.stats_path.absolute? rescue false
+    end
+
+    validate :stats_path, 'need to be managed by git' do
+      Git.new(self.stats_path).git_repo?
+    end
+
+    validate :stats_life, 'need to be a real number' do
+      self.stats_life.is_a?(Integer) && self.stats_life > 0
     end
 
     validate :exclude_patterns, 'need to be an array' do
@@ -94,10 +111,13 @@ module DeltaTest
     end
 
     def initialize
-      update do |c|
-        c.base_path          = File.expand_path('.')
-        c.table_file         = 'tmp/.delta_test_dt'
-        c.files              = []
+      update(validate: false) do |c|
+        c.base_path = File.expand_path('.')
+        c.files     = []
+
+        c.stats_path = File.expand_path('tmp/delta_test_stats')
+        c.stats_life = 1000  # commits
+
         c.patterns           = []
         c.exclude_patterns   = []
         c.full_test_patterns = []
@@ -115,37 +135,19 @@ module DeltaTest
     # @return {Pathname}
     ###
     def base_path=(path)
+      return unless path
       @base_path = Pathname.new(path)
     end
 
     ###
-    # Store table_file as Pathname
+    # Store stats_path as Pathname
     #
     # @params {String|Pathname} path
     # @return {Pathname}
     ###
-    def table_file=(path)
-      @table_file = Pathname.new(path)
-    end
-
-
-    #  Override getters
-    #-----------------------------------------------
-    ###
-    # Returns file path for the table
-    #
-    # @params {String} part
-    #
-    # @return {Pathname}
-    ###
-    def table_file_path(part = nil)
-      return unless @table_file_path
-
-      if part
-        @table_file_path.sub_ext(PART_FILE_EXT % part)
-      else
-        @table_file_path
-      end
+    def stats_path=(path)
+      return unless path
+      @stats_path = Pathname.new(path)
     end
 
 
@@ -156,9 +158,9 @@ module DeltaTest
     #
     # @block
     ###
-    def update
+    def update(validate: true)
       yield self if block_given?
-      validate!
+      validate! if validate
       precalculate!
     end
 
@@ -174,7 +176,7 @@ module DeltaTest
 
       @filtered_files = Set.new(filtered_files)
 
-      @table_file_path = Pathname.new(File.absolute_path(self.table_file, self.base_path))
+      @stats_path = Pathname.new(File.absolute_path(self.stats_path, self.base_path))
     end
 
 
@@ -201,8 +203,13 @@ module DeltaTest
       end
 
       yaml = YAML.load_file(config_file)
+      yaml_dir = File.dirname(config_file)
 
-      self.base_path = File.dirname(config_file)
+      _base_path = yaml.delete('base_path')
+      self.base_path = _base_path ? File.absolute_path(_base_path, yaml_dir) : yaml_dir
+
+      _stats_path = yaml.delete('stats_path')
+      self.stats_path = File.absolute_path(_stats_path, yaml_dir) if _stats_path
 
       yaml.each do |k, v|
         if self.respond_to?("#{k}=")
@@ -218,11 +225,19 @@ module DeltaTest
     # And update `files`
     ###
     def retrive_files_from_git_index!
-      unless Git.git_repo?
-        raise NotInGitRepositoryError
-      end
+      self.files = Git.new(self.base_path).ls_files
+    end
 
-      self.files = Git.ls_files
+
+    #  Getters
+    #-----------------------------------------------
+    ###
+    # Temporary table file path
+    #
+    # @return {Pathname}
+    ###
+    def tmp_table_file
+      self.stats_path.join('tmp', DeltaTest.tester_id)
     end
 
   end

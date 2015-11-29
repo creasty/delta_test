@@ -7,6 +7,12 @@ master
 N/A
 
 
+1.0.0
+-----
+
+- [feature] #25 Versioning table files. Including many refactorings and bug fixes
+
+
 0.2.0
 -----
 

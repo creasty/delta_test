@@ -2,7 +2,7 @@ require 'delta_test/utils'
 
 describe DeltaTest::Utils do
 
-  describe '::regulate_filepath' do
+  describe '.regulate_filepath' do
 
     let(:base_path) { Pathname.new('/base_path') }
 
@@ -28,7 +28,7 @@ describe DeltaTest::Utils do
 
   end
 
-  describe '::find_file_upward' do
+  describe '.find_file_upward' do
 
     let(:file)      { FakeFS::FakeFile.new }
     let(:file_name) { 'file' }
@@ -131,7 +131,7 @@ describe DeltaTest::Utils do
 
   end
 
-  describe '::grep_pattern_to_regexp' do
+  describe '.grep_pattern_to_regexp' do
 
     # private method
     let(:grep_pattern_to_regexp) { DeltaTest::Utils.method(:grep_pattern_to_regexp) }
@@ -177,7 +177,7 @@ describe DeltaTest::Utils do
 
   end
 
-  describe '::files_grep' do
+  describe '.files_grep' do
 
     let(:files) do
       [

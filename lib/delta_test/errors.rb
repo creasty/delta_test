@@ -20,6 +20,30 @@ module DeltaTest
 
   end
 
+  class StatsNotFoundError < StandardError
+
+    def message
+      'no stats data found'
+    end
+
+  end
+
+  class StatsRepositorySyncError < StandardError
+
+    def message
+      'failed to sync the stats repository'
+    end
+
+  end
+
+  class TableFileStageError < StandardError
+
+    def message
+      'failed to stage a table file'
+    end
+
+  end
+
   class NoConfigurationFileFoundError < IOError
 
     def message

@@ -8,10 +8,10 @@ require_relative 'utils'
 module DeltaTest
   class Generator
 
-    attr_reader *%i[
+    attr_reader(*%i[
       current_spec_file
       table
-    ]
+    ])
 
     ###
     # Setup table
@@ -24,7 +24,7 @@ module DeltaTest
 
       DeltaTest.log('--- setup!')
 
-      @table = DependenciesTable.load(DeltaTest.config.table_file_path)
+      @table = DependenciesTable.new
 
       @current_spec_file = nil
     end
@@ -75,28 +75,8 @@ module DeltaTest
       @_teardown = true
 
       DeltaTest.log('--- teardown!')
-
       Profiler.clean!
-
-      if defined?(ParallelTests)
-        if ParallelTests.first_process?
-          ParallelTests.wait_for_other_processes_to_finish
-
-          table_file_path = DeltaTest.config.table_file_path('*')
-
-          Dir.glob(table_file_path).each do |part_file|
-            part_table = DependenciesTable.load(part_file)
-            @table.reverse_merge!(part_table)
-          end
-        else
-          table_file_path = DeltaTest.config.table_file_path(ENV['TEST_ENV_NUMBER'])
-
-          @table.dump(table_file_path)
-          return
-        end
-      end
-
-      @table.dump(DeltaTest.config.table_file_path)
+      @table.dump(DeltaTest.config.tmp_table_file)
     end
 
     ###

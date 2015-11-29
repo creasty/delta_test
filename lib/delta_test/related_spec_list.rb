@@ -6,20 +6,25 @@ require_relative 'dependencies_table'
 module DeltaTest
   class RelatedSpecList
 
-    attr_reader *%i[
+    attr_reader(*%i[
+      git
       table
       changed_files
-    ]
+    ])
+
+    def initialize
+      @git = Git.new(DeltaTest.config.base_path)
+    end
 
     ###
     # Load table from the file
     ###
-    def load_table!
-      unless File.exist?(DeltaTest.config.table_file_path)
-        raise TableNotFoundError.new(DeltaTest.config.table_file_path)
+    def load_table!(table_file_path)
+      unless File.exist?(table_file_path)
+        raise TableNotFoundError.new(table_file_path)
       end
 
-      @table = DependenciesTable.load(DeltaTest.config.table_file_path)
+      @table = DependenciesTable.load(table_file_path)
     end
 
     ###
@@ -28,12 +33,12 @@ module DeltaTest
     # @params {String} base
     # @params {String} head
     ###
-    def retrive_changed_files!(base, head)
-      unless Git.git_repo?
+    def retrive_changed_files!(commit)
+      unless @git.git_repo?
         raise NotInGitRepositoryError
       end
 
-      @changed_files = Git.changed_files(base, head)
+      @changed_files = @git.changed_files(commit)
     end
 
     ###
