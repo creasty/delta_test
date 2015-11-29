@@ -203,10 +203,13 @@ module DeltaTest
       end
 
       yaml = YAML.load_file(config_file)
+      yaml_dir = File.dirname(config_file)
 
       _base_path = yaml.delete('base_path')
-      yaml_dir = File.dirname(config_file)
       self.base_path = _base_path ? File.absolute_path(_base_path, yaml_dir) : yaml_dir
+
+      _stats_path = yaml.delete('stats_path')
+      self.stats_path = File.absolute_path(_stats_path, yaml_dir) if _stats_path
 
       yaml.each do |k, v|
         if self.respond_to?("#{k}=")
