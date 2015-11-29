@@ -83,13 +83,13 @@ describe DeltaTest::Configuration do
         }.not_to raise_error
       end
 
-      xit 'should raise if `base_path` is not managed by git' do
+      it 'should raise if `base_path` is not managed by git' do
         configuration.base_path = '/absolute/path'
         allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).and_return(false)
 
         expect {
           configuration.validate!
-        }.to raise_error  # somehow doesn't work!!
+        }.to raise_error
       end
 
     end
