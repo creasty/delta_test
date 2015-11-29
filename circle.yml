@@ -16,4 +16,4 @@ database:
 test:
   override:
     - bundle exec rake test
-    - bundle exec rake rails:test
+    # - bundle exec rake rails:test
