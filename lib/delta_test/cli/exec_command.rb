@@ -87,7 +87,7 @@ module DeltaTest
       ###
       def profile_mode?
         return @profile_mode if defined?(@profile_mode)
-        @profile_mode = !stats.base_commit
+        @profile_mode = !stats.base_commit && !@options['force-run']
       end
 
     end

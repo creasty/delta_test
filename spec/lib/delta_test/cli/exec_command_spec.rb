@@ -45,6 +45,17 @@ describe DeltaTest::CLI::ExecCommand do
       expect(command.profile_mode?).to be(true)
     end
 
+    context 'with --force-run' do
+
+      let(:args) { ['--force-run', 'bundle', 'exec', 'rspec'] }
+
+      it 'should always return false' do
+        allow(command.stats).to receive(:base_commit).and_return(nil)
+        expect(command.profile_mode?).to be(false)
+      end
+
+    end
+
   end
 
   describe '#invoke!' do
