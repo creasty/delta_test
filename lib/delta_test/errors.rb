@@ -20,6 +20,14 @@ module DeltaTest
 
   end
 
+  class StatsNotFoundError < StandardError
+
+    def message
+      'no stats data found'
+    end
+
+  end
+
   class NoConfigurationFileFoundError < IOError
 
     def message
