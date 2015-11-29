@@ -14,7 +14,7 @@ module DeltaTest
         save_table_file
 
         stage_table_file
-        sync_table_file
+        sync_table_file unless @options['no-sync']
       end
 
       def load_tmp_table_files

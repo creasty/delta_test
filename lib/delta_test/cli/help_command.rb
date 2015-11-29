@@ -20,7 +20,8 @@ specs          List related spec files for changes.
 
 stats:show     Show dependencies table.
 
-stats:save     Clean up tables and caches.
+stats:save [--no-sync]
+               Clean up tables and caches.
 
 version        Show version.
 

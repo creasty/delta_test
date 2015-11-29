@@ -10,6 +10,7 @@ module DeltaTest
       DEFAULT_OPTIONS = {
         'verbose'   => false,
         'force-run' => false,
+        'no-sync'   => false,
       }.freeze
 
       attr_reader(*%i[
