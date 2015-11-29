@@ -7,23 +7,28 @@ module DeltaTest
     class StatsShowCommand < CommandBase
 
       def invoke!
-        @stats = Stats.new
-        @list  = RelatedSpecList.new
-
-        if @stats.base_commit
-          puts 'Base commit: %s' % [@stats.base_commit]
+        if stats.base_commit
+          puts 'Base commit: %s' % [stats.base_commit]
           puts
         else
           raise StatsNotFoundError
         end
 
-        @list.load_table!(@stats.table_file_path)
+        list.load_table!(stats.table_file_path)
         print_table
       end
 
+      def stats
+        @stats ||= Stats.new
+      end
+
+      def list
+        @list ||= RelatedSpecList.new
+      end
+
       def print_table
-        if @list.table.any?
-          @list.table.each do |spec_file, dependencies|
+        if list.table.any?
+          list.table.each do |spec_file, dependencies|
             puts spec_file
             puts
             dependencies.each do |dependency|

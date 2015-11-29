@@ -1,6 +1,4 @@
 require 'delta_test/cli/specs_command'
-require 'delta_test/related_spec_list'
-require 'delta_test/stats'
 
 describe DeltaTest::CLI::SpecsCommand do
 
@@ -18,17 +16,17 @@ describe DeltaTest::CLI::SpecsCommand do
     allow($stdout).to receive(:puts).and_return(nil)
     allow($stderr).to receive(:puts).and_return(nil)
 
-    allow_any_instance_of(DeltaTest::RelatedSpecList).to receive(:load_table!).and_return(nil)
-    allow_any_instance_of(DeltaTest::RelatedSpecList).to receive(:retrive_changed_files!).and_return(nil)
-    allow_any_instance_of(DeltaTest::RelatedSpecList).to receive(:related_spec_files).and_return(related_spec_files)
+    allow(command.list).to receive(:load_table!).and_return(nil)
+    allow(command.list).to receive(:retrive_changed_files!).and_return(nil)
+    allow(command.list).to receive(:related_spec_files).and_return(related_spec_files)
 
-    allow_any_instance_of(DeltaTest::Stats).to receive(:base_commit).and_return(base_commit)
+    allow(command.stats).to receive(:base_commit).and_return(base_commit)
   end
 
   describe '#invoke!' do
 
     it 'should raise an error if a base commit does not exist' do
-      allow_any_instance_of(DeltaTest::Stats).to receive(:base_commit).and_return(nil)
+      allow(command.stats).to receive(:base_commit).and_return(nil)
 
       expect {
         command.invoke!
@@ -36,8 +34,8 @@ describe DeltaTest::CLI::SpecsCommand do
     end
 
     it 'should load a table file and retrive changed files' do
-      expect_any_instance_of(DeltaTest::RelatedSpecList).to receive(:load_table!).once
-      expect_any_instance_of(DeltaTest::RelatedSpecList).to receive(:retrive_changed_files!).once
+      expect(command.list).to receive(:load_table!).once
+      expect(command.list).to receive(:retrive_changed_files!).once
 
       expect {
         command.invoke!
@@ -45,9 +43,9 @@ describe DeltaTest::CLI::SpecsCommand do
     end
 
     it 'should show a list of related spec files' do
-      expect_any_instance_of(DeltaTest::RelatedSpecList).to receive(:load_table!).once
-      expect_any_instance_of(DeltaTest::RelatedSpecList).to receive(:retrive_changed_files!).once
-      expect_any_instance_of(DeltaTest::RelatedSpecList).to receive(:related_spec_files).once
+      expect(command.list).to receive(:load_table!).once
+      expect(command.list).to receive(:retrive_changed_files!).once
+      expect(command.list).to receive(:related_spec_files).once
 
       expect {
         command.invoke!

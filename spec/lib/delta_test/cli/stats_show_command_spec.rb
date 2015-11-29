@@ -1,6 +1,4 @@
 require 'delta_test/cli/stats_show_command'
-require 'delta_test/related_spec_list'
-require 'delta_test/stats'
 
 describe DeltaTest::CLI::StatsShowCommand do
 
@@ -18,16 +16,16 @@ describe DeltaTest::CLI::StatsShowCommand do
     allow($stdout).to receive(:puts).and_return(nil)
     allow($stderr).to receive(:puts).and_return(nil)
 
-    allow_any_instance_of(DeltaTest::RelatedSpecList).to receive(:load_table!).and_return(nil)
-    allow_any_instance_of(DeltaTest::RelatedSpecList).to receive(:table).and_return(table)
+    allow(command.list).to receive(:load_table!).and_return(nil)
+    allow(command.list).to receive(:table).and_return(table)
 
-    allow_any_instance_of(DeltaTest::Stats).to receive(:base_commit).and_return(base_commit)
+    allow(command.stats).to receive(:base_commit).and_return(base_commit)
   end
 
   describe '#invoke!' do
 
     it 'should raise an error if a base commit does not exist' do
-      allow_any_instance_of(DeltaTest::Stats).to receive(:base_commit).and_return(nil)
+      allow(command.stats).to receive(:base_commit).and_return(nil)
 
       expect {
         command.invoke!
@@ -35,8 +33,8 @@ describe DeltaTest::CLI::StatsShowCommand do
     end
 
     it 'should load a table file' do
-      expect_any_instance_of(DeltaTest::RelatedSpecList).to receive(:load_table!)
-      expect_any_instance_of(DeltaTest::RelatedSpecList).to receive(:table)
+      expect(command.list).to receive(:load_table!)
+      expect(command.list).to receive(:table)
 
       expect {
         command.invoke!
@@ -44,8 +42,8 @@ describe DeltaTest::CLI::StatsShowCommand do
     end
 
     it 'should show the table contents' do
-      expect_any_instance_of(DeltaTest::RelatedSpecList).to receive(:load_table!)
-      expect_any_instance_of(DeltaTest::RelatedSpecList).to receive(:table)
+      expect(command.list).to receive(:load_table!)
+      expect(command.list).to receive(:table)
 
       expect {
         command.invoke!
