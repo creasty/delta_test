@@ -17,7 +17,7 @@ module DeltaTest
       return @base_commit if defined?(@base_commit)
 
       indexes = @stats_git.ls_files
-        .map { |f| f.sub('/', '') }
+        .map { |f| f.split('/').take(2).join('') }
         .to_set
 
       @base_commit = @base_git.ls_hashes(DeltaTest.config.stats_life)

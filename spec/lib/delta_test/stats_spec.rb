@@ -27,10 +27,12 @@ describe DeltaTest::Stats do
     ]
   end
 
-  let(:commit_dirs) do
+  let(:files) do
     [
-      '11/11111111111111111111111111111111111111',
-      '33/33333333333333333333333333333333333333',
+      '11/11111111111111111111111111111111111111/foo.txt',
+      '11/11111111111111111111111111111111111111/table.marshal',
+      '33/33333333333333333333333333333333333333/bar.txt',
+      '33/33333333333333333333333333333333333333/table.marshal',
     ]
   end
 
@@ -44,7 +46,7 @@ describe DeltaTest::Stats do
   describe '#base_commit' do
 
     it 'should return a base commit if exists' do
-      allow_any_instance_of(DeltaTest::Git).to receive(:ls_files).and_return(commit_dirs)
+      allow_any_instance_of(DeltaTest::Git).to receive(:ls_files).and_return(files)
       expect(stats.base_commit).to eq('3333333333333333333333333333333333333333')
     end
 
@@ -59,7 +61,7 @@ describe DeltaTest::Stats do
     let(:commit_dir) { DeltaTest.config.stats_path.join('33/33333333333333333333333333333333333333') }
 
     it 'should return a file for the commit hash if base_commit exists' do
-      allow_any_instance_of(DeltaTest::Git).to receive(:ls_files).and_return(commit_dirs)
+      allow_any_instance_of(DeltaTest::Git).to receive(:ls_files).and_return(files)
       expect(stats.commit_dir).to eq(commit_dir)
     end
 
@@ -74,7 +76,7 @@ describe DeltaTest::Stats do
     let(:table_file_path) { DeltaTest.config.stats_path.join('33/33333333333333333333333333333333333333/table.marshal') }
 
     it 'should return a path of table file' do
-      allow_any_instance_of(DeltaTest::Git).to receive(:ls_files).and_return(commit_dirs)
+      allow_any_instance_of(DeltaTest::Git).to receive(:ls_files).and_return(files)
       expect(stats.table_file_path).to eq(table_file_path)
     end
 
