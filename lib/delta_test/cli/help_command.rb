@@ -8,24 +8,25 @@ module DeltaTest
 usage: delta_test <command> [--verbose] [<args>]
 
 options:
---verbose      Print more output.
+    --verbose      Print more output.
 
 commands:
-exec [--force-run] <script> -- <files...>
-               Execute test script using delta_test.
-               --force-run to force DeltaTest to run full test cases.
+    exec [--force-run] <script> -- <files...>
+                   Execute test script using delta_test.
+                   --force-run to force DeltaTest to run full test cases.
 
-specs          List related spec files for changes.
+    specs          List related spec files for changes.
 
+    stats:clean    Clean up temporary files.
 
-stats:show     Show dependencies table.
+    stats:show     Show dependencies table.
 
-stats:save [--no-sync]
-               Clean up tables and caches.
+    stats:save [--no-sync]
+                   Save and sync a table file.
 
-version        Show version.
+    version        Show version.
 
-help           Show this.
+    help           Show this.
 HELP
 
       def invoke!

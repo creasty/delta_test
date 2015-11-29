@@ -24,7 +24,7 @@ Setup
 Add this line to your Gemfile:
 
 ```ruby
-gem 'delta_test', group: :test
+gem 'delta_test'
 ```
 
 ### Configuration
@@ -60,19 +60,11 @@ end
 Usage
 -----
 
-For the first time and whenever on master, it'll run full test cases to create **dependencies table**:
-
 ```bash
-$ git checkout master
-$ delta_test exec rspec
-```
-
-And on other branch, it'll run only related tests for your changes from master:
-
-```bash
-$ git checkout -b feature/something_awesome
-$ # Make changes & create commits...
-$ delta_test exec rspec
+$ delta_test stats:clean
+$ delta_test exec rspec spec/models
+$ delta_test exec rspec spec/controllers
+$ delta_test stats:save
 ```
 
 
@@ -82,34 +74,28 @@ Advanced usage
 ### Command
 
 ```
-usage: delta_test <command> [--base=<base>] [--head=<head>] [--verbose] [<args>]
-                  [-v|--version]
+usage: delta_test <command> [--verbose] [<args>]
 
 options:
-    --base=<base>  A branch or a commit id to diff from.
-                   <head> is default to master.
-
-    --head=<head>  A branch or a commit id to diff to.
-                   <head> is default to HEAD. (current branch you're on)
-
     --verbose      Print more output.
 
-    -v, --version  Show version.
-
 commands:
-    list           List related spec files for changes between base and head.
-                   head is default to master; base is to the current branch.
-
-    table          Show dependencies table.
-
-    exec <script> [-- <files>]
+    exec [--force-run] <script> -- <files...>
                    Execute test script using delta_test.
-                   if <base> and <head> is the same commit or no dependencies table is found,
-                   it'll run full test cases with a profile mode to create a table.
-                   Otherwise, it'll run test script with only related spec files
-                   passed by its arguments, like `delta_test list | xargs script'.
+                   --force-run to force DeltaTest to run full test cases.
 
-    clear          Clean up tables and caches.
+    specs          List related spec files for changes.
+
+    stats:clean    Clean up temporary files.
+
+    stats:show     Show dependencies table.
+
+    stats:save [--no-sync]
+                   Save and sync a table file.
+
+    version        Show version.
+
+    help           Show this.
 ```
 
 #### `exec` example
@@ -147,7 +133,8 @@ $ bundle exec delta_test exec parallel_test -t rspec -n 4 -- spec/features
 ### Configurations
 
 ```yaml
-table_file: tmp/.delta_test_dt
+stats_path: tmp/delta_test_stats
+stats_life: 1000
 
 patterns:
   - lib/**/*.rb
