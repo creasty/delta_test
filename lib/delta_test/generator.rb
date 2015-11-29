@@ -76,7 +76,7 @@ module DeltaTest
 
       DeltaTest.log('--- teardown!')
       Profiler.clean!
-      @table.dump(DeltaTest.config.tmp_stats_file_path)
+      @table.dump(DeltaTest.config.tmp_table_file)
     end
 
     ###

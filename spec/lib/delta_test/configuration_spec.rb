@@ -281,15 +281,15 @@ describe DeltaTest::Configuration do
 
   end
 
-  describe '#tmp_stats_file_path' do
+  describe '#tmp_table_file' do
 
       it 'should return a path with a part extension' do
         configuration.base_path  = '/base_path'
         configuration.stats_path = 'somewhere/stats_path'
-        tmp_stats_file_path = Pathname.new('%s/%s/tmp/%s' % [configuration.base_path, configuration.stats_path, DeltaTest.tester_id])
+        tmp_table_file = Pathname.new('%s/%s/tmp/%s' % [configuration.base_path, configuration.stats_path, DeltaTest.tester_id])
 
         configuration.precalculate!
-        expect(configuration.tmp_stats_file_path).to eq(tmp_stats_file_path)
+        expect(configuration.tmp_table_file).to eq(tmp_table_file)
       end
 
     end

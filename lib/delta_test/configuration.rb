@@ -229,11 +229,11 @@ module DeltaTest
     #  Getters
     #-----------------------------------------------
     ###
-    # Temporary stats file path
+    # Temporary table file path
     #
     # @return {Pathname}
     ###
-    def tmp_stats_file_path
+    def tmp_table_file
       self.stats_path.join('tmp', DeltaTest.tester_id)
     end
 
