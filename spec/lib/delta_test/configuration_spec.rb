@@ -11,6 +11,7 @@ describe DeltaTest::Configuration do
     let(:options) do
       %i[
         base_path
+        stats_path
         files
         stats_life
       ]
@@ -85,6 +86,35 @@ describe DeltaTest::Configuration do
 
       it 'should raise if `base_path` is not managed by git' do
         configuration.base_path = '/absolute/path'
+        allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).and_return(false)
+
+        expect {
+          configuration.validate!
+        }.to raise_error
+      end
+
+    end
+
+    describe '#stats_path' do
+
+      it 'should raise an error if `stats_path` is a relative path' do
+        configuration.stats_path = 'relative/path'
+
+        expect {
+          configuration.validate!
+        }.to raise_error(/stats_path/)
+      end
+
+      it 'should not raise if `stats_path` is a absolute path' do
+        configuration.stats_path= '/absolute/path'
+
+        expect {
+          configuration.validate!
+        }.not_to raise_error
+      end
+
+      it 'should raise if `stats_path` is not managed by git' do
+        configuration.stats_path = '/absolute/path'
         allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).and_return(false)
 
         expect {

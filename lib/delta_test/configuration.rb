@@ -87,6 +87,10 @@ module DeltaTest
       self.stats_path.absolute? rescue false
     end
 
+    validate :stats_path, 'need to be managed by git' do
+      Git.new(self.stats_path).git_repo?
+    end
+
     validate :stats_life, 'need to be a real number' do
       self.stats_life.is_a?(Integer) && self.stats_life > 0
     end
