@@ -36,7 +36,8 @@ module DeltaTest
       end
 
       def cleanup_tmp_table_files
-        FileUtils.rm_rf(DeltaTest.config.tmp_table_file.parent)
+        tmp_dir = DeltaTest.config.tmp_table_file.parent
+        FileUtils.rm_rf(tmp_dir) if File.directory?(tmp_dir)
       end
 
       def table
