@@ -16,7 +16,7 @@ module DeltaTest
     # @return {Boolean}
     ###
     def git_repo?
-      _, _, s = exec(%q{git rev-parse --is-inside-work-tree}) rescue []
+      _, _, s = exec(%q{rev-parse --is-inside-work-tree}) rescue []
       !!s && s.success?
     end
 
@@ -26,7 +26,7 @@ module DeltaTest
     # @return {String}
     ###
     def root_dir
-      o, _, s = exec(%q{git rev-parse --show-toplevel})
+      o, _, s = exec(%q{rev-parse --show-toplevel})
       s.success? ? o.strip : nil
     end
 
@@ -38,7 +38,7 @@ module DeltaTest
     # @return {String}
     ###
     def rev_parse(rev)
-      o, _, s = exec(%q{git rev-parse %s}, rev)
+      o, _, s = exec(%q{rev-parse %s}, rev)
       s.success? ? o.strip : nil
     end
 
@@ -60,7 +60,7 @@ module DeltaTest
     # @return {Array<String>}
     ###
     def ls_files(path: '.')
-      o, _, s = exec(%q{git ls-files -z %s}, path)
+      o, _, s = exec(%q{ls-files -z %s}, path)
       s.success? ? o.split("\x0") : []
     end
 
@@ -73,7 +73,7 @@ module DeltaTest
     # @return {Array<String>}
     ###
     def changed_files(base = 'master', head = 'HEAD', path: '.')
-      o, _, s = exec(%q{git --no-pager diff --name-only -z %s %s %s}, base, head, path)
+      o, _, s = exec(%q{diff --name-only -z %s %s %s}, base, head, path)
       s.success? ? o.split("\x0") : []
     end
 
@@ -85,18 +85,24 @@ module DeltaTest
     # @return {Array<String>}
     ###
     def ls_hashes(n)
-      o, _, s = exec(%q{git --no-pager log -z -n %d --format='%%H'}, n.to_i)
+      o, _, s = exec(%q{log -z -n %d --format='%%H'}, n.to_i)
       s.success? ? o.split("\x0") : []
     end
-
-
-  private
 
     ###
     # Util for executing command
     ###
-    def exec(command, *args)
-      args = args.map { |a| a.is_a?(String) ? Shellwords.escape(a) : a }
+    def exec(subcommand, *args)
+      command = [
+        'git',
+        '--git-dir=%s',
+        '--no-pager',
+        subcommand,
+      ].join(' ')
+
+      args.unshift(@dir.join('.git'))
+      args.map! { |a| a.is_a?(String) ? Shellwords.escape(a) : a }
+
       Open3.capture3(command % args, chdir: @dir)
     end
 
