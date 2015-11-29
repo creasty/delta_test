@@ -23,11 +23,9 @@ namespace :rails do
     Bundler.with_clean_env do
       Dir.chdir('spec/rails') do
         s = system('bundle exec delta_test stats:clean')
-        exit $? unless s
-        s = system('bundle exec delta_test exec rspec --color')
-        exit $? unless s
-        s = system('bundle exec delta_test stats:save --no-sync')
-        exit $? unless s
+        s &&= system('bundle exec delta_test exec --verbose rspec --color')
+        s &&= system('bundle exec delta_test stats:save --no-sync')
+        exit $?.exitstatus unless s
       end
     end
   end
