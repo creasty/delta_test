@@ -5,6 +5,9 @@ machine:
 dependencies:
   cache_directories:
     - spec/rails/vendor/bundle
+  pre:
+    - git config --global user.email 'yuki@creasty.com'
+    - git config --global user.name 'Yuki Iwanaga'
   post:
     - bundle exec rake compile
     - cd spec/rails && (bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs=4 --retry=3)
