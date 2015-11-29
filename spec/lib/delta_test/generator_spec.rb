@@ -21,10 +21,9 @@ describe DeltaTest::Generator do
 
   before do
     DeltaTest.configure do |config|
-      config.base_path        = base_path
-      config.files            = files
-      config.stats_repository = 'git@example.com:test/test.git'
-      config.stats_path       = stats_path
+      config.base_path  = base_path
+      config.files      = files
+      config.stats_path = stats_path
     end
 
     DeltaTest.active = true

@@ -52,7 +52,6 @@ module DeltaTest
       base_path
       files
 
-      stats_repository
       stats_path
       stats_life
 
@@ -116,9 +115,8 @@ module DeltaTest
         c.base_path = File.expand_path('.')
         c.files     = []
 
-        c.stats_repository = nil
-        c.stats_path       = File.expand_path('tmp/delta_test_stats')
-        c.stats_life       = 1000  # commits
+        c.stats_path = File.expand_path('tmp/delta_test_stats')
+        c.stats_life = 1000  # commits
 
         c.patterns           = []
         c.exclude_patterns   = []
