@@ -40,7 +40,7 @@ describe DeltaTest::RelatedSpecList do
       allow(DeltaTest::DependenciesTable).to receive(:load).with(Pathname.new(table_file_path)).and_return(table)
 
       allow(list.git).to receive(:git_repo?).and_return(true)
-      allow(list.git).to receive(:changed_files).with(base_commit, 'HEAD').and_return(changed_files)
+      allow(list.git).to receive(:changed_files).with(base_commit).and_return(changed_files)
     end
 
   end
