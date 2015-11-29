@@ -13,7 +13,7 @@ module DeltaTest
     ])
 
     def initialize
-      @git = Git.new
+      @git = Git.new(DeltaTest.config.base_path)
     end
 
     ###
