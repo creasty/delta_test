@@ -36,6 +36,14 @@ module DeltaTest
 
   end
 
+  class TableFileStageError < StandardError
+
+    def message
+      'failed to stage a table file'
+    end
+
+  end
+
   class NoConfigurationFileFoundError < IOError
 
     def message
