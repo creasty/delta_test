@@ -2,7 +2,7 @@ require_relative 'command_base'
 
 module DeltaTest
   class CLI
-    class SaveCommand < CommandBase
+    class StatsFetchCommand < CommandBase
 
       def invoke!
       end

@@ -1,7 +1,8 @@
-require_relative 'cli/list_command'
-require_relative 'cli/table_command'
 require_relative 'cli/exec_command'
-require_relative 'cli/save_command'
+require_relative 'cli/specs_command'
+require_relative 'cli/stats_fetch_command'
+require_relative 'cli/stats_show_command'
+require_relative 'cli/stats_save_command'
 require_relative 'cli/version_command'
 require_relative 'cli/help_command'
 
@@ -15,12 +16,13 @@ module DeltaTest
     end
 
     COMMANDS = {
-      'list'    => ListCommand,
-      'table'   => TableCommand,
-      'exec'    => ExecCommand,
-      'save'    => SaveCommand,
-      'version' => VersionCommand,
-      'help'    => HelpCommand,
+      'exec'        => ExecCommand,
+      'specs'       => SpecsCommand,
+      'stats:fetch' => StatsFetchCommand,
+      'stats:show'  => StatsShowCommand,
+      'stats:save'  => StatsSaveCommand,
+      'version'     => VersionCommand,
+      'help'        => HelpCommand,
     }
 
     ###

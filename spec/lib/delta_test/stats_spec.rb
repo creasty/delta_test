@@ -15,14 +15,13 @@ describe DeltaTest::Stats do
 
   end
 
-  describe '::find_file_by_commit' do
+  describe '::find_commit_dir' do
 
-    let(:commit_hash)     { '0000000000000000000000000000000000000000' }
-    let(:index_filename)  { '00/00000000000000000000000000000000000000' }
-    let(:index_file_path) { DeltaTest.config.stats_path.join('indexes', index_filename) }
+    let(:commit_hash) { '0000000000000000000000000000000000000000' }
+    let(:commit_dir)  { DeltaTest.config.stats_path.join('00/00000000000000000000000000000000000000') }
 
     it 'should return a file for the commit hash' do
-      expect(DeltaTest::Stats.find_index_file_by_commit(commit_hash)).to eq(index_file_path)
+      expect(DeltaTest::Stats.find_commit_dir(commit_hash)).to eq(commit_dir)
     end
 
   end
@@ -41,7 +40,7 @@ describe DeltaTest::Stats do
       ]
     end
 
-    let(:indexes) do
+    let(:commits) do
       [
         '11/11111111111111111111111111111111111111',
         '33/33333333333333333333333333333333333333',
@@ -53,12 +52,10 @@ describe DeltaTest::Stats do
         .with(DeltaTest.config.stats_life)
         .and_return(commit_hashes)
 
-      allow_any_instance_of(DeltaTest::Git).to receive(:ls_files)
-        .with(path: 'indexes')
-        .and_return(indexes)
+      allow_any_instance_of(DeltaTest::Git).to receive(:ls_files).and_return(commits)
     end
 
-    it 'should return the newest commit in the indexes' do
+    it 'should return the newest commit in the commits' do
       expect(stats.find_base_commit).to eq('3333333333333333333333333333333333333333')
     end
 

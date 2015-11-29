@@ -2,7 +2,7 @@ require_relative 'command_base'
 
 module DeltaTest
   class CLI
-    class TableCommand < CommandBase
+    class SpecsCommand < CommandBase
 
       def invoke!
       end
