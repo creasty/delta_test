@@ -237,4 +237,34 @@ describe DeltaTest::Git do
 
   end
 
+  describe '#origin_url' do
+
+    let(:subcommand) { ['config --get remote.origin.url'] }
+    let(:out)        { 'git@example.com:test/test.git' }
+
+    it 'should raise an error if the command is not exist' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_raise
+
+      expect {
+        git.origin_url
+      }.to raise_error
+    end
+
+    it 'should return a root directory path if success' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(success_status)
+
+      expect(git.origin_url).to eq(out)
+    end
+
+    it 'should return nil if error' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(error_status)
+
+      expect(git.origin_url).to be_nil
+    end
+
+  end
+
 end

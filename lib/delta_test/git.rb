@@ -90,6 +90,16 @@ module DeltaTest
     end
 
     ###
+    # Get url for the remote origin
+    #
+    # @return {String}
+    ###
+    def origin_url
+      o, _, s = exec(%q{config --get remote.origin.url})
+      s.success? ? o.strip : nil
+    end
+
+    ###
     # Util for executing command
     ###
     def exec(subcommand, *args)
