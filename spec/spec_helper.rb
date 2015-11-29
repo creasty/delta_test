@@ -1,4 +1,5 @@
 require 'rspec'
+require 'pry'
 require 'fakefs/spec_helpers'
 require 'codeclimate-test-reporter'
 
@@ -7,6 +8,8 @@ require 'delta_test'
 Dir["#{File.dirname(__FILE__)}/fixtures/**/*.rb"].each { |f| require f }
 Dir["#{File.dirname(__FILE__)}/supports/**/*.rb"].each { |f| require f }
 
+Pry.config.history.should_load = false
+Pry.config.history.should_save = false
 
 module DeltaTestSpecHelper
 
