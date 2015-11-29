@@ -1,5 +1,5 @@
 base_path: ../..
 
 patterns:
-  - app/**/*.rb
-  - config/locales/**/*.yml
+  - spec/rails/app/**/*.rb
+  - spec/rails/config/locales/**/*.yml
