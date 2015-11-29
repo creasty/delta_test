@@ -33,9 +33,13 @@ RSpec.configure do |config|
   end
 
   config.before do
-    allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).and_return(true)
     DeltaTest.active  = false
     DeltaTest.verbose = false
+
+    allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).and_return(true)
+
+    allow($stdout).to receive(:puts).with(any_args).and_return(nil)
+    allow($stderr).to receive(:puts).with(any_args).and_return(nil)
   end
 
 end

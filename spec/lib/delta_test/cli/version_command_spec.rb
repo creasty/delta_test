@@ -2,10 +2,6 @@ require 'delta_test/cli/version_command'
 
 describe DeltaTest::CLI::VersionCommand do
 
-  before do
-    allow($stdout).to receive(:puts).with(any_args).and_return(nil)
-  end
-
   let(:command) { DeltaTest::CLI::VersionCommand.new([]) }
 
   describe '#invoke!' do

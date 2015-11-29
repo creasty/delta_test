@@ -4,12 +4,6 @@ describe DeltaTest::CLI::CommandBase do
 
   let(:command_base) { DeltaTest::CLI::CommandBase.new([]) }
 
-  before do
-    # ignore outputs
-    allow($stdout).to receive(:puts).with(any_args).and_return(nil)
-    allow($stderr).to receive(:puts).with(any_args).and_return(nil)
-  end
-
   describe '#invoke!' do
 
     it 'should raise a not implemented error' do

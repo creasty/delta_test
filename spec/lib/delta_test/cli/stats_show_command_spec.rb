@@ -13,9 +13,6 @@ describe DeltaTest::CLI::StatsShowCommand do
   let(:base_commit) { '1111111111111111111111111111111111111111' }
 
   before do
-    allow($stdout).to receive(:puts).and_return(nil)
-    allow($stderr).to receive(:puts).and_return(nil)
-
     allow(command.list).to receive(:load_table!).and_return(nil)
     allow(command.list).to receive(:table).and_return(table)
 

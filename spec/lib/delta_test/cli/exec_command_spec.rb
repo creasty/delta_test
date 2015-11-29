@@ -20,9 +20,6 @@ describe DeltaTest::CLI::ExecCommand do
   let(:base_commit) { '1111111111111111111111111111111111111111' }
 
   before do
-    allow($stdout).to receive(:puts).and_return(nil)
-    allow($stderr).to receive(:puts).and_return(nil)
-
     allow(command.list).to receive(:load_table!).and_return(nil)
     allow(command.list).to receive(:table).and_return(table)
     allow(command.list).to receive(:retrive_changed_files!).and_return(nil)
