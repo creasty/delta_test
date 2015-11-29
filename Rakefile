@@ -21,8 +21,14 @@ namespace :rails do
   desc 'Run rails tests'
   task :test do
     Bundler.with_clean_env do
-      s = system('cd spec/rails && DELTA_TEST_ACTIVE=true DELTA_TEST_VERBOSE=true bundle exec rspec')
-      exit $? unless s
+      Dir.chdir('spec/rails') do
+        s = system('bundle exec delta_test stats:clean')
+        exit $? unless s
+        s = system('bundle exec delta_test exec rspec --color')
+        exit $? unless s
+        s = system('bundle exec delta_test stats:save --no-sync')
+        exit $? unless s
+      end
     end
   end
 end
