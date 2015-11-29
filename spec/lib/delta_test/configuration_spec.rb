@@ -68,7 +68,7 @@ describe DeltaTest::Configuration do
     describe '#base_path' do
 
       it 'should raise an error if `base_path` is a relative path' do
-        configuration.base_path = "relative/path"
+        configuration.base_path = 'relative/path'
 
         expect {
           configuration.validate!
@@ -76,11 +76,20 @@ describe DeltaTest::Configuration do
       end
 
       it 'should not raise if `base_path` is a absolute path' do
-        configuration.base_path = "/absolute/path"
+        configuration.base_path = '/absolute/path'
 
         expect {
           configuration.validate!
         }.not_to raise_error
+      end
+
+      it 'should raise if `base_path` is not managed by git' do
+        configuration.base_path = '/absolute/path'
+        allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).and_return(false)
+
+        expect {
+          configuration.validate!
+        }.to raise_error
       end
 
     end
@@ -266,10 +275,10 @@ describe DeltaTest::Configuration do
       allow(dummy).to receive(:not_yet_called)
       allow(dummy).to receive(:already_called)
 
-      expect(dummy).to receive(:not_yet_called).with(no_args).once.ordered
-      expect(configuration).to receive(:validate!).with(no_args).once.ordered
-      expect(configuration).to receive(:precalculate!).with(no_args).once.ordered
-      expect(dummy).to receive(:already_called).with(no_args).once.ordered
+      expect(dummy).to receive(:not_yet_called).once.ordered
+      expect(configuration).to receive(:validate!).once.ordered
+      expect(configuration).to receive(:precalculate!).once.ordered
+      expect(dummy).to receive(:already_called).once.ordered
 
       configuration.update do |config|
         dummy.not_yet_called
@@ -288,9 +297,9 @@ describe DeltaTest::Configuration do
         allow(configuration).to receive(:load_from_file!).and_return(true)
         allow(configuration).to receive(:retrive_files_from_git_index!).and_return(true)
 
-        expect(configuration).to receive(:load_from_file!).with(no_args).once.ordered
-        expect(configuration).to receive(:retrive_files_from_git_index!).with(no_args).once.ordered
-        expect(configuration).to receive(:update).with(no_args).once.ordered
+        expect(configuration).to receive(:load_from_file!).once.ordered
+        expect(configuration).to receive(:retrive_files_from_git_index!).once.ordered
+        expect(configuration).to receive(:update).once.ordered
 
         configuration.auto_configure!
       end
@@ -359,22 +368,14 @@ stats_path: #{stats_path}
 
     describe 'retrive_files_from_git_index!' do
 
-      it 'should raise an error if not in git repo' do
-        allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).with(no_args).and_return(false)
-
-        expect {
-          configuration.retrive_files_from_git_index!
-        }.to raise_error(DeltaTest::NotInGitRepositoryError)
-      end
-
       it 'should set `files` from the file indices of git' do
         files = [
           'a/file_1',
           'a/file_2',
         ]
 
-        allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).with(no_args).and_return(true)
-        allow_any_instance_of(DeltaTest::Git).to receive(:ls_files).with(no_args).and_return(files)
+        allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).and_return(true)
+        allow_any_instance_of(DeltaTest::Git).to receive(:ls_files).and_return(files)
 
         expect {
           configuration.retrive_files_from_git_index!

@@ -31,6 +31,10 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
+  config.before do
+    allow_any_instance_of(DeltaTest::Git).to receive(:git_repo?).and_return(true)
+  end
+
   config.after do
     DeltaTest.active  = false
     DeltaTest.verbose = false

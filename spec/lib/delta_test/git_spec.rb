@@ -6,23 +6,15 @@ describe DeltaTest::Git do
   let(:success_status) { [out, '', double(success?: true)] }
   let(:error_status)   { ['', '', double(success?: false)] }
 
-  let(:git) { DeltaTest::Git.new }
+  let(:git) { DeltaTest::Git.new('.') }
 
   describe '::new' do
 
-    it 'should execute commands in the base_path' do
-      git = DeltaTest::Git.new
-      expect(git.dir).to eq(DeltaTest.config.base_path)
-    end
-
-    context 'with dir' do
-
-      it 'sholud execute commands in the specified directory' do
-        dir = '/dir'
-        git = DeltaTest::Git.new(dir)
-        expect(git.dir).to eq(dir)
-      end
-
+    it 'sholud execute commands in the specified directory' do
+      dir = '/dir'
+      git = DeltaTest::Git.new(dir)
+      expect(git.dir).to be_a_kind_of(Pathname)
+      expect(git.dir.to_s).to eq(dir)
     end
 
   end
@@ -30,6 +22,10 @@ describe DeltaTest::Git do
   describe '#git_repo?' do
 
     let(:subcommand) { ['rev-parse --is-inside-work-tree'] }
+
+    before do
+      allow(git).to receive(:git_repo?).and_call_original
+    end
 
     it 'should return false if `git` command is not exist' do
       expect(git).to receive(:exec).with(*subcommand).and_call_original

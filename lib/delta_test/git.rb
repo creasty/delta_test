@@ -6,8 +6,8 @@ module DeltaTest
 
     attr_reader :dir
 
-    def initialize(dir = nil)
-      @dir = dir || DeltaTest.config.base_path
+    def initialize(dir)
+      @dir = Pathname.new(dir)
     end
 
     ###

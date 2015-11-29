@@ -71,6 +71,10 @@ module DeltaTest
       self.base_path.absolute? rescue false
     end
 
+    validate :base_path, 'need to be managed by git' do
+      Git.new(self.base_path).git_repo?
+    end
+
     validate :files, 'need to be an array' do
       self.files.is_a?(Array)
     end
@@ -214,13 +218,7 @@ module DeltaTest
     # And update `files`
     ###
     def retrive_files_from_git_index!
-      git = Git.new
-
-      unless git.git_repo?
-        raise NotInGitRepositoryError
-      end
-
-      self.files = git.ls_files
+      self.files = Git.new(self.base_path).ls_files
     end
 
 

@@ -17,6 +17,12 @@ module DeltaTest
         .find { |h| indexes.include?(h) }
     end
 
+    def find_commit_dir
+      _base_commit_dir = find_base_commit
+      return unless _base_commit_dir
+      self.class.find_commit_dir(_base_commit_dir)
+    end
+
     def self.find_commit_dir(commit)
       DeltaTest.config.stats_path.join(*commit.unpack('A2A*'))
     end
