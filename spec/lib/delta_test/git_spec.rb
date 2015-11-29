@@ -237,7 +237,7 @@ describe DeltaTest::Git do
 
   end
 
-  describe '#origin_url' do
+  describe '#remote_url' do
 
     let(:subcommand) { ['config --get remote.origin.url'] }
     let(:out)        { 'git@example.com:test/test.git' }
@@ -247,7 +247,7 @@ describe DeltaTest::Git do
       allow(Open3).to receive(:capture3).and_raise
 
       expect {
-        git.origin_url
+        git.remote_url
       }.to raise_error
     end
 
@@ -255,14 +255,47 @@ describe DeltaTest::Git do
       expect(git).to receive(:exec).with(*subcommand).and_call_original
       allow(Open3).to receive(:capture3).and_return(success_status)
 
-      expect(git.origin_url).to eq(out)
+      expect(git.remote_url).to eq(out)
     end
 
     it 'should return nil if error' do
       expect(git).to receive(:exec).with(*subcommand).and_call_original
       allow(Open3).to receive(:capture3).and_return(error_status)
 
-      expect(git.origin_url).to be_nil
+      expect(git.remote_url).to be_nil
+    end
+
+  end
+
+  describe '#has_remote?' do
+
+    let(:subcommand) { ['config --get remote.origin.url'] }
+    let(:out)        { 'git@example.com:test/test.git' }
+
+    it 'should return false if the command is not exist' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_raise
+
+      res = nil
+
+      expect {
+        res = git.has_remote?
+      }.not_to raise_error
+      expect(res).to be(false)
+    end
+
+    it 'should return true if it has a remote origin' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(success_status)
+
+      expect(git.has_remote?).to be(true)
+    end
+
+    it 'should return false if not' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(error_status)
+
+      expect(git.has_remote?).to be(false)
     end
 
   end

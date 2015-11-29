@@ -94,9 +94,18 @@ module DeltaTest
     #
     # @return {String}
     ###
-    def origin_url
+    def remote_url
       o, _, s = exec(%q{config --get remote.origin.url})
       s.success? ? o.strip : nil
+    end
+
+    ###
+    # Check if it has a remote origin
+    #
+    # @return {String}
+    ###
+    def has_remote?
+      !!remote_url rescue false
     end
 
     ###
