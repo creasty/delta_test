@@ -33,12 +33,12 @@ module DeltaTest
     # @params {String} base
     # @params {String} head
     ###
-    def retrive_changed_files!(base, head)
+    def retrive_changed_files!(commit)
       unless @git.git_repo?
         raise NotInGitRepositoryError
       end
 
-      @changed_files = @git.changed_files(base, head)
+      @changed_files = @git.changed_files('HEAD', commit)
     end
 
     ###

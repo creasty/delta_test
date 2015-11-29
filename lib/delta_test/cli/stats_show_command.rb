@@ -1,6 +1,6 @@
 require_relative 'command_base'
 require_relative '../stats'
-require_relative '../dependencies_table'
+require_relative '../related_spec_list'
 
 module DeltaTest
   class CLI
@@ -8,6 +8,7 @@ module DeltaTest
 
       def invoke!
         @stats = Stats.new
+        @list  = RelatedSpecList.new
 
         if @stats.base_commit
           puts 'Base commit: %s' % [@stats.base_commit]
@@ -16,18 +17,22 @@ module DeltaTest
           raise StatsNotFoundError
         end
 
-        @table = DependenciesTable.load(@stats.table_file_path)
+        @list.load_table!(@stats.table_file_path)
         print_table
       end
 
       def print_table
-        @table.each do |spec_file, dependencies|
-          puts spec_file
-          puts
-          dependencies.each do |dependency|
-            puts "\t#{dependency}"
+        if @list.table.any?
+          @list.table.each do |spec_file, dependencies|
+            puts spec_file
+            puts
+            dependencies.each do |dependency|
+              puts "\t#{dependency}"
+            end
+            puts
           end
-          puts
+        else
+          puts '(no entry)'
         end
       end
 
