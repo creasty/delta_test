@@ -44,9 +44,7 @@ module DeltaTest
     CONFIG_FILES = [
       'delta_test.yml',
       'delta_test.yaml',
-    ].freeze
-
-    PART_FILE_EXT = '.part-%s'
+    ].map(&:freeze).freeze
 
     attr_accessor(*%i[
       base_path
