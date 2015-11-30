@@ -63,8 +63,7 @@ Usage
 ```bash
 $ git clone git@example.com:sample/sample_stats.git tmp/delta_test_stats
 $ delta_test stats:clean
-$ delta_test exec rspec spec/models
-$ delta_test exec rspec spec/controllers
+$ delta_test exec rspec
 $ delta_test stats:save
 ```
 
