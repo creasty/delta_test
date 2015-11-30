@@ -18,6 +18,7 @@ describe DeltaTest::CLI::SpecsCommand do
     allow(command.list).to receive(:related_spec_files).and_return(related_spec_files)
 
     allow(command.stats).to receive(:base_commit).and_return(base_commit)
+    allow(command.stats).to receive(:table_file_path).and_return(nil)
   end
 
   describe '#invoke!' do
