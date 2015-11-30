@@ -120,7 +120,7 @@ describe DeltaTest do
 
     it 'should return an unique id for process' do
       expect(DeltaTest.tester_id).to be_a(String)
-      expect(DeltaTest.tester_id).to match(/\Ap\d+t\d+n\d+\z/)
+      expect(DeltaTest.tester_id).to match(/\A\d+-\d+-\d+\z/)
     end
 
   end
