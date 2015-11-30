@@ -100,17 +100,17 @@ describe DeltaTest::CLI::CommandBase do
 
         expect(options).to be_a(Hash)
 
-        expect(options['force-run']).to eq(false)
+        expect(options['force']).to eq(false)
         expect(options['verbose']).to eq(false)
       end
 
       it 'should be able to overwrite default options' do
-        args = ['--force-run', '--verbose']
+        args = ['--force', '--verbose']
         options = command_base.parse_options!(args)
 
         expect(options).to be_a(Hash)
 
-        expect(options['force-run']).to eq(true)
+        expect(options['force']).to eq(true)
         expect(options['verbose']).to eq(true)
       end
 

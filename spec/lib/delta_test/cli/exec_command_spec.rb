@@ -26,6 +26,7 @@ describe DeltaTest::CLI::ExecCommand do
     allow(command.list).to receive(:related_spec_files).and_return(related_spec_files)
 
     allow(command.stats).to receive(:base_commit).and_return(base_commit)
+    allow(command.stats).to receive(:table_file_path).and_return(nil)
   end
 
   describe '#profile_mode?' do
@@ -45,13 +46,13 @@ describe DeltaTest::CLI::ExecCommand do
       expect(command.profile_mode?).to be(true)
     end
 
-    context 'with --force-run' do
+    context 'with --force' do
 
-      let(:args) { ['--force-run', 'bundle', 'exec', 'rspec'] }
+      let(:args) { ['--force', 'bundle', 'exec', 'rspec'] }
 
-      it 'should always return false' do
+      it 'should always return true' do
         allow(command.stats).to receive(:base_commit).and_return(nil)
-        expect(command.profile_mode?).to be(false)
+        expect(command.profile_mode?).to be(true)
       end
 
     end

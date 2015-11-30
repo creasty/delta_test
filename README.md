@@ -63,8 +63,7 @@ Usage
 ```bash
 $ git clone git@example.com:sample/sample_stats.git tmp/delta_test_stats
 $ delta_test stats:clean
-$ delta_test exec rspec spec/models
-$ delta_test exec rspec spec/controllers
+$ delta_test exec rspec
 $ delta_test stats:save
 ```
 
@@ -81,9 +80,9 @@ options:
     --verbose      Print more output.
 
 commands:
-    exec [--force-run] <script> -- <files...>
+    exec [--force] <script> -- <files...>
                    Execute test script using delta_test.
-                   --force-run to force DeltaTest to run full test cases.
+                   --force to force DeltaTest to run full test in profile mode.
 
     specs          List related spec files for changes.
 

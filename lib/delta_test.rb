@@ -51,7 +51,7 @@ module DeltaTest
     def tester_id
       return @tester_id if @tester_id
       t = Time.now
-      @tester_id = 'p%dt%dn%d' % [$$, t.to_i, t.nsec]
+      @tester_id = '%d-%d-%d' % [t.to_i, t.nsec, $$]
     end
 
   end

@@ -8,9 +8,9 @@ module DeltaTest
     class CommandBase
 
       DEFAULT_OPTIONS = {
-        'verbose'   => false,
-        'force-run' => false,
-        'no-sync'   => false,
+        'verbose' => false,
+        'force'   => false,
+        'no-sync' => false,
       }.freeze
 
       attr_reader(*%i[
@@ -87,6 +87,8 @@ module DeltaTest
       # @params {Integer|Nil} status
       ###
       def exec_with_data(args, ary, status = nil)
+        $stdout.sync = true
+
         Open3.popen3(args) do |i, o, e, w|
           i.write(ary.join("\n")) if ary
           i.close

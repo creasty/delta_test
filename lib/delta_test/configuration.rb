@@ -44,16 +44,14 @@ module DeltaTest
     CONFIG_FILES = [
       'delta_test.yml',
       'delta_test.yaml',
-    ].freeze
-
-    PART_FILE_EXT = '.part-%s'
+    ].map(&:freeze).freeze
 
     attr_accessor(*%i[
       base_path
-      files
-
       stats_path
       stats_life
+
+      files
 
       patterns
       exclude_patterns
@@ -74,14 +72,6 @@ module DeltaTest
       Git.new(self.base_path).git_repo?
     end
 
-    validate :files, 'need to be an array' do
-      self.files.is_a?(Array)
-    end
-
-    validate :patterns, 'need to be an array' do
-      self.patterns.is_a?(Array)
-    end
-
     validate :stats_path, 'need to be an absolute path' do
       self.stats_path.absolute? rescue false
     end
@@ -92,6 +82,14 @@ module DeltaTest
 
     validate :stats_life, 'need to be a real number' do
       self.stats_life.is_a?(Integer) && self.stats_life > 0
+    end
+
+    validate :files, 'need to be an array' do
+      self.files.is_a?(Array)
+    end
+
+    validate :patterns, 'need to be an array' do
+      self.patterns.is_a?(Array)
     end
 
     validate :exclude_patterns, 'need to be an array' do
@@ -112,11 +110,11 @@ module DeltaTest
 
     def initialize
       update(validate: false) do |c|
-        c.base_path = File.expand_path('.')
-        c.files     = []
-
+        c.base_path  = File.expand_path('.')
         c.stats_path = File.expand_path('tmp/delta_test_stats')
         c.stats_life = 1000  # commits
+
+        c.files     = []
 
         c.patterns           = []
         c.exclude_patterns   = []
@@ -171,10 +169,7 @@ module DeltaTest
       filtered_files = self.files
         .map { |f| Utils.regulate_filepath(f, self.base_path) }
         .uniq
-
-      filtered_files = Utils.files_grep(filtered_files, self.patterns, self.exclude_patterns)
-
-      @filtered_files = Set.new(filtered_files)
+      @filtered_files = Utils.files_grep(filtered_files, self.patterns, self.exclude_patterns).to_set
 
       @stats_path = Pathname.new(File.absolute_path(self.stats_path, self.base_path))
     end
