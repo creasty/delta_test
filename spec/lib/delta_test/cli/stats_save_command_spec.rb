@@ -51,6 +51,7 @@ describe DeltaTest::CLI::StatsSaveCommand do
 
     before do
       allow(command.table).to receive(:any?).and_return(true)
+      allow(command).to receive(:error_recorded?).and_return(false)
     end
 
     it 'should execute procedures' do
@@ -83,6 +84,20 @@ describe DeltaTest::CLI::StatsSaveCommand do
         allow(command.table).to receive(:any?).and_return(false)
         expect(command).to receive(:load_tmp_table_files).and_return(nil).once.ordered
         expect(command).to receive(:cleanup_tmp_table_files).and_return(nil).once.ordered
+        expect(command).not_to receive(:save_table_file)
+        expect(command).not_to receive(:stage_table_file)
+        expect(command).not_to receive(:sync_table_file)
+        command.invoke!
+      end
+
+    end
+
+    context 'error_recorded?' do
+
+      it 'should do nothing' do
+        allow(command).to receive(:error_recorded?).and_return(true)
+        expect(command).not_to receive(:load_tmp_table_files)
+        expect(command).not_to receive(:cleanup_tmp_table_files)
         expect(command).not_to receive(:save_table_file)
         expect(command).not_to receive(:stage_table_file)
         expect(command).not_to receive(:sync_table_file)

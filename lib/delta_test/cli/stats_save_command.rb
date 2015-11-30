@@ -9,6 +9,8 @@ module DeltaTest
     class StatsSaveCommand < CommandBase
 
       def invoke!
+        return if error_recorded?
+
         load_tmp_table_files
         cleanup_tmp_table_files
 
