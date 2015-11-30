@@ -7,6 +7,12 @@ master
 N/A
 
 
+1.0.1
+-----
+
+- [feature] #26 Subversioning to avoid conflicts
+
+
 1.0.0
 -----
 
