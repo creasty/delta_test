@@ -11,7 +11,7 @@ GIT
 PATH
   remote: ../..
   specs:
-    delta_test (1.0.2)
+    delta_test (1.0.3)
 
 GEM
   remote: https://rubygems.org/

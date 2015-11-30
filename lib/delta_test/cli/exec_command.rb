@@ -93,7 +93,9 @@ module DeltaTest
 
         args += @args
 
-        exec_with_data(args.join(' '), @spec_files)
+        record_error do
+          exec_with_data(args.join(' '), @spec_files)
+        end
       end
 
     end

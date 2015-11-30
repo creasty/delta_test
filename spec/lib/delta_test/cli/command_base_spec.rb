@@ -161,4 +161,64 @@ describe DeltaTest::CLI::CommandBase do
 
   end
 
+  describe '#error_file' do
+
+    it 'should return a path for an error file' do
+      expect(command_base.error_file).to be_a(Pathname)
+    end
+
+  end
+
+  describe '#create_error_file' do
+
+    it 'should create an error file' do
+      expect(File.exists?(command_base.error_file)).to be(false)
+      command_base.create_error_file
+      expect(File.exists?(command_base.error_file)).to be(true)
+    end
+
+  end
+
+  describe '#error_recorded?' do
+
+    it 'should return false if no error file exists' do
+      expect(File.exists?(command_base.error_file)).to be(false)
+      expect(command_base.error_recorded?).to be(false)
+    end
+
+    it 'should return false if an error file exists' do
+      command_base.create_error_file
+      expect(File.exists?(command_base.error_file)).to be(true)
+      expect(command_base.error_recorded?).to be(true)
+    end
+
+  end
+
+  describe '#record_error' do
+
+    before do
+      allow(command_base).to receive(:hook_create_error_file).and_return(nil)
+    end
+
+    it 'should call hook_create_error_file' do
+      expect(command_base).to receive(:hook_create_error_file)
+      command_base.record_error
+    end
+
+    it 'should yield a given block' do
+      called = false
+      command_base.record_error { called = true }
+      expect(called).to be(true)
+    end
+
+  end
+
+  describe '#hook_create_error_file' do
+
+  end
+
+  describe '#current_process_status_success?' do
+
+  end
+
 end
