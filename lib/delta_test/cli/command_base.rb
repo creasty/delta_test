@@ -127,9 +127,17 @@ module DeltaTest
       ###
       def hook_create_error_file
         at_exit do
-          next if $!.nil? || $!.is_a?(SystemExit) && $!.success?
-          create_error_file
+          create_error_file unless current_process_status_success?
         end
+      end
+
+      ###
+      # Check exit status of the current process
+      #
+      # @return {Boolean}
+      ###
+      def current_process_status_success?
+        $!.nil? || $!.is_a?(SystemExit) && $!.success?
       end
 
       ###
