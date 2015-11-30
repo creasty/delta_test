@@ -11,10 +11,12 @@ module DeltaTest
       def invoke!
         load_tmp_table_files
         cleanup_tmp_table_files
-        save_table_file
 
-        stage_table_file
-        sync_table_file unless @options['no-sync']
+        if table.any?
+          save_table_file
+          stage_table_file
+          sync_table_file unless @options['no-sync']
+        end
       end
 
       def load_tmp_table_files

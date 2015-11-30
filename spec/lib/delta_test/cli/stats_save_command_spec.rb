@@ -49,6 +49,10 @@ describe DeltaTest::CLI::StatsSaveCommand do
 
   describe '#invoke!' do
 
+    before do
+      allow(command.table).to receive(:any?).and_return(true)
+    end
+
     it 'should execute procedures' do
       expect(command).to receive(:load_tmp_table_files).and_return(nil).once.ordered
       expect(command).to receive(:cleanup_tmp_table_files).and_return(nil).once.ordered
@@ -67,6 +71,20 @@ describe DeltaTest::CLI::StatsSaveCommand do
         expect(command).to receive(:cleanup_tmp_table_files).and_return(nil).once.ordered
         expect(command).to receive(:save_table_file).and_return(nil).once.ordered
         expect(command).to receive(:stage_table_file).and_return(nil).once.ordered
+        expect(command).not_to receive(:sync_table_file)
+        command.invoke!
+      end
+
+    end
+
+    context 'no table data' do
+
+      it 'should not create an empty table file' do
+        allow(command.table).to receive(:any?).and_return(false)
+        expect(command).to receive(:load_tmp_table_files).and_return(nil).once.ordered
+        expect(command).to receive(:cleanup_tmp_table_files).and_return(nil).once.ordered
+        expect(command).not_to receive(:save_table_file)
+        expect(command).not_to receive(:stage_table_file)
         expect(command).not_to receive(:sync_table_file)
         command.invoke!
       end
