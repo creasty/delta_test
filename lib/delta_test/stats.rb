@@ -42,16 +42,19 @@ module DeltaTest
 
     def table_file_path
       return unless commit_dir
+      return @table_file_path if defined?(@table_file_path)
 
       if @head
-        commit_dir.join(TABLE_FILENAME_TPL % [DeltaTest.tester_id])
+        @table_file_path = commit_dir.join(TABLE_FILENAME_TPL % [DeltaTest.tester_id])
       else
         file = Dir.glob(commit_dir.join(TABLE_FILENAME_PATTERN)).max do |f|
           File.basename(f).split('-').take(2).join('.').to_f
         end
-        return unless file
-        Pathname.new(file)
+        @table_file_path = file
+        @table_file_path = Pathname.new(file) if file
       end
+
+      @table_file_path
     end
 
   end
