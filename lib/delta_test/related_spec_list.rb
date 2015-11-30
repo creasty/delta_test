@@ -72,7 +72,7 @@ module DeltaTest
 
       @table.each do |spec_file, dependencies|
         dependent = @changed_files.include?(spec_file) \
-          || (dependencies & @changed_files).any?
+          || (dependencies.map(&:to_s) & @changed_files).any?
 
         @dependents << spec_file if dependent
       end
