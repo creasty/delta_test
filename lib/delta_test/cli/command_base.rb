@@ -8,9 +8,9 @@ module DeltaTest
     class CommandBase
 
       DEFAULT_OPTIONS = {
-        'verbose'   => false,
-        'force-run' => false,
-        'no-sync'   => false,
+        'verbose' => false,
+        'force'   => false,
+        'no-sync' => false,
       }.freeze
 
       attr_reader(*%i[
