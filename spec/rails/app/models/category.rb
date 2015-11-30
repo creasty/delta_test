@@ -12,7 +12,7 @@ class Category < ActiveRecord::Base
     length: { maximum: 100 }
 
   def test
-    true
+    false
   end
 
 end
