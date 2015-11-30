@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'open3'
 require 'shellwords'
 require 'thread'
@@ -109,6 +110,52 @@ module DeltaTest
       ###
       def bundler_enabled?
         Object.const_defined?(:Bundler) || !!Utils.find_file_upward('Gemfile')
+      end
+
+      ###
+      # Wrapper of hook_create_error_file
+      #
+      # @block
+      ###
+      def record_error
+        hook_create_error_file
+        yield if block_given?
+      end
+
+      ###
+      # Hook on exit and record errors
+      ###
+      def hook_create_error_file
+        at_exit do
+          next if $!.nil? || $!.is_a?(SystemExit) && $!.success?
+          create_error_file
+        end
+      end
+
+      ###
+      # Check if any error is recorded
+      #
+      # @return {Boolean}
+      ###
+      def error_recorded?
+        File.exists?(error_file)
+      end
+
+      ###
+      # Path for an error file
+      #
+      # @return {Pathname}
+      ###
+      def error_file
+        @error_file ||= DeltaTest.config.tmp_table_file.parent.join('error.txt')
+      end
+
+      ###
+      # Create an error file
+      ###
+      def create_error_file
+        FileUtils.mkdir_p(File.dirname(error_file))
+        File.new(error_file, 'w')
       end
 
     end

@@ -27,6 +27,8 @@ describe DeltaTest::CLI::ExecCommand do
 
     allow(command.stats).to receive(:base_commit).and_return(base_commit)
     allow(command.stats).to receive(:table_file_path).and_return(nil)
+
+    allow(command).to receive(:hook_on_exit).and_return(nil)
   end
 
   describe '#profile_mode?' do
@@ -123,6 +125,18 @@ describe DeltaTest::CLI::ExecCommand do
 
       end
 
+    end
+
+  end
+
+  describe '#hook_on_exit' do
+
+  end
+
+  describe '#create_error_file' do
+
+    it 'should create an error file' do
+      expect(File.exists?())
     end
 
   end
