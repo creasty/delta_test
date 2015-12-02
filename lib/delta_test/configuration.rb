@@ -53,9 +53,11 @@ module DeltaTest
 
       files
 
+      full_test_patterns
+      full_test_branches
+
       patterns
       exclude_patterns
-      full_test_patterns
       custom_mappings
     ])
 
@@ -88,16 +90,20 @@ module DeltaTest
       self.files.is_a?(Array)
     end
 
+    validate :full_test_patterns, 'need to be an array' do
+      self.full_test_patterns.is_a?(Array)
+    end
+
+    validate :full_test_branches, 'need to be an array' do
+      self.full_test_branches.is_a?(Array)
+    end
+
     validate :patterns, 'need to be an array' do
       self.patterns.is_a?(Array)
     end
 
     validate :exclude_patterns, 'need to be an array' do
       self.exclude_patterns.is_a?(Array)
-    end
-
-    validate :full_test_patterns, 'need to be an array' do
-      self.full_test_patterns.is_a?(Array)
     end
 
     validate :custom_mappings, 'need to be a hash' do
@@ -116,9 +122,11 @@ module DeltaTest
 
         c.files     = []
 
+        c.full_test_patterns = []
+        c.full_test_branches = []
+
         c.patterns           = []
         c.exclude_patterns   = []
-        c.full_test_patterns = []
         c.custom_mappings    = {}
       end
     end

@@ -136,15 +136,18 @@ $ bundle exec delta_test exec parallel_test -t rspec -n 4 -- spec/features
 stats_path: tmp/delta_test_stats
 stats_life: 1000
 
+full_test_patterns:
+  - Gemfile.lock
+
+full_test_braches:
+  - master
+
 patterns:
   - lib/**/*.rb
   - app/**/*.rb
 
 exclude_patterns:
   - lib/batch/*.rb
-
-full_test_patterns:
-  - Gemfile.lock
 
 custom_mappings:
   spec/features/i18n_spec.rb:
