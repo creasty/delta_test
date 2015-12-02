@@ -117,6 +117,36 @@ describe DeltaTest::Git do
 
   end
 
+  describe '#current_branch' do
+
+    let(:subcommand) { ['symbolic-ref --short HEAD'] }
+    let(:out)        { 'master' }
+
+    it 'should raise an error if the command is not exist' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_raise
+
+      expect {
+        git.current_branch
+      }.to raise_error
+    end
+
+    it 'should return name of the current branch if success' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(success_status)
+
+      expect(git.current_branch).to eq(out)
+    end
+
+    it 'should return nil if error' do
+      expect(git).to receive(:exec).with(*subcommand).and_call_original
+      allow(Open3).to receive(:capture3).and_return(error_status)
+
+      expect(git.current_branch).to be_nil
+    end
+
+  end
+
   describe '#same_commit?' do
 
     let(:map) do

@@ -43,6 +43,16 @@ module DeltaTest
     end
 
     ###
+    # Get name of the current branch
+    #
+    # @return {String}
+    ###
+    def current_branch
+      o, _, s = exec(%q{symbolic-ref --short HEAD})
+      s.success? ? o.strip : nil
+    end
+
+    ###
     # Compare two rev names by their commit ids
     #
     # @params {String} r1

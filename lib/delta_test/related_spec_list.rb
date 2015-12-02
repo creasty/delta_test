@@ -48,15 +48,16 @@ module DeltaTest
     ###
     def full_tests?
       return false unless @changed_files
+      return @full_tests if defined?(@full_tests)
 
-      @full_tests ||= if DeltaTest.config.full_test_patterns.empty?
-          false
-        else
-          Utils.files_grep(
-            @changed_files,
-            DeltaTest.config.full_test_patterns
-          ).any?
-        end
+      @full_tests = false
+      @full_tests ||= DeltaTest.config.full_test_branches.include?(@git.current_branch)
+      @full_tests ||= DeltaTest.config.full_test_patterns.any? && Utils.files_grep(
+        @changed_files,
+        DeltaTest.config.full_test_patterns
+      ).any?
+
+      @full_tests
     end
 
     ###
