@@ -36,11 +36,20 @@ describe DeltaTest::RelatedSpecList do
       ]
     end
 
+    let(:current_branch) { 'master' }
+
+    let(:full_test_branches) { [] }
+    let(:full_test_patterns) { [] }
+
     before do
       allow(DeltaTest::DependenciesTable).to receive(:load).with(Pathname.new(table_file_path)).and_return(table)
 
       allow(list.git).to receive(:git_repo?).and_return(true)
       allow(list.git).to receive(:changed_files).with(base_commit).and_return(changed_files)
+      allow(list.git).to receive(:current_branch).and_return(current_branch)
+
+      allow(DeltaTest.config).to receive(:full_test_branches).and_return(full_test_branches)
+      allow(DeltaTest.config).to receive(:full_test_patterns).and_return(full_test_patterns)
     end
 
   end
@@ -184,7 +193,46 @@ describe DeltaTest::RelatedSpecList do
 
     describe '#full_tests?' do
 
-      context 'No file in full test patterns is changed' do
+      context 'full_test_branches is empty' do
+
+        it 'should return false' do
+          expect(list.full_tests?).to be(false)
+        end
+
+      end
+
+      context 'the current branch is in full_test_branches' do
+
+        let(:current_branch)     { 'master' }
+        let(:full_test_branches) { ['master'] }
+
+        it 'should return true' do
+          expect(list.full_tests?).to be(true)
+        end
+
+      end
+
+      context 'the current branch is not in full_test_branches' do
+
+        let(:current_branch)     { 'master' }
+        let(:full_test_branches) { ['other_branch'] }
+        let(:changed_files)      { [] }
+
+        it 'should return false' do
+          expect(list.full_tests?).to be(false)
+        end
+
+      end
+
+      context 'full_test_patterns is empty' do
+
+        it 'should return false' do
+          expect(list.full_tests?).to be(false)
+        end
+
+      end
+
+      context 'no file in full_test_patterns is changed' do
 
         let(:changed_files) do
           [
@@ -198,7 +246,7 @@ describe DeltaTest::RelatedSpecList do
 
       end
 
-      context 'No file in full test patterns is changed' do
+      context 'no file in full_test_patterns is changed' do
 
         let(:full_test_patterns) do
           [
@@ -210,18 +258,6 @@ describe DeltaTest::RelatedSpecList do
           [
             'spec/other_spec.rb',
           ]
-        end
-
-        before do
-          DeltaTest.configure do |config|
-            config.full_test_patterns = full_test_patterns
-          end
-        end
-
-        after do
-          DeltaTest.configure do |config|
-            config.full_test_patterns = []
-          end
         end
 
         it 'should return true' do
